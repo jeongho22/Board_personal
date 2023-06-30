@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org/">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        .button-container {
+            position: fixed; /* 고정된 위치에 버튼 그룹을 둠 */
+            right: 10px; /* 오른쪽에서 10픽셀 떨어진 곳 */
+            bottom: 10px; /* 아래쪽에서 10픽셀 떨어진 곳 */
+            display: flex; /* 요소들을 한 줄로 배치 */
+        }
+        .inline-form {
+            display: inline; /* 이 부분이 form 요소를 inline으로 만들어 줍니다. */
+        }
+
+    </style>
+    <title>게시판 페이지</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Job</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td th:text="${board.name}"></td>
+        <td th:text="${board.job}"></td>
+    </tr>
+    </tbody>
+</table>
+
+
+
+
+
+<!-- 댓글 내용 -->
+<div class="mt-5">
+    <h3>전체댓글</h3>
+    <ul class="list-group">
+        <li class="list-group-item" th:each="comment : ${comments}">
+            <strong th:text="${comment.author}"></strong>
+            <p th:text="${comment.content}"></p>
+            <small th:text="${comment.createdAt}"></small>
+            <!-- Delete Button -->
+            <form th:action="@{/deleteComment/{commentId}(commentId=${comment.id})}" method="post">
+                <button class="btn btn-danger btn-sm" type="submit">Delete</button>
+            </form>
+        </li>
+    </ul>
+</div>
+
+
+<!-- 댓글 쓰기 -->
+<div class="mt-5">
+
+    <form th:action="@{/boardview/{id}(id=${board.id})}" th:object="${comment}" method="post" class="form-group">
+        <input type="text" th:field="*{author}" placeholder="글쓴이" class="form-control">
+        <textarea th:field="*{content}" placeholder="내용" class="form-control mt-3"></textarea>
+        <button type="submit" class="btn btn-primary mt-3">등록</button>
+    </form>
+</div>
+
+
+
+
+<!--    <a th:href="@{${board.filepath}}">다운로드</a>-->
+
+
+<div class="button-container">
+    <a th:href="@{/modify/{id}(id=${board.id})}" class="btn btn-primary">수정</a>
+    <a th:href="@{/delete(id=${board.id})}" class="btn btn-primary" onclick="return confirm('정말로 삭제하시겠습니까?')">삭제</a>
+    <form th:action="@{/list}" method="get" class="inline-form">
+        <button type="submit" class="btn btn-primary">목록</button>
+    </form>
+</div>
+
+
+
+</body>
+</html>

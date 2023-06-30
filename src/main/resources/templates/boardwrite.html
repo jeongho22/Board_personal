@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>게시물 작성폼</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        .layout {
+            width: 500px;
+            margin: 0 auto;
+            margin-top: 40px;
+        }
+        .layout input, textarea {
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 10px;
+        }
+        .layout textarea {
+            width: 100%;
+            margin-top: 10px;
+            min-height: 300px;
+        }
+    </style>
+</head>
+<body>
+<div class='layout'>
+    <form action="boardwritepro" method="post">
+        이름 <input name="name" type="text">
+        가격 <textarea name="job"></textarea>
+        <button type="submit" class="btn btn-primary">작성</button>
+    </form>

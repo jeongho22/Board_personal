@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<th:block th:each="user : ${users}">
+    <div>
+        사용자 이름1 <span th:text="${user.username}"></span>
+        사용자 나이1 <span th:text="${user.age}"></span></div>
+    <div>
+        요약 <span th:text="${user.username} + ' / ' + ${user.age}"></span>
+    </div>
+
+
+<!--    대표적으로 th:each로 반복을 하고자 할때 반복의 대상이 한 요소가 아니라 -->
+<!--    동등한 레벨의 여러 요소를 구룹화하여 반복하고자 하면 th:block이 유용하다.-->
+
+
+</th:block>
+</body>
+</html>
