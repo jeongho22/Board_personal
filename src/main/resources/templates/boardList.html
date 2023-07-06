@@ -7,6 +7,8 @@
 </head>
 
 <body>
+
+
 <div class="container mt-4">
     <table class="table">
         <thead class="thead-light">
@@ -24,7 +26,13 @@
 
             </td>
             <td>
-                <a th:text="${board.name}" th:href="@{/boardview/{id}(id=${board.id})}"></a>
+                <a th:text="${board.name} + ' [' + ${#lists.size(board.comments)} + ']' " th:href="@{/boardview/{id}(id=${board.id},
+                 page=${param.page}, searchType=${param.searchType}, searchKeyword=${param.searchKeyword})}"></a>
+
+
+                <!--                서버측에서 해석되고 실행됩니다. 즉, 이 표현식이 페이지가 로드될 때 실행되어 그 결과가 HTML에 삽입됩니다.-->
+<!--                #lists를 가리킵니다. 이 유틸리티 객체는 리스트에 대한 몇 가지 유용한 메소드를 제공합니다.-->
+
             </td>
             <td>
                 <a th:text="${board.job}"></a>
@@ -41,12 +49,22 @@
         </tbody>
     </table>
 
-    <div class="btn-group" role="group" th:each="page : ${#numbers.sequence(startPage,endPage)}">
+    <div class="btn-group" role="group">
+        <a th:if="${showPrevious}" th:href="@{/list(page = ${nowPage - 2},
+    searchType= ${param.searchType},
+    searchKeyword= ${param.searchKeyword})}" class="btn btn-light">이전</a>
+
+        <span th:each="page : ${#numbers.sequence(startPage, endPage)}">
         <a th:if="${page != nowPage}" th:href="@{/list(page = ${page - 1},
         searchType= ${param.searchType},
         searchKeyword= ${param.searchKeyword})}" th:text="${page}" class="btn btn-light">
         </a>
         <strong th:if="${page == nowPage}" th:text="${page}" class="btn btn-primary"></strong>
+    </span>
+
+        <a th:if="${showNext}" th:href="@{/list(page = ${nowPage},
+    searchType= ${param.searchType},
+    searchKeyword= ${param.searchKeyword})}" class="btn btn-light">다음</a>
     </div>
 
 

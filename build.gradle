@@ -29,6 +29,13 @@ dependencies {
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'org.mariadb.jdbc:mariadb-java-client:2.7.4'
+
+
+	// other dependencies
+	// Bean Validation API
+	implementation 'javax.validation:validation-api:2.0.1.Final'
+	// Hibernate Validator (Bean Validation API implementation)
+	implementation 'org.hibernate.validator:hibernate-validator:6.0.13.Final'
 }
 
 tasks.named('test') {

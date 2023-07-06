@@ -25,13 +25,17 @@
     <title>게시판 페이지</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
+
+
+
+
 <body>
 
 <table class="table">
     <thead>
     <tr>
-        <th>Name</th>
-        <th>Job</th>
+        <th>이름</th>
+        <th>가격</th>
     </tr>
     </thead>
     <tbody>
@@ -40,7 +44,13 @@
         <td th:text="${board.job}"></td>
     </tr>
     </tbody>
+
+
+
+
 </table>
+
+
 
 
 
@@ -55,9 +65,15 @@
             <p th:text="${comment.content}"></p>
             <small th:text="${comment.createdAt}"></small>
             <!-- Delete Button -->
-            <form th:action="@{/deleteComment/{commentId}(commentId=${comment.id})}" method="post">
-                <button class="btn btn-danger btn-sm" type="submit">Delete</button>
+
+
+
+            <form th:action="@{/deleteComment/{commentId}(commentId=${comment.id},page=${nowPage},searchType=${searchType},searchKeyword=${searchKeyword})}" method="post">
+                <button class="btn btn-danger btn-sm" type="submit">X</button>
             </form>
+
+
+
         </li>
     </ul>
 </div>
@@ -66,26 +82,58 @@
 <!-- 댓글 쓰기 -->
 <div class="mt-5">
 
-    <form th:action="@{/boardview/{id}(id=${board.id})}" th:object="${comment}" method="post" class="form-group">
-        <input type="text" th:field="*{author}" placeholder="글쓴이" class="form-control">
-        <textarea th:field="*{content}" placeholder="내용" class="form-control mt-3"></textarea>
-        <button type="submit" class="btn btn-primary mt-3">등록</button>
-    </form>
+
+
+    <div class="mt-5">
+        <form id="comment-form" th:action="@{/boardview/{id}(id=${board.id})}" th:object="${comment}" method="post" class="form-group">
+            <input type="hidden" name="page" th:value="${nowPage}">
+            <input type="hidden" name="searchType" th:value="${searchType}">
+            <input type="hidden" name="searchKeyword" th:value="${searchKeyword}">
+            <input type="text" th:field="*{author}" placeholder="글쓴이" class="form-control">
+            <textarea id="comment-field" th:field="*{content}" placeholder="내용" class="form-control mt-3"></textarea>
+            <button id="submit-comment" type="submit" class="btn btn-primary mt-3">등록</button>
+        </form>
+    </div>
+
+
+    <!--    </form>-->
 </div>
 
 
 
-
-<!--    <a th:href="@{${board.filepath}}">다운로드</a>-->
 
 
 <div class="button-container">
     <a th:href="@{/modify/{id}(id=${board.id})}" class="btn btn-primary">수정</a>
-    <a th:href="@{/delete(id=${board.id})}" class="btn btn-primary" onclick="return confirm('정말로 삭제하시겠습니까?')">삭제</a>
+<!--    <a th:href="@{/modify/{id}(id=${board.id},page=${nowPage},searchType=${searchType},searchKeyword=${searchKeyword})}" class="btn btn-primary">수정</a>-->
+    <a th:href="@{/delete(id=${board.id})}" class="btn btn-primary" onclick="return confirm('게시글을 삭제하시겠습니까?')">삭제</a>
+
+
+
+
+
     <form th:action="@{/list}" method="get" class="inline-form">
+        <input type="hidden" name="page" th:value="${nowPage}">
+        <input type="hidden" name="searchType" th:value="${searchType}">
+        <input type="hidden" name="searchKeyword" th:value="${searchKeyword}">
         <button type="submit" class="btn btn-primary">목록</button>
     </form>
+
+
+
 </div>
+
+
+<script type="text/javascript">
+    document.getElementById('submit-comment').addEventListener('click', function(event) {
+        var comment = document.getElementById('comment-field').value;
+        if (!comment) {
+            alert('내용을 작성해주세요.');
+            event.preventDefault(); // 이벤트 중지 (폼 제출 중지)
+        }
+    });
+</script>
+
 
 
 
