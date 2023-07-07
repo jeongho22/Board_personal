@@ -179,6 +179,17 @@ public String modify(@PathVariable("id") Integer id,
     }
 
 
+    @ControllerAdvice
+    public class ErrorController {
+
+        @ExceptionHandler(RuntimeException.class)
+        public String handleRuntimeException(RuntimeException e, Model model) {
+            model.addAttribute("message", e.getMessage());
+            return "rollback";
+        }
+    }
+
+
 
 
 

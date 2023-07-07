@@ -2,7 +2,7 @@ package com.example.dy.entity;
 
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.DynamicUpdate;
+
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -63,7 +63,6 @@ public class Board {
     // fetch = FetchType.LAZY는 이 '자식' 댓글들을 필요할 때만 가져오게 하는 역할을 합니다. 게시물을 클릭해서 들어갈 때만 그 게시물에 대한 댓글들을 가져오는 것입니다.
 
     // 이렇게 하면 불필요한 데이터를 미리 가져오지 않으므로, 컴퓨터의 성능을 절약할 수 있습니다.
-
 
 
 

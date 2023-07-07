@@ -7,6 +7,8 @@ import com.example.dy.repository.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 
@@ -77,7 +79,7 @@ public class BoardService {
 
 
 //        if (true) { // 특정 조건
-//            throw new RuntimeException("롤백이 발생되어 댓글 삭제가 취소되었습니다 !");
+//            throw new RuntimeException("롤백처리 되어 글 삭제가 취소 되었습니다 !");
 //        }
 
         boardRepository.deleteById(id); // 이후에 게시글을 삭제합니다.
@@ -85,11 +87,7 @@ public class BoardService {
 
 
 
-
-
-
     }
-
 
 
 

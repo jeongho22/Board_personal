@@ -20,6 +20,7 @@ public interface BoardRepository extends JpaRepository<Board,Integer > {
     // 제공된 'searchKeyword'를 포함하는 'name' 속성을 가진 'Board' 엔티티의 Page를 반환합니다.
     // 'Pageable' 매개변수는 페이지 정보(어떤 페이지를 검색하고 페이지당 레코드 수 등)를 제공하는 데 사용됩니다.
 
+
     Page<Board> findByJobContaining(String searchKeyword, Pageable pageable);
     // 위 메서드와 비슷하게, 이 메서드는 제공된 'searchKeyword'를 포함하는 'job' 속성을 가진 'Board' 엔티티의 Page를 반환합니다.
     // 또한 'Pageable'를 페이징에 사용합니다.
