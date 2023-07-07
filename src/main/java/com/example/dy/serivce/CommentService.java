@@ -1,6 +1,6 @@
 
-package com.example.dy.service;
 
+package com.example.dy.service;
 import com.example.dy.entity.Comment;
 import com.example.dy.repository.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;

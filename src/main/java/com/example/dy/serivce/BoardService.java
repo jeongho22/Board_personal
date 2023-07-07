@@ -8,10 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+
 
 import javax.transaction.Transactional;
-import java.util.List;
 
 @Service
 public class BoardService {
@@ -76,7 +75,6 @@ public class BoardService {
     public void boardDelete(Integer id) {
 
 
-
         commentRepository.deleteByBoardId(id); // 먼저 게시글에 연결된 댓글들을 삭제합니다.
         System.out.println("댓글이 먼저 삭제되었습니다.");
 
@@ -84,7 +82,6 @@ public class BoardService {
 //        if (true) { // 특정 조건
 //            throw new RuntimeException("롤백이 발생되어 댓글 삭제가 취소되었습니다 !");
 //        }
-
 
         boardRepository.deleteById(id); // 이후에 게시글을 삭제합니다.
         System.out.println("이후에 게시물도 같이 삭제되었습니다.");

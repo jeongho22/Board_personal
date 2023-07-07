@@ -98,9 +98,6 @@ public class ViewController {
 
 
 
-
-
-
     // 조회수 증가 컨트롤러
 
 
@@ -147,24 +144,6 @@ public class ViewController {
     }
 
 
-
-
-
-//    @PostMapping("/update/{id}")
-//    public String update(@PathVariable("id") Integer id,
-//                         Board board,
-//                         @RequestParam(value="page", defaultValue = "0") int page,
-//                         @RequestParam(value="searchType", required = false) String searchType,
-//                         @RequestParam(value="searchKeyword", required = false) String searchKeyword) {
-//        Board boardTemp = boardService.boardView(id);
-//        boardTemp.setName(board.getName());
-//        boardTemp.setJob(board.getJob());
-//
-//
-//        boardService.write(boardTemp);
-//        return "redirect:/boardview/" + id + "?page=" + page + "&searchType=" + searchType + "&searchKeyword=" + searchKeyword;
-//    }
-//
 
     @PostMapping("/update/{id}")
     public String update(@PathVariable("id") Integer id,
