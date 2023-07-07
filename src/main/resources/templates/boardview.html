@@ -96,7 +96,7 @@
     </div>
 
 
-    <!--    </form>-->
+
 </div>
 
 
@@ -104,8 +104,10 @@
 
 
 <div class="button-container">
-    <a th:href="@{/modify/{id}(id=${board.id})}" class="btn btn-primary">수정</a>
-<!--    <a th:href="@{/modify/{id}(id=${board.id},page=${nowPage},searchType=${searchType},searchKeyword=${searchKeyword})}" class="btn btn-primary">수정</a>-->
+<!--    <a th:href="@{/modify/{id}(id=${board.id})}" class="btn btn-primary">수정</a>-->
+
+    <a th:href="@{/modify/{id}(id=${board.id},page=${nowPage},searchType=${searchType},searchKeyword=${searchKeyword})}" class="btn btn-primary">수정</a>
+
     <a th:href="@{/delete(id=${board.id})}" class="btn btn-primary" onclick="return confirm('게시글을 삭제하시겠습니까?')">삭제</a>
 
 

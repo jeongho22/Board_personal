@@ -17,6 +17,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 
+import javax.servlet.http.HttpSession;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 
 
@@ -130,18 +134,27 @@ public class ViewController {
 
 
 
-    @GetMapping("/modify/{id}")
-    public String modify(@PathVariable("id") Integer id,
-                         @RequestParam(value="page", defaultValue = "0") int nowPage,
-                         @RequestParam(value="searchType", defaultValue = "") String searchType,
-                         @RequestParam(value="searchKeyword", defaultValue = "") String searchKeyword,
-                         Model model){
-        model.addAttribute("board",boardService.boardView(id));
-        model.addAttribute("nowPage", nowPage); // 현재 페이지 번호를 모델에 추가
-        model.addAttribute("searchType", searchType); // 검색 유형을 모델에 추가
-        model.addAttribute("searchKeyword", searchKeyword); // 검색 키워드를 모델에 추가
-        return "boardmodify";  // "boardmodify"라는 이름의 뷰(view)를 반환합니다.
-    }
+@GetMapping("/modify/{id}")
+public String modify(@PathVariable("id") Integer id,
+                     @RequestParam(value="page", defaultValue = "0") int nowPage,
+                     @RequestParam(value="searchType", defaultValue = "") String searchType,
+                     @RequestParam(value="searchKeyword", defaultValue = "") String searchKeyword,
+                     Model model, HttpSession session) {
+    Board board = boardService.boardView(id);
+    model.addAttribute("board", board);
+    session.setAttribute("viewCount", board.getViews()); // 현재 조회수를 세션에 저장
+    model.addAttribute("nowPage", nowPage); // 현재 페이지 번호를 모델에 추가
+    model.addAttribute("searchType", searchType); // 검색 유형을 모델에 추가
+    model.addAttribute("searchKeyword", searchKeyword); // 검색 키워드를 모델에 추가
+
+    // Save search conditions and page number to session
+    session.setAttribute("searchType", searchType);
+    session.setAttribute("searchKeyword", searchKeyword);
+    session.setAttribute("nowPage", nowPage); // Save current page number to session
+
+    return "boardmodify";  // "boardmodify"라는 이름의 뷰(view)를 반환합니다.
+}
+
 
 
 
@@ -152,10 +165,19 @@ public class ViewController {
                          @RequestParam(value="searchType", required = false) String searchType,
                          @RequestParam(value="searchKeyword", required = false) String searchKeyword) {
 
+        String encodedSearchKeyword;
+        try {
+            encodedSearchKeyword = URLEncoder.encode(searchKeyword, StandardCharsets.UTF_8.toString());
+        } catch (UnsupportedEncodingException e) {
+            // Handle the exception as you see fit
+            throw new RuntimeException("Encoding failed", e);
+        }
+
         board.setId(id); // Ensure that the board object has the correct id
         Board updatedBoard = boardService.updateBoard(board);
-        return "redirect:/boardview/" + updatedBoard.getId() + "?page=" + page + "&searchType=" + searchType + "&searchKeyword=" + searchKeyword;
+        return "redirect:/boardview/" + id + "?page=" + page + "&searchType=" + searchType + "&searchKeyword=" + encodedSearchKeyword;
     }
+
 
 
 

@@ -55,7 +55,6 @@ public class BoardService {
         return boardRepository.findById(id).get();
     }
 
-
     @Autowired
     public BoardService(BoardRepository boardRepository, CommentRepository commentRepository) { // CommentRepository를 주입받습니다.
         this.boardRepository = boardRepository;
@@ -64,8 +63,6 @@ public class BoardService {
 
     // 위 코드는 BoardService 클래스의 일부입니다. BoardService 클래스는 BoardRepository와 CommentRepository를 필요로 합니다.
     // 이 두 인스턴스는 생성자를 통해 외부에서 주입됩니다. 이렇게 하면 BoardService 클래스는 데이터 접근 로직을 직접 구현하지 않아도 됩니다.
-
-
 
 
 
