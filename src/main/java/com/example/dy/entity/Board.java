@@ -19,10 +19,10 @@ public class Board {
 
     private Integer id;
 
-    @NotBlank(message = "이름이 비었습니다.") // 서버 사이드 검증
+    @NotBlank(message = "이름이 비었습니다") // 서버 사이드 검증
                                           // 장점 : 보안성, 신뢰성
     private String name;
-    @NotBlank(message = "가격이 비었습니다.") //  NotNull < NotEmpty <NotBlank는 세 가지 어노테이션 중 가장 강도가 강한 것으로 // null, "", " " 모두 허용하지 않습니다.
+    @NotBlank(message = "가격이 비었습니다") //  NotNull < NotEmpty <NotBlank는 세 가지 어노테이션 중 가장 강도가 강한 것으로 // null, "", " " 모두 허용하지 않습니다.
     private String job;
     private Integer age;
 
