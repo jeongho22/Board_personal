@@ -1,6 +1,8 @@
 package com.example.dy.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -17,6 +19,7 @@ import java.time.LocalDateTime;
         private String author;
         @NotBlank(message = "내용이 비었습니다.")
         private String content;
+        @CreationTimestamp
         private LocalDateTime createdAt;
 
 
@@ -30,6 +33,8 @@ import java.time.LocalDateTime;
 
     //@JoinColumn은 외래키 열의 이름을 명시적으로 지정할 수 있게 해줍니다.
     // 여기서는 board_id라는 이름을 외래키 열의 이름으로 지정하고 있습니다.
+
+    @JsonBackReference
 
     private Board board;
 

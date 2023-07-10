@@ -1,5 +1,6 @@
 package com.example.dy.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -33,7 +34,10 @@ public class Board {
 
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<Comment> comments = new ArrayList<>();
+
+
 
     //@OneToMany 어노테이션은 Entity 간의 관계를 정의하는 데 사용됩니다.
     //Board 인스턴스가 여러 개의 Comment 인스턴스를 가질 수 있음을 나타냅니다.

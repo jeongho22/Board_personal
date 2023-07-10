@@ -1,61 +1,43 @@
 package com.example.dy.controller;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import com.example.dy.entity.Board;
+
+import com.example.dy.dto.CommentDto;
 import com.example.dy.entity.Comment;
-import com.example.dy.serivce.BoardService;
 import com.example.dy.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 
-@Controller
+@RestController
+@RequestMapping("/api/comments")
 public class CommentController {
     @Autowired
     private CommentService commentService;
-    @Autowired
-    private BoardService boardService;
 
-
-
-    @PostMapping("/boardview/{boardId}")
-    public String addComment(@ModelAttribute Comment comment,
-                             @PathVariable("boardId") Integer boardId,
-                             @RequestParam(value="page", defaultValue = "0") int page,
-                             @RequestParam(value="searchType", required = false) String searchType,
-                             @RequestParam(value="searchKeyword", required = false) String searchKeyword) {
-        Board board = boardService.boardView(boardId);  // 해당하는 Board를 가져옴
-        comment.setBoard(board);  // Comment가 어떤 Board에 속하는지 설정
-        commentService.save(comment);
-        String encodedSearchKeyword = URLEncoder.encode(searchKeyword, StandardCharsets.UTF_8);
-        System.out.println("댓글이 작성 되었습니다.");
-        return "redirect:/boardview/" + boardId + "?page=" + page + "&searchType=" + searchType + "&searchKeyword=" + encodedSearchKeyword;
+    @GetMapping
+    public List<Comment> getAllComments() {
+        return commentService.getAllComments();
     }
 
-
-
-
-    @PostMapping("/deleteComment/{commentId}")
-    public String deleteComment(@PathVariable("commentId") Integer commentId,
-                                @RequestParam(value="page", defaultValue = "0") int page,
-                                @RequestParam(value="searchType", defaultValue = "") String searchType,
-                                @RequestParam(value="searchKeyword", defaultValue = "") String searchKeyword) {
-        Comment comment = commentService.findById(commentId);
-        Integer boardId = comment.getBoard().getId();
-        commentService.deleteById(commentId);
-        String encodedSearchKeyword = URLEncoder.encode(searchKeyword, StandardCharsets.UTF_8);
-        System.out.println("댓글이 삭제 되었습니다.");
-        return "redirect:/boardview/" + boardId + "?page=" + page + "&searchType=" + searchType + "&searchKeyword=" + encodedSearchKeyword;
+    @GetMapping("/{id}")
+    public Comment getCommentById(@PathVariable Integer id) {
+        return commentService.getCommentById(id);
     }
 
+    @PostMapping
+    public Comment createComment(@RequestBody CommentDto commentDto) {
+        return commentService.createComment(commentDto);
+    }
 
+    @PutMapping("/{id}")
+    public Comment updateComment(@PathVariable Integer id, @RequestBody Comment comment) {
+        return commentService.updateComment(id, comment);
+    }
 
-
-
-
-
+    @DeleteMapping("/{id}")
+    public void deleteComment(@PathVariable Integer id) {
+        commentService.deleteComment(id);
+    }
 
 
 }
