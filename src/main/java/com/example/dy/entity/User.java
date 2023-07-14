@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 
 @Data
@@ -21,6 +22,7 @@ public class User {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private int id;             // 회원 일련번호
 
+    @NotBlank
     @Column(nullable=false, length=50, unique=true)
     private String username;    // 로그인 아이디
 

@@ -4,18 +4,13 @@ package com.example.dy.controller;
 
 import com.example.dy.entity.User;
 import com.example.dy.repository.UserRepository;
-// 'entity'와 'repository' 패키지로부터 클래스를 import 하였습니다. User 클래스와 UserRepository 인터페이스를 사용합니다.
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-// Spring Framework에서 제공하는 클래스와 애노테이션입니다. 의존성 주입과 암호화를 위해 사용됩니다.
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-// Spring에서 제공하는 웹 관련 애노테이션과 클래스입니다. 컨트롤러 선언, 요청 매핑, 파라미터 바인딩, 모델 처리 등에 사용됩니다.
 
 import java.security.Principal;
 // Java의 내장 클래스입니다. 현재 사용자의 정보를 담고 있습니다.
@@ -45,7 +40,17 @@ public class RegistrationController {
     @PostMapping("/register")
     public String registerUser(@RequestParam(name = "username") String username,
                                @RequestParam(name = "password") String password,
-                               @RequestParam(name = "email") String email) {  // 이메일 파라미터를 추가하였습니다.
+                               @RequestParam(name = "email") String email,
+                               Model model) {  // 이메일 파라미터를 추가하였습니다.
+
+        // 사용자 이름이 이미 존재하는지 확인
+        if (userRepository.existsByUsername(username)) {
+            model.addAttribute("usernameError", "Username already exists."); // 중복된 사용자 이름이면 에러 메시지를 추가
+            return "register"; // 회원가입 페이지로 다시 리다이렉트
+        }
+
+
+
         User user = new User();
         user.setUsername(username);
         user.setPassword(bCryptPasswordEncoder.encode(password)); // 비밀번호는 암호화하여 설정합니다.
@@ -68,6 +73,11 @@ public class RegistrationController {
     }
 
     // "/login" URL에 대한 GET 요청을 처리합니다. 로그인 폼을 보여주거나, 이미 로그인한 경우 다른 뷰를 보여줍니다.
+
+
+
+
+
 }
 
 

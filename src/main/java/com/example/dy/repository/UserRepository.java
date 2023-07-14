@@ -18,6 +18,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUsername(String username);
     // User 테이블에서 username 필드를 기준으로 검색하는 메소드입니다. 반환값은 User 객체가 포함된 Optional입니다.
     // 즉, 해당 username을 가진 User가 있으면 그 User를 반환하고, 없으면 Optional.empty를 반환합니다.
+
+    boolean existsByUsername(String username); // 이 메서드를 추가합니다.
 }
 
 

@@ -4,17 +4,6 @@
     <title>회원가입</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <!-- Add custom JavaScript for form validation -->
-    <script>
-        window.onload = function() {
-            var checkbox = document.getElementById('agree');
-            var button = document.getElementById('register');
-            checkbox.onchange = function() {
-                button.disabled = !this.checked;
-            };
-            checkbox.onchange(); // (re)set the button's state
-        };
-    </script>
 </head>
 <body>
 <div class="container">
@@ -24,7 +13,13 @@
             <form th:action="@{/register}" method="post">
                 <div class="form-group">
                     <label for="username">Name: </label>
-                    <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
+                        <div class="input-group-append">
+                            <button id="check-username" class="btn btn-outline-secondary" type="button">중복 확인</button>
+                        </div>
+                    </div>
+                    <span id="username-error"></span> <!-- 에러 메시지를 표시할 공간 -->
                 </div>
                 <div class="form-group">
                     <label for="password">Password: </label>
@@ -47,6 +42,55 @@
 </div>
 
 <!-- Bootstrap JS -->
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script>
+    var usernameValid = false;
+
+    function validateForm() {
+        var checkbox = document.getElementById('agree');
+        var button = document.getElementById('register');
+        button.disabled = !(checkbox.checked && usernameValid);
+    }
+
+    window.onload = function() {
+        var checkbox = document.getElementById('agree');
+        checkbox.onchange = validateForm;
+        checkbox.onchange(); // (re)set the button's state
+    };
+
+    document.getElementById('check-username').onclick = function() {
+        var username = document.getElementById('username').value;
+        if (!username) {
+            alert('아이디를 입력해주세요.');
+            return;
+        }
+        var usernameError = document.getElementById('username-error');
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '/check-username?username=' + encodeURIComponent(username), true);
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                usernameError.textContent = '사용 가능한 아이디입니다.';
+                usernameError.className = 'success'; // add success class
+                usernameValid = true;
+            } else if (xhr.status === 409) {
+                usernameError.textContent = '아이디: 사용할 수 없는 아이디입니다. 다른 아이디를 입력해 주세요.';
+                usernameError.className = 'error'; // add error class
+                usernameValid = false;
+            }
+            validateForm(); // validate form after checking username
+        };
+        xhr.send();
+    };
+</script>
+
+
+<style>
+    .error {
+        color: red;
+    }
+    .success {
+        color: green;
+    }
+</style>
+
 </body>
 </html>

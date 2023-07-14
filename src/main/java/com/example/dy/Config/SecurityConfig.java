@@ -35,7 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {  // 웹 보�
                 .ignoringAntMatchers("/api/**")  // "/api/**" 패턴의 URL에 대해서는 csrf 보안을 무시합니다.
                 .and()  // 설정 이어가기 위한 연결 메소드입니다.
                 .authorizeRequests()  // 요청에 대한 보안을 설정합니다.
-                .antMatchers("/register").permitAll()  // "/register" 패턴의 URL은 모든 사용자가 접근할 수 있습니다.
+                .antMatchers("/register","/check-username").permitAll()  // "/register" 패턴의 URL은 모든 사용자가 접근할 수 있습니다.
                 .anyRequest().authenticated()  // 그 외의 요청은 인증된 사용자만 접근할 수 있습니다.
                 .and()  // 설정 이어가기 위한 연결 메소드입니다.
                 .formLogin()  // 폼 기반 로그인에 대한 설정을 시작합니다.
