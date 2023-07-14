@@ -1,0 +1,125 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<meta charset="UTF-8">-->
+<!--<body>-->
+
+
+<!--<h2>글쓰기</h2>-->
+<!--<form id="boardForm">-->
+<!--    <label for="name">Name:</label><br>-->
+<!--    <input type="text" id="name" name="name"><br>-->
+<!--    <label for="job">Job:</label><br>-->
+<!--    <input type="text" id="job" name="job"><br>-->
+<!--    <input type="button" value="Submit" onclick="submitBoard()">-->
+<!--</form>-->
+
+
+<!--<h2>리스트</h2>-->
+<!--<div id="boardView"></div>-->
+<!--<div id="pagination"></div> &lt;!&ndash; Here is the pagination container &ndash;&gt;-->
+<!--<button onclick="getBoards(0)">View Boards</button> &lt;!&ndash; Call getBoards with initial page number 0 &ndash;&gt;-->
+
+
+<!--<h2>댓글달기</h2>-->
+<!--<form id="commentForm">-->
+<!--    <label for="boardId">Board ID:</label><br>-->
+<!--    <input type="text" id="boardId" name="boardId"><br>-->
+<!--    <label for="author">Author:</label><br>-->
+<!--    <input type="text" id="author" name="author"><br>-->
+<!--    <label for="content">Content:</label><br>-->
+<!--    <input type="text" id="content" name="content"><br>-->
+<!--    <input type="button" value="Submit" onclick="submitComment()">-->
+<!--</form>-->
+<!--<script>-->
+<!--    function submitBoard() {-->
+<!--        var xhttp = new XMLHttpRequest();-->
+<!--        var url = "http://localhost:8090/api/boards";-->
+<!--        xhttp.open("POST", url, true);-->
+<!--        xhttp.setRequestHeader("Content-type", "application/json");-->
+<!--        var form = document.getElementById('boardForm');-->
+<!--        var name = form.name.value;-->
+<!--        var job = form.job.value;-->
+<!--        var data = JSON.stringify({"name": name, "job": job});-->
+<!--        xhttp.onreadystatechange = function() {-->
+<!--            if (this.readyState == 4 && this.status == 200) {-->
+<!--                alert('Board successfully created');-->
+<!--            }-->
+<!--        };-->
+<!--        xhttp.send(data);-->
+<!--    }-->
+
+<!--    var currentPage = 0;-->
+<!--    var maxVisiblePages = 5;-->
+
+<!--    function getBoards(pageNumber) {-->
+<!--        var xhttp = new XMLHttpRequest();-->
+<!--        var url = "http://localhost:8090/api/boards?page=" + pageNumber + "&size=5&sort=time,desc";-->
+<!--        xhttp.open("GET", url, true);-->
+<!--        xhttp.onreadystatechange = function() {-->
+<!--            if (this.readyState == 4 && this.status == 200) {-->
+<!--                var boardView = document.getElementById('boardView');-->
+<!--                var boards = JSON.parse(this.responseText);-->
+
+<!--                var formattedBoards = boards.content.map(function(board) {-->
+<!--                    var formattedComments = board.comments.map(function(comment) {-->
+<!--                        return '<p>댓글 ID: ' + comment.id + ', 글쓴이: ' + comment.author + ', 내용: ' + comment.content + ', 댓글 작성시간: ' + comment.createdAt + '</p>';-->
+<!--                    }).join('');-->
+
+<!--                    return '<div><h1 >게시글 ID: ' + board.id + ', 이름: ' + board.name + ', 가격: ' + board.job + ', 게시글 작성시간: ' + board.time + '</h1>' + formattedComments + '</div>';-->
+<!--                }).join('');-->
+
+<!--                boardView.innerHTML = formattedBoards;-->
+
+<!--                currentPage = pageNumber;-->
+<!--                var pagination = document.getElementById('pagination');-->
+<!--                pagination.innerHTML = "";-->
+<!--                var startPage = Math.floor(currentPage / maxVisiblePages) * maxVisiblePages;-->
+<!--                var endPage = Math.min(startPage + maxVisiblePages, boards.totalPages);-->
+
+<!--                if (currentPage > 0) {-->
+<!--                    var prevButton = document.createElement('button');-->
+<!--                    prevButton.innerHTML = '이전';-->
+<!--                    prevButton.onclick = function() { getBoards(currentPage - 1); };-->
+<!--                    pagination.appendChild(prevButton);-->
+<!--                }-->
+
+<!--                for (var i = startPage; i < endPage; i++) {-->
+<!--                    (function(i) {-->
+<!--                        var button = document.createElement('button');-->
+<!--                        button.innerHTML = i + 1;-->
+<!--                        button.onclick = function() { getBoards(i); };-->
+<!--                        pagination.appendChild(button);-->
+<!--                    })(i);-->
+<!--                }-->
+
+<!--                if (currentPage < boards.totalPages - 1) {-->
+<!--                    var nextButton = document.createElement('button');-->
+<!--                    nextButton.innerHTML = '다음';-->
+<!--                    nextButton.onclick = function() { getBoards(currentPage + 1); };-->
+<!--                    pagination.appendChild(nextButton);-->
+<!--                }-->
+<!--            }-->
+<!--        };-->
+<!--        xhttp.send();-->
+<!--    }-->
+
+<!--    function submitComment() {-->
+<!--        var xhttp = new XMLHttpRequest();-->
+<!--        var url = "http://localhost:8090/api/comments";-->
+<!--        xhttp.open("POST", url, true);-->
+<!--        xhttp.setRequestHeader("Content-type", "application/json");-->
+<!--        var form = document.getElementById('commentForm');-->
+<!--        var boardId = form.boardId.value;-->
+<!--        var author = form.author.value;-->
+<!--        var content = form.content.value;-->
+<!--        var data = JSON.stringify({"author": author, "content": content, "boardId": boardId});-->
+<!--        xhttp.onreadystatechange = function() {-->
+<!--            if (this.readyState == 4 && this.status == 200) {-->
+<!--                alert('Comment successfully created');-->
+<!--            }-->
+<!--        };-->
+<!--        xhttp.send(data);-->
+<!--    }-->
+<!--</script>-->
+<!--</body>-->
+<!--</html>-->
