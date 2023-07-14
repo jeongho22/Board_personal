@@ -72,7 +72,7 @@
                 usernameError.className = 'success'; // add success class
                 usernameValid = true;
             } else if (xhr.status === 409) {
-                usernameError.textContent = '아이디: 사용할 수 없는 아이디입니다. 다른 아이디를 입력해 주세요.';
+                usernameError.textContent = '사용할 수 없는 아이디입니다. 다른 아이디를 입력해 주세요.';
                 usernameError.className = 'error'; // add error class
                 usernameValid = false;
             }
