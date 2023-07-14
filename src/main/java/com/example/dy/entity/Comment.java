@@ -1,6 +1,7 @@
 package com.example.dy.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -8,16 +9,19 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
-@Data
-@Entity
+@Data // Lombok에서 제공하는 어노테이션으로, 클래스에 대한 getter, setter, equals, hashCode, toString 메서드를 자동으로 생성해줍니다.
+@Entity // JPA에서 제공하는 어노테이션으로, 이 클래스가 엔티티 클래스임을 나타냅니다. 엔티티 클래스란 데이터베이스 테이블과 직접 매핑되는 클래스를 의미합니다.
     public class Comment {
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        @Id // 엔티티의 기본키를 나타내는 어노테이션입니다.
+        @GeneratedValue(strategy = GenerationType.IDENTITY) // 기본키의 생성 전략을 지정하는 어노테이션입니다. 여기서는 IDENTITY 전략을 사용하므로, DB가 자동으로 ID를 생성합니다.
         private Integer id;
 
-        @NotBlank(message = "이름이 비었습니다.")
+    @Schema(description = "글쓴이")
+    @NotBlank(message = "이름이 비었습니다.")
         private String author;
-        @NotBlank(message = "내용이 비었습니다.")
+
+    @Schema(description = "내용")
+    @NotBlank(message = "내용이 비었습니다.")
         private String content;
         @CreationTimestamp
         private LocalDateTime createdAt;
@@ -25,16 +29,13 @@ import java.time.LocalDateTime;
 
 
 
-    @ManyToOne
-    // 이것은 Board 엔티티에 대한 다대일 관계를 설정하는데 사용되며,
-    // JPA는 기본적으로 대상 엔티티의 이름과 소스 엔티티의 필드 이름을 사용하여 외래키 열의 이름을 생성합니다.
+    @ManyToOne // 다대일 관계를 정의하는 어노테이션입니다. 여기서는 여러 댓글이 하나의 게시글에 속할 수 있음을 나타냅니다.
 
-    @JoinColumn(name="board_id")
 
-    //@JoinColumn은 외래키 열의 이름을 명시적으로 지정할 수 있게 해줍니다.
-    // 여기서는 board_id라는 이름을 외래키 열의 이름으로 지정하고 있습니다.
+    @JoinColumn(name="board_id") // 외래키를 매핑할 때 사용하는 어노테이션입니다. 여기서는 외래키 열의 이름을 "board_id"로 지정합니다.
 
-    @JsonBackReference
+
+    @JsonBackReference  // 양방향 연관관계에서 무한 루프에 빠지는 것을 방지하는 어노테이션입니다.
 
     private Board board;
 
@@ -46,6 +47,7 @@ import java.time.LocalDateTime;
         this.board = board;
     }
 
+    // 이 메서드는 댓글이 어떤 게시글에 속하는지 설정하는 데 사용됩니다. 없으면 댓글이 어떤 게시글에 속하는지 변경할 수 없습니다.
 
 
     // 이 메서드가 없다면, 댓글이 어떤 게시글에 속해야하는지를 변경할 수 없게 돼요.
@@ -55,15 +57,7 @@ import java.time.LocalDateTime;
 
 
 
-    // 총정리
 
-    // setBoard(Board board) 메서드를 통해 자신이 어떤 게시물에 속해 있는지를 지정합니다.
-
-    // mappedBy = "board"는 댓글이 자신이 어떤 게시물에 속해 있는지를 알려주는 역할을 합니다. 이것이 없다면, 각 댓글이 어떤 게시물에 속해 있는지 알 수 없습니다.
-
-    // fetch = FetchType.LAZY는 이 '자식' 댓글들을 필요할 때만 가져오게 하는 역할을 합니다. 게시물을 클릭해서 들어갈 때만 그 게시물에 대한 댓글들을 가져오는 것입니다.
-
-    // 이렇게 하면 불필요한 데이터를 미리 가져오지 않으므로, 컴퓨터의 성능을 절약할 수 있습니다.
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;

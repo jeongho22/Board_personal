@@ -29,6 +29,12 @@ dependencies {
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'org.mariadb.jdbc:mariadb-java-client:2.7.4'
+	implementation("org.springdoc:springdoc-openapi-ui:1.6.11")
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+
+
+
 
 
 	// other dependencies
