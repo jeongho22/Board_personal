@@ -21,6 +21,7 @@ import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.security.Principal;
 import java.time.LocalDateTime;
 
 
@@ -52,7 +53,7 @@ public class ViewController {
 
     public String boardList(Model model,
                             @PageableDefault(page =0, size =10, sort="id", direction = Sort.Direction.DESC) Pageable pageable,
-                            String searchKeyword, String searchType) {
+                            String searchKeyword, String searchType, Principal principal) {
         // 페이지 정보와 검색 키워드, 검색 유형을 인자로 받습니다.
 
         Page<Board> list = null;  // 게시글 리스트를 담을 변수를 선언합니다.
@@ -97,6 +98,7 @@ public class ViewController {
         model.addAttribute("endPage",endPage);
         model.addAttribute("showPrevious", showPrevious);
         model.addAttribute("showNext", showNext);
+        model.addAttribute("username", principal.getName());
 
 
 
