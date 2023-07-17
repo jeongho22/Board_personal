@@ -2,7 +2,9 @@ package com.example.dy.controller;
 
 // 'controller' 패키지에 속한 클래스입니다. 웹 요청에 대한 처리를 담당하는 역할입니다.
 
+import com.example.dy.entity.Role;
 import com.example.dy.entity.User;
+import com.example.dy.repository.RoleRepository;
 import com.example.dy.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -13,18 +15,23 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
+import java.util.Arrays;
 // Java의 내장 클래스입니다. 현재 사용자의 정보를 담고 있습니다.
 
 @Controller
 public class RegistrationController {
     private UserRepository userRepository;
+    private RoleRepository roleRepository;  // roleRepository 선언
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     // UserRepository와 BCryptPasswordEncoder의 객체를 멤버 변수로 선언하였습니다.
 
     @Autowired
-    public RegistrationController(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public RegistrationController(UserRepository userRepository,
+                                  RoleRepository roleRepository, // 생성자에 RoleRepository 추가
+                                  BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository; // RoleRepository 초기화
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
@@ -41,24 +48,30 @@ public class RegistrationController {
     public String registerUser(@RequestParam(name = "username") String username,
                                @RequestParam(name = "password") String password,
                                @RequestParam(name = "email") String email,
-                               Model model) {  // 이메일 파라미터를 추가하였습니다.
-
-        // 사용자 이름이 이미 존재하는지 확인
+                               Model model) {
         if (userRepository.existsByUsername(username)) {
-            model.addAttribute("usernameError", "Username already exists."); // 중복된 사용자 이름이면 에러 메시지를 추가
-            return "register"; // 회원가입 페이지로 다시 리다이렉트
+            model.addAttribute("usernameError", "Username already exists.");
+            return "register";
         }
 
-
+        Role userRole = roleRepository.findByName("USER"); // "USER" 역할을 찾습니다.
+        if (userRole == null) {  // 만약 "USER" 역할이 없다면, 생성합니다.
+            userRole = new Role();
+            userRole.setName("USER");
+            roleRepository.save(userRole);
+        }
 
         User user = new User();
         user.setUsername(username);
-        user.setPassword(bCryptPasswordEncoder.encode(password)); // 비밀번호는 암호화하여 설정합니다.
-        user.setEmail(email);  // 이메일을 설정합니다.
-        userRepository.save(user); // 이름 ,이메일 , 비밀번호(암호화) 되어서 userRepository 저장
+        user.setPassword(bCryptPasswordEncoder.encode(password));
+        user.setEmail(email);
+        user.setRoles(Arrays.asList(userRole));  // 찾은 또는 생성한 역할을 설정합니다.
+        userRepository.save(user);
 
-        return "redirect:/login";  // 회원 가입이 성공하면, 로그인 페이지로 리다이렉션합니다.
+        return "redirect:/login";
     }
+
+
 
     // "/register" URL에 대한 POST 요청을 처리합니다. 사용자가 제공한 정보로 새로운 User 객체를 생성하고 저장합니다.
 

@@ -4,9 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Data
@@ -15,22 +22,61 @@ import javax.validation.constraints.NotBlank;
 @Builder
 @Entity
 @Table(name="user")
-public class User {
-    // 기본키에 대응하는 식별자 변수
+public class User implements UserDetails {
     @Id
-    // 1 부터 시작하여 자동으로 1 씩 증가하도록 증가 전략 설정
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private int id;             // 회원 일련번호
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
     @NotBlank
     @Column(nullable=false, length=50, unique=true)
-    private String username;    // 로그인 아이디
+    private String username;
 
     @Column(length=100)
     private String password;
-    // 비밀번호
+
     @Column(nullable=false, length=100)
-    private String email;       // 이메일
+    private String email;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Board> boards = new ArrayList<>();
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    private Collection<Role> roles; // roles 필드 추가
+
+    // getter, setter, 생성자 등
+
+    // UserDetails methods
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority(role.getName()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true; // 또는 사용자 상태에 따라 반환
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true; // 또는 사용자 상태에 따라 반환
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true; // 또는 사용자 상태에 따라 반환
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true; // 또는 사용자 상태에 따라 반환
+    }
+
+
 
 
 }

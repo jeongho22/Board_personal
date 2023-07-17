@@ -4,6 +4,7 @@ import com.example.dy.serivce.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -11,16 +12,20 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Configuration  // 이 클래스는 스프링 설정 클래스임을 나타냅니다.
 @EnableWebSecurity  // 웹 보안을 활성화합니다.
+@EnableGlobalMethodSecurity(prePostEnabled = true) // 메소드 기반의 보안 설정 활성화
 public class SecurityConfig extends WebSecurityConfigurerAdapter {  // 웹 보안 설정 클래스를 정의합니다.
     private UserDetailsServiceImpl userDetailsService;  // 사용자 정보 조회를 위한 서비스를 저장할 필드입니다.
     private BCryptPasswordEncoder bCryptPasswordEncoder;  // 비밀번호 암호화를 위한 객체를 저장할 필드입니다.
     private CustomAuthenticationFailureHandler failureHandler;  // 인증 실패 시 처리를 위한 객체를 저장할 필드입니다.
 
+
     @Autowired  // 의존성 주입을 위한 어노테이션입니다.
-    public SecurityConfig(UserDetailsServiceImpl userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder) {  // 생성자입니다.
-        this.userDetailsService = userDetailsService;  // 사용자 정보 조회 서비스를 주입받습니다.
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;  // 비밀번호 암호화 객체를 주입받습니다.
-        this.failureHandler = failureHandler;  // 인증 실패 처리 객체를 주입받습니다.
+    public SecurityConfig(UserDetailsServiceImpl userDetailsService,
+                          BCryptPasswordEncoder bCryptPasswordEncoder,
+                          CustomAuthenticationFailureHandler failureHandler) {
+        this.userDetailsService = userDetailsService;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.failureHandler = failureHandler;
     }
 
     public void configureGlobal(AuthenticationManagerBuilder auth)
@@ -36,6 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {  // 웹 보�
                 .and()  // 설정 이어가기 위한 연결 메소드입니다.
                 .authorizeRequests()  // 요청에 대한 보안을 설정합니다.
                 .antMatchers("/register","/check-username").permitAll()  // "/register" 패턴의 URL은 모든 사용자가 접근할 수 있습니다.
+//                .antMatchers("/admin/**").hasAuthority("ADMIN") // '/admin/**' 경로로 시작하는 모든 요청은 ADMIN 권한을 가진 사용자만 접근 가능하도록 설정합니다.
                 .anyRequest().authenticated()  // 그 외의 요청은 인증된 사용자만 접근할 수 있습니다.
                 .and()  // 설정 이어가기 위한 연결 메소드입니다.
                 .formLogin()  // 폼 기반 로그인에 대한 설정을 시작합니다.
@@ -50,8 +56,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {  // 웹 보�
                 .deleteCookies("JSESSIONID")  // 로그아웃 시 쿠키를 삭제합니다.
                 .logoutSuccessUrl("/login")  // 로그아웃 성공 시 리다이렉트할 URL을 설정합니다.
                 .permitAll();  // 모든 사용자가 로그아웃 할 수 있습니다.
+        http
+                .exceptionHandling()
+                .accessDeniedPage("/access-denied"); // 사용자가 접근 권한이 없을 때 보여줄 페이지의 경로를 설정합니다.
     }
-}
+
+
+
+    }
+
 
 
 

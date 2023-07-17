@@ -2,13 +2,19 @@ package com.example.dy.serivce;  // 이 클래스가 com.example.dy.service 패�
 
 // 필요한 클래스나 인터페이스를 임포트합니다.
 // 사용자 정보를 저장하고 처리하는 데 필요한 엔티티, 인터페이스, 예외 클래스, 어노테이션 등을 임포트하고 있습니다.
+
 import com.example.dy.entity.User;
 import com.example.dy.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 
 // 사용자 인증 처리를 담당하는 부분입니다. 구체적인 기능은 다음과 같습니다.
@@ -26,15 +32,17 @@ public class UserDetailsServiceImpl implements UserDetailsService {  // UserDeta
 
 
 
-    @Override  // 부모 인터페이스의 메서드를 오버라이드합니다.
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {  // 사용자 이름을 인자로 받아 UserDetails를 반환하는 메서드를 정의합니다.
-        User user = userRepository.findByUsername(username)  // UserRepository를 사용해 DB에서 사용자를 조회합니다.
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));  // 사용자를 찾을 수 없으면 예외를 던집니다.
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
 
+        // Spring Security가 이해할 수 있는 권한 형태로 변환
+        Collection<GrantedAuthority> authorities = user.getRoles().stream()
+                .map(role -> new SimpleGrantedAuthority(role.getName()))
+                .collect(Collectors.toList());
 
-        return new UserPrincipal(user);  // 조회한 사용자 정보를 UserPrincipal로 래핑해 반환합니다.
-
-        // UserPrincipal 클래스는 UserDetails 인터페이스를 구현하며, 인증에 필요한 사용자 정보(아이디, 비밀번호, 권한 정보 등)를 가집니다.
+        return new UserPrincipal(user, authorities); // 조회한 사용자 정보를 UserPrincipal로 래핑해 반환합니다.
     }
 }
 

@@ -1,10 +1,8 @@
 package com.example.dy.controller;
 
 
-
 import com.example.dy.entity.Board;
 import com.example.dy.entity.Comment;
-
 import com.example.dy.serivce.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,9 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-
 import org.springframework.web.bind.annotation.*;
-
 
 import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
@@ -36,14 +32,15 @@ public class ViewController {
     @Autowired  // Spring 컨테이너에서 BoardService 타입의 자동으로 주입해줍니다.
     private BoardService boardService;
 
-    @PostMapping("/boardwritepro")  // POST 요청을 "/boardwritepro" URL로 매핑하는 어노테이션입니다.
-    public String boardwrite(Board board, Model model) {
-        board.setTime(LocalDateTime.now());  // 게시글의 작성 시간을 현재 시간으로 설정합니다.
-        boardService.write(board);  // 작성된 게시글을 저장합니다.
-        model.addAttribute("message","글작성이 완료 되었습니다.");  // Model에 "message"라는 이름으로 메시지를 추가합니다.
-        model.addAttribute("url","/list");  // Model에 "url"이라는 이름으로 url을 추가합니다.
-        return "message";  // "message"라는 이름의 뷰(view)를 반환합니다.
+    @PostMapping("/boardwritepro")
+    public String boardwrite(Board board, Model model, Principal principal) { // Principal 객체를 파라미터로 추가합니다.
+        board.setTime(LocalDateTime.now());
+        boardService.write(board, principal.getName());  // 로그인한 사용자의 이름을 함께 넘겨줍니다.
+        model.addAttribute("message","글작성이 완료 되었습니다.");
+        model.addAttribute("url","/list");
+        return "message";
     }
+
 
 
 
@@ -129,10 +126,10 @@ public class ViewController {
 
 
 
-    @GetMapping("/delete")  // GET 요청을 "/delete" URL로 매핑하는 어노테이션입니다.
-    public String boardDelete(Integer id){
-        boardService.boardDelete(id);  // 해당 id의 게시글을 삭제합니다.
-        return "redirect:/list";  // 삭제 후 "/list" URL로 리다이렉트합니다.
+    @GetMapping("/delete")
+    public String boardDelete(Integer id, Principal principal){  // Principal 객체를 파라미터로 추가합니다.
+        boardService.boardDelete(id, principal.getName());  // 로그인한 사용자의 이름을 함께 넘겨줍니다.
+        return "redirect:/list";
     }
 
 
@@ -168,7 +165,8 @@ public class ViewController {
                          Board board,
                          @RequestParam(value="page", defaultValue = "0") int page,
                          @RequestParam(value="searchType", required = false) String searchType,
-                         @RequestParam(value="searchKeyword", required = false) String searchKeyword) {
+                         @RequestParam(value="searchKeyword", required = false) String searchKeyword,
+                         Principal principal) { // Principal 객체를 파라미터로 추가합니다.
 
         String encodedSearchKeyword;
         try {
@@ -179,7 +177,7 @@ public class ViewController {
         }
 
         board.setId(id); // Ensure that the board object has the correct id
-        Board updatedBoard = boardService.updateBoard(board);
+        Board updatedBoard = boardService.updateBoard(board, principal.getName()); // 로그인한 사용자의 이름을 함께 넘겨줍니다.
         return "redirect:/boardview/" + id + "?page=" + page + "&searchType=" + searchType + "&searchKeyword=" + encodedSearchKeyword;
     }
 
@@ -190,7 +188,8 @@ public class ViewController {
         @ExceptionHandler(RuntimeException.class)
         public String handleRuntimeException(RuntimeException e, Model model) {
             model.addAttribute("message", e.getMessage());
-            return "rollback";
+
+            return "access-denied";
         }
     }
 

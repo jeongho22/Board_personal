@@ -2,26 +2,35 @@ package com.example.dy.serivce;
 
 
 import com.example.dy.entity.Board;
+import com.example.dy.entity.User;
 import com.example.dy.repository.BoardRepository;
 import com.example.dy.repository.CommentRepository;
+import com.example.dy.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Collection;
 
 @Service
 public class BoardService {
 
-
-
-
-
-    @Autowired // 의존성 주입
+    @Autowired
     private BoardRepository boardRepository;
+    private final CommentRepository commentRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-    private final CommentRepository commentRepository; // CommentRepository 인스턴스를 추가합니다.
+    public BoardService(BoardRepository boardRepository, CommentRepository commentRepository, UserRepository userRepository) {
+        this.boardRepository = boardRepository;
+        this.commentRepository = commentRepository;
+        this.userRepository = userRepository;
+    }
 
 
 
@@ -29,36 +38,23 @@ public class BoardService {
 
 
     //글 작성 처리
-    public void write(Board board) {
-
-
-
-
+    public void write(Board board, String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다. username=" + username));
+        board.setUser(user);
         board.setViews(0);
         boardRepository.save(board);
-
     }
 
     //게시글 리스트 처리
-
     public Page<Board> boardList(Pageable pageable) {
-
         return boardRepository.findAll(pageable);
     }
 
-
-    //특정 게시글 불러오기
-
     public Board boardView(Integer id) {
-
         return boardRepository.findById(id).get();
     }
 
-    @Autowired
-    public BoardService(BoardRepository boardRepository, CommentRepository commentRepository) { // CommentRepository를 주입받습니다.
-        this.boardRepository = boardRepository;
-        this.commentRepository = commentRepository; // CommentRepository 인스턴스를 초기화합니다.
-    }
 
     // 위 코드는 BoardService 클래스의 일부입니다. BoardService 클래스는 BoardRepository와 CommentRepository를 필요로 합니다.
     // 이 두 인스턴스는 생성자를 통해 외부에서 주입됩니다. 이렇게 하면 BoardService 클래스는 데이터 접근 로직을 직접 구현하지 않아도 됩니다.
@@ -67,24 +63,51 @@ public class BoardService {
 
 //     트랜잭션 처리 게시글에 댓글을 삭제하고 게시글 삭제
 
-    @Transactional
-    public void boardDelete(Integer id) {
 
-
-        commentRepository.deleteByBoardId(id); // 먼저 게시글에 연결된 댓글들을 삭제합니다.
-        System.out.println("댓글이 먼저 삭제되었습니다.");
-
-
-//        if (true) { // 특정 조건
-//            throw new RuntimeException("롤백처리 되어 글 삭제가 취소 되었습니다 !");
+//    @Transactional
+//    public void boardDelete(Integer id, String username) {
+//        Board board = boardRepository.findById(id)
+//                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다. id=" + id));
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+//
+//        for (GrantedAuthority authority : authorities) {
+//            if (authority.getAuthority().equals("ADMIN") ||
+//                    (authority.getAuthority().equals("USER") && board.getUser().getUsername().equals(username))) {
+//                commentRepository.deleteByBoardId(id);
+//                System.out.println("댓글이 먼저 삭제되었습니다.");
+//                boardRepository.deleteById(id);
+//                System.out.println("이후에 게시물도 같이 삭제되었습니다.");
+//            }
 //        }
+//    }
 
-        boardRepository.deleteById(id); // 이후에 게시글을 삭제합니다.
-        System.out.println("이후에 게시물도 같이 삭제되었습니다.");
+    @Transactional
+    public void boardDelete(Integer id, String username) {
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다. id=" + id));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        boolean isAuthorized = false;
 
+        for (GrantedAuthority authority : authorities) {
+            if (authority.getAuthority().equals("ADMIN") ||
+                    (authority.getAuthority().equals("USER") && board.getUser().getUsername().equals(username))) {
+                isAuthorized = true;
+                commentRepository.deleteByBoardId(id);
+                System.out.println("댓글이 먼저 삭제되었습니다.");
+                boardRepository.deleteById(id);
+                System.out.println("이후에 게시물도 같이 삭제되었습니다.");
+                break;
+            }
+        }
 
-
+        if (!isAuthorized) {
+            throw new RuntimeException("글을 삭제할 권한이 없습니다.");
+        }
     }
+
+
 
 
 
@@ -107,47 +130,46 @@ public class BoardService {
 
 
 
-    // 이름 검색기능
     public Page<Board> boardSearchByName(String searchKeyword, Pageable pageable) {
         return boardRepository.findByNameContaining(searchKeyword, pageable);
     }
-
-    // 직업 검색 기능
 
     public Page<Board> boardSearchByJob(String searchKeyword, Pageable pageable) {
         return boardRepository.findByJobContaining(searchKeyword, pageable);
     }
 
-    // 전체 검색 기능
-
     public Page<Board> boardSearchByNameOrJob(String name, String job, Pageable pageable) {
         return boardRepository.findByNameContainingOrJobContaining(name, job, pageable);
     }
 
-
-    // 조회수 저장 기능
-
     public Board getBoardAndIncreaseView(Integer id) {
-        Board board = boardRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다. id=" + id));
-        board.setViews(board.getViews() + 1); // 조회수 증가
-        boardRepository.save(board); // 변경된 조회수 저장
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다. id=" + id));
+        board.setViews(board.getViews() + 1);
+        boardRepository.save(board);
         return board;
     }
 
 
     // 수정 후에도 조회수 변경금지
-    public Board updateBoard(Board updatedBoard) {
+    public Board updateBoard(Board updatedBoard, String username) {
         Board existingBoard = boardRepository.findById(updatedBoard.getId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다. id=" + updatedBoard.getId()));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 
-        existingBoard.setName(updatedBoard.getName()); // Update fields as necessary
-        existingBoard.setJob(updatedBoard.getJob());
-        existingBoard.setAge(updatedBoard.getAge());
-        existingBoard.setViews(existingBoard.getViews()); // This assumes views should not be updated.
-
-        return boardRepository.save(existingBoard);
+        for (GrantedAuthority authority : authorities) {
+            if (authority.getAuthority().equals("ADMIN") ||
+                    (authority.getAuthority().equals("USER") && existingBoard.getUser().getUsername().equals(username))) {
+                existingBoard.setName(updatedBoard.getName());
+                existingBoard.setJob(updatedBoard.getJob());
+                existingBoard.setAge(updatedBoard.getAge());
+                existingBoard.setViews(existingBoard.getViews());
+                return boardRepository.save(existingBoard);
+            }
+        }
+        throw new RuntimeException("글을 수정할 권한이 없습니다.");
     }
-
 
 }
 
