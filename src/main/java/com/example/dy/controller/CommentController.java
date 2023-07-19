@@ -1,14 +1,19 @@
 package com.example.dy.controller;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+
 import com.example.dy.entity.Board;
 import com.example.dy.entity.Comment;
 import com.example.dy.serivce.BoardService;
 import com.example.dy.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import org.springframework.web.bind.annotation.*;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.security.Principal;
 
 
 @Controller
@@ -17,6 +22,7 @@ public class CommentController {
     private CommentService commentService;
     @Autowired
     private BoardService boardService;
+
 
 
 
@@ -37,18 +43,22 @@ public class CommentController {
 
 
 
+
+
     @PostMapping("/deleteComment/{commentId}")
     public String deleteComment(@PathVariable("commentId") Integer commentId,
                                 @RequestParam(value="page", defaultValue = "0") int page,
                                 @RequestParam(value="searchType", defaultValue = "") String searchType,
-                                @RequestParam(value="searchKeyword", defaultValue = "") String searchKeyword) {
+                                @RequestParam(value="searchKeyword", defaultValue = "") String searchKeyword,
+                                Principal principal) { // 수정된 부분
         Comment comment = commentService.findById(commentId);
         Integer boardId = comment.getBoard().getId();
-        commentService.deleteById(commentId);
+        commentService.deleteById(commentId, principal.getName()); // 수정된 부분
         String encodedSearchKeyword = URLEncoder.encode(searchKeyword, StandardCharsets.UTF_8);
         System.out.println("댓글이 삭제 되었습니다.");
         return "redirect:/boardview/" + boardId + "?page=" + page + "&searchType=" + searchType + "&searchKeyword=" + encodedSearchKeyword;
     }
+
 
 
 

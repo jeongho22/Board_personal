@@ -64,24 +64,6 @@ public class BoardService {
 //     트랜잭션 처리 게시글에 댓글을 삭제하고 게시글 삭제
 
 
-//    @Transactional
-//    public void boardDelete(Integer id, String username) {
-//        Board board = boardRepository.findById(id)
-//                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다. id=" + id));
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-//
-//        for (GrantedAuthority authority : authorities) {
-//            if (authority.getAuthority().equals("ADMIN") ||
-//                    (authority.getAuthority().equals("USER") && board.getUser().getUsername().equals(username))) {
-//                commentRepository.deleteByBoardId(id);
-//                System.out.println("댓글이 먼저 삭제되었습니다.");
-//                boardRepository.deleteById(id);
-//                System.out.println("이후에 게시물도 같이 삭제되었습니다.");
-//            }
-//        }
-//    }
-
     @Transactional
     public void boardDelete(Integer id, String username) {
         Board board = boardRepository.findById(id)

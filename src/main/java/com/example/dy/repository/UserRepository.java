@@ -3,11 +3,12 @@ package com.example.dy.repository;
 // 'repository' 패키지에 속한 인터페이스입니다. 데이터베이스 연산을 담당하는 역할입니다.
 
 import com.example.dy.entity.User;
-// 'entity' 패키지로부터 User 클래스를 import 하였습니다.
-
 import org.springframework.data.jpa.repository.JpaRepository;
-// Spring Data JPA가 제공하는 JpaRepository 인터페이스를 import 하였습니다. 기본 CRUD 연산과 함께 JPA의 다른 유용한 기능을 사용할 수 있게 해줍니다.
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 // Java의 내장 클래스입니다. 값이 없을 수도 있는 상황을 나타내는 wrapper 클래스입니다.
 
@@ -20,6 +21,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // 즉, 해당 username을 가진 User가 있으면 그 User를 반환하고, 없으면 Optional.empty를 반환합니다.
 
     boolean existsByUsername(String username); // 이 메서드를 추가합니다.
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM User u WHERE u.id IN ?1")
+    void deleteAllById(List<Integer> userIds);
+
+
+
 }
 
 

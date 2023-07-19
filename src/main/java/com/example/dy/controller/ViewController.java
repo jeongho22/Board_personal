@@ -32,7 +32,7 @@ public class ViewController {
     @Autowired  // Spring 컨테이너에서 BoardService 타입의 자동으로 주입해줍니다.
     private BoardService boardService;
 
-    @PostMapping("/boardwritepro")
+    @PostMapping("/boardwriting")
     public String boardwrite(Board board, Model model, Principal principal) { // Principal 객체를 파라미터로 추가합니다.
         board.setTime(LocalDateTime.now());
         boardService.write(board, principal.getName());  // 로그인한 사용자의 이름을 함께 넘겨줍니다.
@@ -177,9 +177,16 @@ public class ViewController {
         }
 
         board.setId(id); // Ensure that the board object has the correct id
+
         Board updatedBoard = boardService.updateBoard(board, principal.getName()); // 로그인한 사용자의 이름을 함께 넘겨줍니다.
+
         return "redirect:/boardview/" + id + "?page=" + page + "&searchType=" + searchType + "&searchKeyword=" + encodedSearchKeyword;
     }
+
+
+
+
+
 
 
     @ControllerAdvice

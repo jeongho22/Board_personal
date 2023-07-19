@@ -76,6 +76,16 @@ public class User implements UserDetails {
         return true; // 또는 사용자 상태에 따라 반환
     }
 
+    public enum AccountStatus {
+        PENDING,
+        APPROVED,
+        DENIED
+    }
+
+    @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private AccountStatus status = AccountStatus.PENDING;
+
 
 
 
