@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Page</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container my-4">
+    <h1>회원가입 대기 리스트</h1>
+    <table id="users-table" class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">아이디</th>
+            <th scope="col">이메일</th>
+            <th scope="col">이름</th>
+            <th scope="col">요청</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- JavaScript will populate user data here -->
+        </tbody>
+    </table>
+
+    <button type="button" class="btn btn-primary btn-block" onclick="goBack()">이전 화면으로</button>
+
+</div>
+
+<script>
+    fetch('/admin/unapproved-users')
+        .then(response => response.json())
+        .then(users => {
+            const tableBody = document.getElementById('users-table').getElementsByTagName('tbody')[0];
+            users.forEach(user => {
+                const newRow = tableBody.insertRow();
+                newRow.innerHTML = `<td>${user.id}</td>
+                                    <td>${user.email}</td>
+                                    <td>${user.username}</td>
+                                    <td><button class="btn btn-primary" onclick="approveUser(${user.id}, '${user.username}')">승인</button></td>`;
+            });
+        });
+
+    function approveUser(userId, username) {
+        if (confirm(`${username} 님을 승인하시겠습니까?`)) {
+            fetch(`/admin/approve/${userId}`, { method: 'PUT' })
+                .then(response => {
+                    if (response.ok) {
+                        alert(`User with ID ${userId} approved.`);
+                        location.reload();
+                    }
+                    else {
+                        alert('Error occurred during approval.');
+                    }
+                });
+        }
+    }
+
+    function goBack() {
+        window.history.back();
+    }
+
+</script>
+</body>
+</html>

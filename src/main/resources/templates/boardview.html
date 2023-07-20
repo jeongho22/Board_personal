@@ -89,7 +89,7 @@
             <input type="hidden" name="page" th:value="${nowPage}">
             <input type="hidden" name="searchType" th:value="${searchType}">
             <input type="hidden" name="searchKeyword" th:value="${searchKeyword}">
-            <input type="text" th:field="*{author}" placeholder="글쓴이" class="form-control">
+            <h1 class="lead" style="font-weight: bold;" th:text="${username}"></h1>
             <textarea id="comment-field" th:field="*{content}" placeholder="내용" class="form-control mt-3"></textarea>
             <button id="submit-comment" type="submit" class="btn btn-primary mt-3">등록</button>
         </form>

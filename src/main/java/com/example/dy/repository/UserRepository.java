@@ -13,7 +13,7 @@ import java.util.Optional;
 // Java의 내장 클래스입니다. 값이 없을 수도 있는 상황을 나타내는 wrapper 클래스입니다.
 
 
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, Integer> {
     // JpaRepository 인터페이스를 상속받아 UserRepository 인터페이스를 정의하였습니다. User 엔티티와 그 primary key의 타입이 Long이라는 것을 지정하였습니다.
 
     Optional<User> findByUsername(String username);
@@ -26,6 +26,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Transactional
     @Query("DELETE FROM User u WHERE u.id IN ?1")
     void deleteAllById(List<Integer> userIds);
+
+    List<User> findByApproved(boolean approved);
 
 
 

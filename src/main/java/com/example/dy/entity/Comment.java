@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 
     @Schema(description = "글쓴이")
     @NotBlank(message = "이름이 비었습니다.")
+
         private String author;
 
     @Schema(description = "내용")
@@ -63,6 +64,8 @@ import java.time.LocalDateTime;
         this.createdAt = createdAt;
     }
     // 시간관리
+
+
 
 
 

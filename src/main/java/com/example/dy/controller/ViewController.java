@@ -112,7 +112,8 @@ public class ViewController {
                             @RequestParam(value="page", defaultValue = "0") int nowPage,
                             @RequestParam(value="searchType", defaultValue = "") String searchType,
                             @RequestParam(value="searchKeyword", defaultValue = "") String searchKeyword,
-                            Model model) {
+                            Model model,
+                            Principal principal) {
         Board board = boardService.getBoardAndIncreaseView(id);  // 해당 id의 게시글을 가져오고, 조회수를 증가시킵니다.
         model.addAttribute("board", board);  // Model에 "board"라는 이름으로 게시글을 추가합니다.
         model.addAttribute("comments", board.getComments());  // Model에 "comments"라는 이름으로 게시글의 댓글들을 추가합니다.
@@ -120,6 +121,7 @@ public class ViewController {
         model.addAttribute("nowPage", nowPage); // 현재 페이지 번호를 모델에 추가
         model.addAttribute("searchType", searchType); // 검색 유형을 모델에 추가
         model.addAttribute("searchKeyword", searchKeyword); // 검색 키워드를 모델에 추가
+        model.addAttribute("username", principal.getName());
         return "/boardview";  // "/boardview"라는 이름의 뷰(view)를 반환합니다.
     }
 

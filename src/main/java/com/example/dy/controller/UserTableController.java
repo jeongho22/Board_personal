@@ -25,27 +25,33 @@ public class UserTableController {
         this.userTableService = userTableService;
     }
 
+//    @GetMapping("/users")
+//    public String listUsers(Model model, @AuthenticationPrincipal UserPrincipal principal) {
+//
+//        boolean isAdmin = userTableService.isAdmin(principal);
+//
+//        if(isAdmin) {
+//            model.addAttribute("users", userTableService.findAllUsers());
+//            return "userList";
+//        } else {
+//            return "access-denied";
+//        }
+//    }
+
     @GetMapping("/users")
     public String listUsers(Model model, @AuthenticationPrincipal UserPrincipal principal) {
-        if(principal == null) {
-            logger.error("User object is null.");
-            return "access-denied";
-        } else {
-            logger.info("Logged user: " + principal.getUsername());
-        }
-
-        logger.info("Logged user roles: " + principal.getAuthorities());
 
         boolean isAdmin = userTableService.isAdmin(principal);
-        logger.info("isAdmin: " + isAdmin);
 
         if(isAdmin) {
-            model.addAttribute("users", userTableService.findAllUsers());
+            model.addAttribute("users", userTableService.findApprovedUsers());
             return "userList";
         } else {
             return "access-denied";
         }
     }
+
+
 
     @PostMapping("/users/delete")
     public String deleteSelectedUsers(@RequestParam List<Integer> userIds, RedirectAttributes redirectAttrs) {
@@ -58,7 +64,6 @@ public class UserTableController {
         }
         return "redirect:/users";
     }
-
 
 
 

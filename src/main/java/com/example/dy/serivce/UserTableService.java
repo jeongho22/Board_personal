@@ -24,9 +24,10 @@ public class UserTableService {
         return userRepository.findAll();
     }
 
-    public Optional<User> findUserById(Long id) {
+    public Optional<User> findUserById(Integer id) {
         return userRepository.findById(id);
     }
+
 
     public boolean isAdmin(UserPrincipal principal) {
         return principal.getAuthorities().stream().anyMatch(role -> role.getAuthority().equals("ADMIN"));
@@ -35,6 +36,10 @@ public class UserTableService {
     @Transactional
     public void deleteUsers(List<Integer> userIds) {
         userRepository.deleteAllById(userIds);
+    }
+
+    public List<User> findApprovedUsers() {
+        return userRepository.findByApproved(true);
     }
 
 

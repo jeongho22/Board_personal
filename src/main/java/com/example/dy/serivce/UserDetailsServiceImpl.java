@@ -37,6 +37,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {  // UserDeta
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
 
+
+        if (!user.isApproved()) {
+            throw new UsernameNotFoundException("User not approved by admin: " + username);
+        }
+
+
         // Spring Security가 이해할 수 있는 권한 형태로 변환
         Collection<GrantedAuthority> authorities = user.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName()))

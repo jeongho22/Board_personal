@@ -37,7 +37,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {  // 웹 보�
     protected void configure(HttpSecurity http) throws Exception {  // HTTP 보안 설정을 위한 메소드입니다.
         http
                 .csrf()  // csrf 공격 방어를 위한 설정을 시작합니다.
-                .ignoringAntMatchers("/boardwriting/**","/users/delete")  // "/api/**" 패턴의 URL에 대해서는 csrf 보안을 무시합니다.
+                .ignoringAntMatchers("/boardwriting/**","/users/delete","/admin/approve/**")  // "/api/**" 패턴의 URL에 대해서는 csrf 보안을 무시합니다.
                 .and()  // 설정 이어가기 위한 연결 메소드입니다.
                 .authorizeRequests()  // 요청에 대한 보안을 설정합니다.
                 .antMatchers("/register","/check-username").permitAll()  // "/register" 패턴의 URL은 모든 사용자가 접근할 수 있습니다.
