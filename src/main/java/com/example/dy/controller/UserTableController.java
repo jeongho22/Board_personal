@@ -25,18 +25,7 @@ public class UserTableController {
         this.userTableService = userTableService;
     }
 
-//    @GetMapping("/users")
-//    public String listUsers(Model model, @AuthenticationPrincipal UserPrincipal principal) {
-//
-//        boolean isAdmin = userTableService.isAdmin(principal);
-//
-//        if(isAdmin) {
-//            model.addAttribute("users", userTableService.findAllUsers());
-//            return "userList";
-//        } else {
-//            return "access-denied";
-//        }
-//    }
+
 
     @GetMapping("/users")
     public String listUsers(Model model, @AuthenticationPrincipal UserPrincipal principal) {

@@ -67,10 +67,11 @@
             <!-- Delete Button -->
 
 
-
-            <form th:action="@{/deleteComment/{commentId}(commentId=${comment.id},page=${nowPage},searchType=${searchType},searchKeyword=${searchKeyword})}" method="post">
-                <button class="btn btn-danger btn-sm" type="submit">X</button>
-            </form>
+            <div th:if="${comment.author == username or #authorization.expression('hasAuthority(''ADMIN'')')}">
+                <form th:action="@{/deleteComment/{commentId}(commentId=${comment.id},page=${nowPage},searchType=${searchType},searchKeyword=${searchKeyword})}" method="post">
+                    <button class="btn btn-danger btn-sm" type="submit">X</button>
+                </form>
+            </div>
 
 
 
@@ -100,19 +101,14 @@
 </div>
 
 
-
-
-
 <div class="button-container">
-    <!--    <a th:href="@{/modify/{id}(id=${board.id})}" class="btn btn-primary">수정</a>-->
+    <div th:if="${#authentication.name.equals(board.user.username)} or ${#authorization.expression('hasAuthority(''ADMIN'')')}">
+        <a th:href="@{/modify/{id}(id=${board.id},page=${nowPage},searchType=${searchType},searchKeyword=${searchKeyword})}" class="btn btn-primary">수정</a>
+    </div>
 
-    <a th:href="@{/modify/{id}(id=${board.id},page=${nowPage},searchType=${searchType},searchKeyword=${searchKeyword})}" class="btn btn-primary">수정</a>
-
-    <a th:href="@{/delete(id=${board.id})}" class="btn btn-primary" onclick="return confirm('게시글을 삭제하시겠습니까?')">삭제</a>
-
-
-
-
+    <div th:if="${#authentication.name.equals(board.user.username)} or ${#authorization.expression('hasAuthority(''ADMIN'')')}">
+        <a th:href="@{/delete(id=${board.id})}" class="btn btn-primary" onclick="return confirm('게시글을 삭제하시겠습니까?')">삭제</a>
+    </div>
 
     <form th:action="@{/list}" method="get" class="inline-form">
         <input type="hidden" name="page" th:value="${nowPage}">
@@ -120,10 +116,11 @@
         <input type="hidden" name="searchKeyword" th:value="${searchKeyword}">
         <button type="submit" class="btn btn-primary">목록</button>
     </form>
-
-
-
 </div>
+
+
+
+
 
 
 <script type="text/javascript">

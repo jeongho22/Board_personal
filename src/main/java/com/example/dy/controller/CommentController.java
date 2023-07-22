@@ -6,6 +6,7 @@ import com.example.dy.serivce.BoardService;
 import com.example.dy.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,10 +53,12 @@ public class CommentController {
                                 @RequestParam(value="page", defaultValue = "0") int page,
                                 @RequestParam(value="searchType", defaultValue = "") String searchType,
                                 @RequestParam(value="searchKeyword", defaultValue = "") String searchKeyword,
-                                Principal principal) { // 수정된 부분
+                                Principal principal,
+                                Model model) { // 수정된 부분
         Comment comment = commentService.findById(commentId);
         Integer boardId = comment.getBoard().getId();
         commentService.deleteById(commentId, principal.getName());
+        model.addAttribute("username", principal.getName());
         String encodedSearchKeyword = URLEncoder.encode(searchKeyword, StandardCharsets.UTF_8);
         System.out.println("댓글이 삭제 되었습니다.");
         return "redirect:/boardview/" + boardId + "?page=" + page + "&searchType=" + searchType + "&searchKeyword=" + encodedSearchKeyword;

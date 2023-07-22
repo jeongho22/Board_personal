@@ -100,6 +100,7 @@ public class CommentService {
         // If the user is authorized (either because they are the author or an admin), we delete the comment
         if (isAuthorized) {
             commentRepository.deleteById(id);
+
             System.out.println("username: " + username);
             System.out.println("author: " + comment.getAuthor());
             System.out.println("댓글이 삭제되었습니다.");

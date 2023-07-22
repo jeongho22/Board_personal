@@ -56,9 +56,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {  // 웹 보�
                 .deleteCookies("JSESSIONID")  // 로그아웃 시 쿠키를 삭제합니다.
                 .logoutSuccessUrl("/login")  // 로그아웃 성공 시 리다이렉트할 URL을 설정합니다.
                 .permitAll();  // 모든 사용자가 로그아웃 할 수 있습니다.
+        
+
+
         http
                 .exceptionHandling()
                 .accessDeniedPage("/access-denied"); // 사용자가 접근 권한이 없을 때 보여줄 페이지의 경로를 설정합니다.
+
     }
 
 

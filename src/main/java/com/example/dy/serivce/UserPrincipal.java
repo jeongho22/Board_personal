@@ -73,4 +73,7 @@ public class UserPrincipal implements UserDetails {
     public boolean isEnabled() {
         return true; // 또는 사용자 상태에 따라 반환
     }
+
+    // 사용자의 ID를 반환하는 메소드를 추가합니다.
+
 }
