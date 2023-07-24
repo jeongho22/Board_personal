@@ -45,6 +45,7 @@
         <div class="user-info">  <!-- 위치 변경 -->
             <h1 class="lead" th:text="${username} "></h1>
             <p class="lead">님이 로그인 중입니다.</p>
+            <a href="/change_password" class="btn btn-primary">비밀번호 변경</a>
         </div>
         <form action="/logout" method="post" id="logout-form">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>

@@ -37,6 +37,7 @@
                     <button type="submit" class="btn btn-primary btn-block" id="register">등록</button>
                 </div>
             </form>
+            <p id="register-message"></p>
         </div>
     </div>
 </div>
@@ -80,8 +81,26 @@
         };
         xhr.send();
     };
-</script>
 
+    var form = document.getElementsByTagName('form')[0];
+    form.onsubmit = function(event) {
+        event.preventDefault();
+        var message = document.getElementById('register-message');
+        var xhr = new XMLHttpRequest();
+        var data = new FormData(form);
+        xhr.open('POST', '/register', true);
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                message.textContent = '등록이 완료되었습니다. 이메일을 확인하고 인증해주세요.';
+                message.className = 'success';
+            } else {
+                message.textContent = '등록에 실패하였습니다. 다시 시도해주세요.';
+                message.className = 'error';
+            }
+        };
+        xhr.send(data);
+    };
+</script>
 
 <style>
     .error {

@@ -41,7 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {  // 웹 보�
                 .and()  // 설정 이어가기 위한 연결 메소드입니다.
                 .authorizeRequests()  // 요청에 대한 보안을 설정합니다.
                 .antMatchers("/register","/check-username").permitAll()  // "/register" 패턴의 URL은 모든 사용자가 접근할 수 있습니다.
-//                .antMatchers("/users").hasRole("ADMIN")  // "/users" URL은 ADMIN 권한을 가진 사용자만 접근할 수 있습니다.
+                .antMatchers("/verify-email/**").permitAll() // 이메일 토큰 인증 URL에 대해 인증 없이 접근 허용
                 .anyRequest().authenticated()  // 그 외의 요청은 인증된 사용자만 접근할 수 있습니다.
                 .and()  // 설정 이어가기 위한 연결 메소드입니다.
                 .formLogin()  // 폼 기반 로그인에 대한 설정을 시작합니다.
@@ -56,7 +56,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {  // 웹 보�
                 .deleteCookies("JSESSIONID")  // 로그아웃 시 쿠키를 삭제합니다.
                 .logoutSuccessUrl("/login")  // 로그아웃 성공 시 리다이렉트할 URL을 설정합니다.
                 .permitAll();  // 모든 사용자가 로그아웃 할 수 있습니다.
-        
+
+        http
+                .sessionManagement()
+                .invalidSessionUrl("/login");  // invalid session URL 설정 추가
+
 
 
         http
@@ -75,4 +79,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {  // 웹 보�
 //SecurityConfig 클래스는 Spring Security 설정을 정의하는 곳입니다.
 // 이 클래스에서는 HTTP 보안을 구성하고, 사용자 세부 서비스를 등록하며, 비밀번호 인코더를 설정합니다.
 
-// PasswordEncoderConfig 이후 과정임
+// http 이 세 가지 설정이 서로 연관되어 있지 않고 독립적인 설정이기 때문에, 각각의 설정 블록으로 나누어 http 객체에 적용되었습니다.
+// 이렇게 각각 분리하여 설정하는 것은 코드의 가독성을 높이고, 설정 간의 의존성을 최소화하여 코드의 유지 보수를 용이하게 합니다.

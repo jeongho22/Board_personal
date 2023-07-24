@@ -26,11 +26,15 @@ public class AdminController {
         this.userApproveService = userApproveService;
     }
 
+
+
     @GetMapping("/unapproved-users")
     @ResponseBody
     public List<User> getUnapprovedUsers() {
         return userRepository.findByApproved(false);
     }
+
+
 
     @PutMapping("/approve/{userId}")
     @ResponseBody
@@ -40,8 +44,13 @@ public class AdminController {
             if (user.isApproved()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User with ID " + userId + " is already approved.");
             } else {
-                userApproveService.approveUser(userId);
-                return ResponseEntity.ok("User with ID " + userId + " approved.");
+                // 이메일 토큰 인증이 먼저 되어야만 승인 처리가 됩니다.
+                if (user.isEmailVerified()) {
+                    userApproveService.approveUser(userId);
+                    return ResponseEntity.ok("User with ID " + userId + " approved.");
+                } else {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User with ID " + userId + " is not verified by email.");
+                }
             }
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User with ID " + userId + " does not exist.");
@@ -50,10 +59,9 @@ public class AdminController {
 
     @GetMapping("/approve")
     public String approvePage(Model model, @AuthenticationPrincipal UserPrincipal principal) {
-
         boolean isAdmin = userApproveService.isAdmin(principal);
 
-        if(isAdmin) {
+        if (isAdmin) {
             model.addAttribute("users", userRepository.findByApproved(false));
             return "Approve";
         } else {

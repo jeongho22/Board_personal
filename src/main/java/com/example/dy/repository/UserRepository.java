@@ -14,6 +14,7 @@ import java.util.Optional;
 
 
 public interface UserRepository extends JpaRepository<User, Integer> {
+
     // JpaRepository 인터페이스를 상속받아 UserRepository 인터페이스를 정의하였습니다. User 엔티티와 그 primary key의 타입이 Long이라는 것을 지정하였습니다.
 
     Optional<User> findByUsername(String username);
@@ -29,6 +30,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     List<User> findByApproved(boolean approved);
 
+
+    Optional<User> findByEmailVerificationToken(String token);
 
 
 }

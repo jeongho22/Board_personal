@@ -10,6 +10,7 @@ import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -29,8 +30,21 @@ public class User {
     @Column(length = 100)
     private String password;
 
-    @Column(nullable = false, length = 100)
+
+    @Column(nullable = false, length = 100, unique = true)
     private String email;
+
+    @Column(name = "email_verification_token", unique = true)
+    private String emailVerificationToken;
+
+
+    @Column(name = "email_verified", nullable = false)
+    private boolean emailVerified = false;
+
+    public void generateEmailVerificationToken() {
+        this.emailVerificationToken = UUID.randomUUID().toString();
+    }
+
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Board> boards = new ArrayList<>();
