@@ -41,11 +41,6 @@ public class User {
     @Column(name = "email_verified", nullable = false)
     private boolean emailVerified = false;
 
-    public void generateEmailVerificationToken() {
-        this.emailVerificationToken = UUID.randomUUID().toString();
-    }
-
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Board> boards = new ArrayList<>();
 
