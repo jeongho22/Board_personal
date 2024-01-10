@@ -1,13 +1,15 @@
 plugins {
 	id 'java'
-	id 'war'
-	id 'org.springframework.boot' version '2.7.12'
-	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	id 'org.springframework.boot' version '2.7.0'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 }
 
-group = 'com.example'
+group = 'com.board'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '1.8'
+
+java {
+	sourceCompatibility = '17'
+}
 
 configurations {
 	compileOnly {
@@ -20,37 +22,43 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	compileOnly 'org.projectlombok:lombok'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-data-rest'
+	implementation 'org.springframework.data:spring-data-rest-hal-explorer'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'mysql:mysql-connector-java'
+	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
-	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	implementation("org.springdoc:springdoc-openapi-ui:1.6.11")
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5:3.0.4.RELEASE'
-	implementation 'org.springframework.boot:spring-boot-starter-mail'
-	implementation 'mysql:mysql-connector-java:8.0.23' // 사용하는 MySQL 버전에 따라 버전을 조정하세요.
 
-
-
-
-
-
-
-
-
-
-
-	// other dependencies
-	// Bean Validation API
-	implementation 'javax.validation:validation-api:2.0.1.Final'
-	// Hibernate Validator (Bean Validation API implementation)
-	implementation 'org.hibernate.validator:hibernate-validator:6.0.13.Final'
+	
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+
+// Querydsl 설정부 // 기본값으로 설정하면 문제가 생길수있어서... 경로설정
+def generated = 'src/main/generated'
+
+// querydsl QClass 파일 생성 위치를 지정
+tasks.withType(JavaCompile) {
+	options.getGeneratedSourceOutputDirectory().set(file(generated))
+}
+
+// java source set 에 querydsl QClass 위치 추가
+sourceSets {
+	main.java.srcDirs += [ generated ]
+}
+
+// gradle clean 시에 QClass 디렉토리 삭제
+clean {
+	delete file(generated)
 }
