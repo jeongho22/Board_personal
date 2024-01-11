@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8"
+        crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<footer th:fragment="common-footer1">
+
+  <div id="comments-list" th:each="comment : ${commentDtos}">
+    <div class="card m-2" th:id="'comments-' + ${comment.id}">
+
+      <div class="card-header">
+        <!-- 닉네임 출력 -->
+        <span th:text="${comment.nickname}">닉네임</span>
+        <!--        버튼-->
+        <button type="button"
+                class="btn btn-sm btn-outline-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#comment-edit-modal"
+                th:data-bs-id="${comment.id}"
+                th:data-bs-nickname="${comment.nickname}"
+                th:data-bs-body="${comment.body}"
+                th:data-bs-article-id="${comment.articleId}">수정</button>
+
+        <!-- 댓글 삭제 버튼 -->
+        <button type="button"
+                class="btn btn-sm btn-outline-danger comment-delete-btn"
+                th:data-comment-id="${comment.id}">삭제</button>
+<!--        버튼에 속성에 대한 아이디값을 넣어줌-->
+
+
+
+      </div>
+      <!-- 본문 내용 출력 -->
+      <div class="card-body" th:text="${comment.body}"></div>
+    </div>
+  </div>
+
+
+
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="comment-edit-modal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">댓글 수정</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- 댓글 수정 폼-->
+          <form>
+            <!-- 닉네임 입력 -->
+            <div class="mb-3">
+              <label class="form-label">닉네임</label>
+              <input type="text" class="form-control form-control-sm" id="edit-comment-nickname">
+            </div>
+            <!-- 댓글 본문 입력 -->
+            <div class="mb-3">
+              <label class="form-label">댓글 내용</label>
+              <textarea type="text" class="form-control form-control-sm" rows="3" id="edit-comment-body"></textarea>
+            </div>
+            <!-- 히든 인풋 -->
+            <input type="hidden" id="edit-comment-id">
+            <input type="hidden" id="edit-comment-article-id">
+            <!-- 전송 버튼 -->
+            <button type="button" class="btn btn-outline-primary btn-sm" id="comment-update-btn">수정 완료</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <!-- 댓글 삭제 -->
+  <script>
+    {
+      // 삭제 버튼 선택
+      const commentDeleteBtns = document.querySelectorAll(".comment-delete-btn"); //querySelectorAll 삭제 버튼 전부다 가져옴.
+      // 삭제 버튼 이벤트를 처리
+      commentDeleteBtns.forEach(btn => { //btn= commentDeleteBtns[i]
+        // 각 버튼의 이벤트 처리를 등록
+        btn.addEventListener("click", (event) => {
+          // 이벤트 발생 요소를 선택
+          const commentDeleteBtn = event.target;
+          // 삭제 댓글 id 가져오기
+          const commentId = commentDeleteBtn.getAttribute("data-comment-id");
+          console.log(`삭제 버튼 클릭: ${commentId}번 댓글`);
+          // 삭제 API 호출 및 처리
+          const url = `/api/comments/${commentId}`;
+          fetch(url, {
+            method: "DELETE"
+          }).then(response => {
+            // 댓글 삭제 실패 처리
+            if (!response.ok) {
+              alert("댓글 삭제 실패..!");
+              return;
+            }
+            // 삭제 성공 시, 댓글을 화면에서 지움!
+            const target = document.querySelector(`#comments-${commentId}`);
+            target.remove(); // window.reload와 target.remove 차이
+          });
+        });
+      });
+    }
+  </script>
+
+    <!-- 댓글 삭제 -->
+<!--    <script>-->
+<!--      {-->
+<!--        // 삭제 버튼 선택-->
+<!--        const commentDeleteBtns = document.querySelectorAll(".comment-delete-btn");-->
+
+<!--        // for 반복문을 사용하여 각 버튼에 이벤트 리스너 추가-->
+<!--        for (let i = 0; i < commentDeleteBtns.length; i++) {-->
+<!--          const btn = commentDeleteBtns[i];-->
+
+<!--          // 이벤트 리스너 등록-->
+<!--          btn.addEventListener("click", (event) => {-->
+<!--            // 이벤트 발생 요소를 선택-->
+<!--            const commentDeleteBtn = event.target;-->
+<!--            // 삭제 댓글 id 가져오기-->
+<!--            const commentId = commentDeleteBtn.getAttribute("data-comment-id");-->
+<!--            console.log(`삭제 버튼 클릭: ${commentId}번 댓글`);-->
+<!--            // 삭제 API 호출 및 처리-->
+<!--            const url = `/api/comments/${commentId}`;-->
+<!--            fetch(url, {-->
+<!--              method: "DELETE"-->
+<!--            }).then(response => {-->
+<!--              // 댓글 삭제 실패 처리-->
+<!--              if (!response.ok) {-->
+<!--                alert("댓글 삭제 실패..!");-->
+<!--                return;-->
+<!--              }-->
+<!--              // 삭제 성공 시, 댓글을 화면에서 지움!-->
+<!--              const target = document.querySelector(`#comments-${commentId}`);-->
+<!--              target.remove();-->
+<!--            });-->
+<!--          });-->
+<!--        }-->
+<!--      }-->
+<!--    </script>-->
+
+
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8"
+          crossorigin="anonymous"></script>
+
+
+  <!-- 모달 이벤트 처리 -->
+  <script>
+
+
+    {
+      // 모달 요소 선택
+      const commentEditModal = document.querySelector("#comment-edit-modal");
+      // 모달 이벤트 감지
+      commentEditModal.addEventListener("show.bs.modal", function (event) {
+        // 트리거 버튼 선택
+        const triggerBtn = event.relatedTarget;
+        // 데이터 가져오기
+        const id = triggerBtn.getAttribute("data-bs-id");
+        const nickname = triggerBtn.getAttribute("data-bs-nickname");
+        const body = triggerBtn.getAttribute("data-bs-body");
+        const articleId = triggerBtn.getAttribute("data-bs-article-id");
+        //console.log(`${id}, ${nickname}, ${body}, ${articleId}`);
+        // 데이터를 반영
+        document.querySelector("#edit-comment-id").value = id;
+        document.querySelector("#edit-comment-nickname").value = nickname;
+        document.querySelector("#edit-comment-body").value = body;
+        document.querySelector("#edit-comment-article-id").value = articleId;
+      });
+
+
+      {
+        // 수정 완료 버튼
+        const commentUpdateBtn = document.querySelector("#comment-update-btn");
+        // 클릭 이벤트 처리
+        commentUpdateBtn.addEventListener("click", function () {
+          // 수정 댓글 객체 생성
+          const comment = {
+            id: document.querySelector("#edit-comment-id").value,             // 이미 있는 해당 값을 가져옴
+            nickname: document.querySelector("#edit-comment-nickname").value, // 이미 있는 해당 값을 가져옴
+            body: document.querySelector("#edit-comment-body").value,         // 이미 있는 해당 값을 가져옴
+            article_id: document.querySelector("#edit-comment-article-id").value    // 이미 있는 해당 값을 가져옴
+          };
+
+
+          // 수정 REST API 호출 - fetch()
+          const url = "/api/comments/" + comment.id; // 위에 수정 댓글 객체의 comment 아이디값을 가져온거임.
+          fetch(url, {
+            method: "PATCH",                          // PATCH 요청 대문자로 해야지 오류 안남...
+            body: JSON.stringify(comment),            // JSON 으로 넘겨 준다.
+            headers: {
+              "Content-Type": "application/json"
+            }
+          }).then(response => {
+            // http 응답 코드에 따른 메시지 출력
+            const msg = (response.ok) ? "댓글이 수정이 성공 하였습니다." : "댓글 수정이 실패 하였습니다."; // 삼항 연산자 True 수정완료 / False 실패
+            alert(msg);
+            // 현재 페이지를 새로고침
+            window.location.reload();
+          });
+        });
+      }
+
+    }
+  </script>
+
+
+</footer>
+
+
+
+</body>
+</html>

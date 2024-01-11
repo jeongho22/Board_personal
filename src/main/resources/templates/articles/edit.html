@@ -1,0 +1,22 @@
+<form class="container" action="/articles/update" method="post" th:action="@{/articles/create}" >
+
+    <input type="hidden" name="id" th:value="${article.id}">
+                                        <!--    수정할때는 id 값까지 같이 던져줘야함... 물론 hidden 처리해주는게좋음-->
+
+    <div class="mb-3">
+        <label class="form-label">제목</label>
+        <label>
+            <input type="text" class="form-control" name="title" th:value="${article.title}">
+                                                                    <!--            value 기존에 값 불러옴-->
+        </label>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">내용</label>
+        <label>
+            <textarea class="form-control" rows="3" name="content" th:text="${article.content}"></textarea>
+                                                                     <!--            value 기존에 값 불러옴-->
+        </label>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+    <a th:href="@{/articles/{id}/(id=${article.id})}">수정취소</a>
+</form>

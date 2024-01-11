@@ -1,0 +1,67 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- 헤더 관련 메타 태그, 스타일시트 링크 등 -->
+    <style>
+        .table-board {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .table-board th {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+        }
+        .table-board td {
+            padding: 8px;
+            text-align: center;
+        }
+        .table-board tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .table-board tr:hover {
+            background-color: #ddd;
+        }
+    </style>
+</head>
+<body>
+<!-- 헤더 삽입 -->
+<div th:replace="layouts/header :: common-header"></div>
+
+<!-- 메인 콘텐츠 -->
+<table class="table-board">
+    <thead>
+    <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Title</th>
+        <th scope="col">Content</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="article : ${articleList}">
+        <td th:text="${article.id}">ID</td>
+        <td><a th:href="@{/articles/{id}(id=${article.id})}" th:text="${article.title}" style="text-align:left;">Title</a></td>
+        <td th:text="${article.content}">Content</td>
+    </tr>
+    </tbody>
+</table>
+
+<a href ="/articles/new">글쓰기</a>
+
+<!-- 푸터 삽입 -->
+<div th:replace="layouts/footer :: common-footer"></div>
+</body>
+</html>
+
+
+
+
+
+
+<!--@{/articles/{id}}: 이 부분은 URL의 템플릿을 정의합니다. 여기서 {id}는 URL 경로의 일부로 사용될 변수를 나타냅니다.
+ 예를 들어, 만약 id 값이 123이라면, 이 템플릿은 /articles/123으로 해석됩니다.-->
+
+<!--(id=${article.id}): 이 부분은 실제 id 변수에 들어갈 값을 정의합니다.
+${article.id}는 현재 Thymeleaf 컨텍스트에서 article 객체의 id 속성 값을 의미합니다.
+이 표현식은 {id} 템플릿 변수를 실제 article 객체의 id 값으로 대체합니다.-->

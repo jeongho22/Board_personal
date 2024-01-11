@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- 헤더 관련 메타 태그, 스타일시트 링크 등 -->
+</head>
+<body>
+<header th:fragment="common-header">
+    헤더
+
+
+    <!-- alert msg -->
+    <div class="alert alert-primary alert-dismissible" th:if="${msg}">
+        <span th:text="${msg}">Alert message here</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+
+</header>
+
+</body>
+</html>
+
+
+
+
