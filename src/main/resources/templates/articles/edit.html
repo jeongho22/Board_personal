@@ -1,4 +1,7 @@
-<form class="container" action="/articles/update" method="post" th:action="@{/articles/create}" >
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<form class="container" action="/articles/update" method="post">
 
     <input type="hidden" name="id" th:value="${article.id}">
                                         <!--    수정할때는 id 값까지 같이 던져줘야함... 물론 hidden 처리해주는게좋음-->
@@ -18,5 +21,5 @@
         </label>
     </div>
     <button type="submit" class="btn btn-primary">Submit</button>
-    <a th:href="@{/articles/{id}/(id=${article.id})}">수정취소</a>
+    <a th:href="@{/articles/{id}/(id=${article.id})}">Cancel</a>
 </form>

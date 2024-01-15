@@ -14,10 +14,10 @@ import java.util.List;
 public interface CommentRepository extends JpaRepository<Comment,Long> {
     // 특정 게시글의 모든 댓글 조회
     @Query(value =
-            "SELECT * " +
+                    "SELECT * " +
                     "FROM comment " +
                     "WHERE article_id = :articleId",                    // comment의 article_id 컬럼의 값들과 일치하는값만
-            nativeQuery = true)
+                    nativeQuery = true)
 
     List<Comment> findByArticleId(@Param("articleId") Long articleId); // aricleId 를 입력 했을때 Comment의 묶음을 반환 했으면 좋겠다.
 

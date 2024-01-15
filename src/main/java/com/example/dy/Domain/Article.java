@@ -9,7 +9,7 @@ import javax.persistence.*;
 @ToString
 @NoArgsConstructor      // 디폴트 생성자 하나 무조건 만들어줘야함
 @Getter                 // @data는 하지만 순환참조나... 각종 로직에 취약함.. getter, setter,  메소드 자동으로 생성
-                        // id, title, content 필드에 대한 getId(), getTitle(), getContent() 메소드를 생성
+// id, title, content 필드에 대한 getId(), getTitle(), getContent() 메소드를 생성
 public class Article {
 
     @Id// 대표값을 하나 넣어줘야함 엔티티에는
@@ -19,23 +19,33 @@ public class Article {
     @Setter @Column private String title;
     @Setter @Column private String content;
 
+    @Setter
+    @Column(columnDefinition = "integer default 0", nullable = false) private long view;
+
+
 
 //     디폴트 생성자 하나 무조건 만들어줘야함
-//    protected Article() {}
+//     protected Article() {}
 
 
-//    public Article(Long id,String title,String content) {
-//        this.id = id;
-//        this.title = title;
-//        this.content= content;
-//    } // 생성자 하나 만들어주고 ... 이걸 dto에서 변환
+    public Article(Long id,String title,String content) {
+        this.id = id;
+        this.title = title;
+        this.content= content;
+//        this.view= view;
+    } // 필드의 생성자 하나 만들어주고 ... 이걸 dto에서 변환
 
 
-        public void patch(Article article) {
+    public void patch(Article article) {
         if (article.title != null)
             this.title = article.title;
         if (article.content != null)
             this.content = article.content;
     }
+
+    public void increaseViewCount() {
+        this.view++;
+    }
+
 
 }

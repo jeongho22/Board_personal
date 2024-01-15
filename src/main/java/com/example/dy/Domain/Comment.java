@@ -27,12 +27,16 @@ public class Comment {
     @Column @Setter private String body;
 
 
+
+    // 생성 메서드
     public static Comment createComment(CommentDto dto, Article article) {
         // 예외 발생
         if (dto.getId() != null)
-            throw new IllegalArgumentException("댓글 생성 실패! 댓글의 id가 없어야 합니다.");
+            throw new IllegalArgumentException("댓글 생성 실패! 댓글의 id가 없어야 합니다."); // 생성할때 댓글의 아이디가 있어야함...
         if (dto.getArticleId() != article.getId())
-            throw new IllegalArgumentException("댓글 생성 실패! 게시글의 id가 잘못되었습니다.");
+            throw new IllegalArgumentException("댓글 생성 실패! 게시글의 id가 잘못되었습니다."); // 게시글의 id랑 == 댓글의 articleId 다르다면
+
+
         // 엔티티 생성 및 반환
         return new Comment(
                 dto.getId(),
@@ -42,6 +46,7 @@ public class Comment {
         );
     }
 
+    // 수정 메서드
     public void patch(CommentDto dto) {
         // 예외 발생
         if (this.id != dto.getId())

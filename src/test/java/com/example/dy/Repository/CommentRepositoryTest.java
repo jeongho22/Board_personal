@@ -21,32 +21,32 @@ class CommentRepositoryTest {
     @Test
     @DisplayName("특정 게시글의 모든 댓글 조회")
     void findByArticleId() {
-        /* Case 1: 4번 게시글의 모든 댓글 조회 */
-        {
-            // 준비
-            Long articleId = 14L;
-            // 수행
-            List<Comment> comments = commentRepository.findByArticleId(articleId);
-            // 예상
-            Article article = new Article(14L, "김정호", "수정");
-            Comment a = new Comment(1L, article, "Park", "치킨");
-            Comment b = new Comment(2L, article, "Kim", "샤브샤브");
-            Comment c = new Comment(3L, article, "Choi", "초밥");
-            List<Comment> expected = Arrays.asList(a, b, c);
-            // 검증
-            assertEquals(expected.toString(), comments.toString(), "14번 글의 모든 댓글을 출력!");
-        }
-        /* Case 2: 1번 게시글의 모든 댓글 조회 */
+        /* Case 1: 1번 게시글의 모든 댓글 조회 */
         {
             // 준비
             Long articleId = 1L;
             // 수행
             List<Comment> comments = commentRepository.findByArticleId(articleId);
             // 예상
-            Article article = new Article(1L, "가가가가", "1111");
+            Article article = new Article(1L, "헉", "헉");
+            Comment a = new Comment(17L, article, "김정호", "1");
+            Comment b = new Comment(18L, article, "권유정", "2");
+            Comment c = new Comment(19L, article, "코코", "3");
+            List<Comment> expected = Arrays.asList(a, b, c);
+            // 검증
+            assertEquals(expected.toString(), comments.toString(), "1번 글의 모든 댓글을 출력!");
+        }
+        /* Case 2: 1번 게시글의 모든 댓글 조회 */
+        {
+            // 준비
+            Long articleId = 19L;
+            // 수행
+            List<Comment> comments = commentRepository.findByArticleId(articleId);
+            // 예상
+            Article article = new Article(19L, "가가가가", "1111");
             List<Comment> expected = Arrays.asList();
             // 검증
-            assertEquals(expected.toString(), comments.toString(), "1번 글은 댓글이 없음");
+            assertEquals(expected.toString(), comments.toString(), "19번 글은 댓글이 없음");
         }
     }
     @Test
@@ -55,16 +55,16 @@ class CommentRepositoryTest {
         /* Case 1: "Park"의 모든 댓글 조회 */
         {
             // 준비
-            String nickname = "Park";
+            String nickname = "김정호";
             // 수행
             List<Comment> comments = commentRepository.findByNickname(nickname);
             // 예상
-            Comment a = new Comment(1L, new Article(4L, "당신의 인생 영화는?", "댓글 ㄱ"), nickname, "굳 윌 헌팅");
-            Comment b = new Comment(4L, new Article(5L, "당신의 소울 푸드는?", "댓글 ㄱㄱ"), nickname, "치킨");
-            Comment c = new Comment(7L, new Article(6L, "당신의 취미는?", "댓글 ㄱㄱㄱ"), nickname, "조깅");
+            Comment a = new Comment(1L, new Article(17L, "헉", "헉"), nickname, "1");
+            Comment b = new Comment(15L, new Article(20L, "데이터 전송", "전송ㅋㅋㅋ"), nickname, "2");
+            Comment c = new Comment(19L, new Article(21L, "유다이렉트", "그런가k"), nickname, "3");
             List<Comment> expected = Arrays.asList(a, b, c);
             // 검증
-            assertEquals(expected.toString(), comments.toString(), "Park의 모든 댓글을 출력!");
+            assertEquals(expected.toString(), comments.toString(), "김정호의 모든 댓글을 출력!");
         }
     }
 }

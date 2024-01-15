@@ -44,8 +44,8 @@ class ArticleServiceTest {
     void show_success() {
 
         //예상
-        Long id= 14L;
-        Article expected = new Article(id,"김정호","수정");
+        Long id= 1L;
+        Article expected = new Article(id,"헉","헉");
 
 
         //실제
@@ -96,7 +96,7 @@ class ArticleServiceTest {
         // 예상
         String title = "라라라라";
         String content = "4444";
-        ArticleFormDto dto = new ArticleFormDto(4L, title, content);
+        ArticleFormDto dto = new ArticleFormDto(1L, title, content);
         Article expected = null;
         // 실제
         Article article = articleService.create(dto);

@@ -1,12 +1,7 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <body>
 
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8"
-        crossorigin="anonymous"></script>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 <footer th:fragment="common-footer1">
@@ -113,42 +108,6 @@
     }
   </script>
 
-    <!-- 댓글 삭제 -->
-<!--    <script>-->
-<!--      {-->
-<!--        // 삭제 버튼 선택-->
-<!--        const commentDeleteBtns = document.querySelectorAll(".comment-delete-btn");-->
-
-<!--        // for 반복문을 사용하여 각 버튼에 이벤트 리스너 추가-->
-<!--        for (let i = 0; i < commentDeleteBtns.length; i++) {-->
-<!--          const btn = commentDeleteBtns[i];-->
-
-<!--          // 이벤트 리스너 등록-->
-<!--          btn.addEventListener("click", (event) => {-->
-<!--            // 이벤트 발생 요소를 선택-->
-<!--            const commentDeleteBtn = event.target;-->
-<!--            // 삭제 댓글 id 가져오기-->
-<!--            const commentId = commentDeleteBtn.getAttribute("data-comment-id");-->
-<!--            console.log(`삭제 버튼 클릭: ${commentId}번 댓글`);-->
-<!--            // 삭제 API 호출 및 처리-->
-<!--            const url = `/api/comments/${commentId}`;-->
-<!--            fetch(url, {-->
-<!--              method: "DELETE"-->
-<!--            }).then(response => {-->
-<!--              // 댓글 삭제 실패 처리-->
-<!--              if (!response.ok) {-->
-<!--                alert("댓글 삭제 실패..!");-->
-<!--                return;-->
-<!--              }-->
-<!--              // 삭제 성공 시, 댓글을 화면에서 지움!-->
-<!--              const target = document.querySelector(`#comments-${commentId}`);-->
-<!--              target.remove();-->
-<!--            });-->
-<!--          });-->
-<!--        }-->
-<!--      }-->
-<!--    </script>-->
-
 
 
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -160,8 +119,6 @@
 
   <!-- 모달 이벤트 처리 -->
   <script>
-
-
     {
       // 모달 요소 선택
       const commentEditModal = document.querySelector("#comment-edit-modal");
