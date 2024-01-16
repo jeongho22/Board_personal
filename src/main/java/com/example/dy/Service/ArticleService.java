@@ -28,14 +28,14 @@ public class ArticleService {
 
 
 
-
+    @Transactional
     public Article show(Long id) {
         Article article = articleRepository.findById(id).orElse(null);
 
         //id를 가진 Article 객체를 데이터베이스에서 찾아서 반환하되, 만약 그런 객체가 없으면 null을 반환
         if (article != null) {
             log.info(article.toString());
-            article.increaseViewCount();
+            articleRepository.incrementViewCount(id);
             log.info(article.toString());
             return articleRepository.save(article);
         }

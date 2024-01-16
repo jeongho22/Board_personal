@@ -1,69 +1,47 @@
 
+
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>게시판 리스트</title>
-    <!-- 헤더 관련 메타 태그, 스타일시트 링크 등 -->
-    <style>
-        .table-board {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .table-board th {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px;
-        }
-        .table-board td {
-            padding: 8px;
-            text-align: center;
-        }
-        .table-board tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-        .table-board tr:hover {
-            background-color: #ddd;
-        }
-    </style>
-
-        <!-- Bootstrap CSS -->
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
-
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
 
 <div th:replace="layouts/header :: common-header"></div>
 
 <!-- 메인 콘텐츠 -->
-<table class="table-board">
-    <thead>
-    <tr>
-        <th scope="col">ID</th>
-        <th scope="col">Title</th>
-        <th scope="col">Content</th>
-        <th scope="col">조회수</th>
-    </tr>
-    </thead>
-    <tbody>
-<!--    컨트롤러에서 가져온 articleList 받아서 하나씩 반복문 돌려줌..-->
-    <tr th:each="article : ${articleList}">
-        <td th:text="${article.id}">ID</td>
-        <td><a th:href="@{/articles/{id}(id=${article.id})}" th:text="${article.title}" style="text-align:left;">Title</a></td>
-        <td th:text="${article.content}">Content</td>
-        <td th:text="${article.view}">조회수</td>
-    </tr>
-    </tbody>
-</table>
+<div class="container mt-4">
+    <table class="table table-hover">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Title</th>
+            <th scope="col">Content</th>
+            <th scope="col">조회수</th>
+            <th scope="col">작성시간</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- 컨트롤러에서 가져온 articleList 받아서 하나씩 반복문 돌려줌..-->
+        <tr th:each="article : ${articleList}">
+            <td th:text="${article.id}">ID</td>
+            <td><a th:href="@{/articles/{id}(id=${article.id})}" th:text="${article.title}">Title</a></td>
+            <td th:text="${article.content}">Content</td>
+            <td th:text="${article.view}">조회수</td>
+            <td th:text="${article.createdAt}">작성시간</td>
+        </tr>
+        </tbody>
+    </table>
 
-<!--<a href ="/articles/new">글쓰기</a>-->
+
+    <div th:replace="layouts/footer :: common-footer"></div>
+</div>x
 
 <!-- 푸터 삽입 -->
-<div th:replace="layouts/footer :: common-footer"></div>
 </body>
 </html>
-
-
 
 
 

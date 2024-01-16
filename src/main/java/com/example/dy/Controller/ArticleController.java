@@ -6,8 +6,11 @@ import com.example.dy.Dto.CommentDto;
 import com.example.dy.Repository.ArticleRepository;
 import com.example.dy.Service.ArticleService;
 import com.example.dy.Service.CommentService;
+import com.example.dy.Service.PaginationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +31,8 @@ public class ArticleController {
     private CommentService commentService;
     @Autowired
     private ArticleService articleService;
+    @Autowired
+    private PaginationService paginationService;
 
 
 
@@ -155,13 +160,14 @@ public class ArticleController {
     }
 
     @GetMapping("/articles")
-    public String index(Model model){
+    public String index(Model model, Pageable pageable){
         // 1: 모든 Article을 가져온다. 전체목록이라... List로 담아야함.
         // ** List findAll() 하는 기능은 CrudRepository 에는 없음.
         List<Article> articleEntityList = articleRepository.findAll();
 
         // 2: 가져온 모든 Article 묶음을 뷰로 전달!
         model.addAttribute("articleList",articleEntityList);
+
 
         // 3: 뷰 페이지를 설정 !
         return "articles/index";
