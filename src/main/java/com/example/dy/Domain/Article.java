@@ -34,7 +34,6 @@ public class Article extends AuditingFields {
         this.id = id;
         this.title = title;
         this.content= content;
-//        this.view= view;
     } // 필드의 생성자 하나 만들어주고 ... 이걸 dto에서 변환
 
 

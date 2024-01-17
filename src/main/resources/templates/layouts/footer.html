@@ -1,11 +1,91 @@
+
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-
-
+<head>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
 <body>
+
 <footer th:fragment="common-footer">
-    <!-- 부트스트랩 클래스를 활용한 스타일리시한 버튼 -->
-    <a href="/articles/new" class="btn btn-primary">글쓰기</a>
+
+
+    <div class="container">
+
+        <!--검색어-->
+        <div class="row mb-3">
+            <div class="col text-center">
+                <nav aria-label="Page navigation">
+                    <!-- 검색 결과가 있을 경우에만 페이지네이션 표시 -->
+                    <div th:if="${!articlePage.empty}" class="row justify-content-center">
+                        <nav class="pagination justify-content-center">
+                            <ul class="pagination justify-content-center">
+                                <!-- Previous Button -->
+                                <!--현재 페이지넘버는 0부터 시작함-->
+                                <li class="page-item" th:classappend="${articlePage.number == 0 ? 'disabled' : ''}">
+                                    <a class="page-link" th:href="@{/articles(page=${articlePage.number - 1}, searchType=${searchType}, searchKeyword=${searchKeyword})}">Previous</a>
+                                </li>
+                                <!-- Page Numbers -->
+                                <li th:each="pageNum : ${#numbers.sequence(0, articlePage.totalPages - 1)}" class="page-item" th:classappend="${pageNum == articlePage.number ? 'active' : ''}">
+                                    <a class="page-link" th:href="@{/articles(page=${pageNum}, searchType=${searchType}, searchKeyword=${searchKeyword})}" th:text="${pageNum + 1}"></a>
+                                    <!--th:each="pageNum : ${#numbers.sequence(0, articlePage.totalPages - 1)}":
+                                         0부터 시작하여 총 페이지 수(articlePage.totalPages)까지의 숫자 시퀀스를 생성합니다.
+                                         각 숫자(pageNum)에 대해 페이지 번호를 표시하는 <li> 요소가 반복적으로 생성됩니다.    -->
+                                </li>
+                                <!-- Next Button -->
+                                <li class="page-item" th:classappend="${articlePage.number == articlePage.totalPages - 1 ? 'disabled' : ''}">
+                                    <a class="page-link" th:href="@{/articles(page=${articlePage.number + 1}, searchType=${searchType}, searchKeyword=${searchKeyword})}">Next</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+
+                    <!-- 검색 결과가 없을 경우 메시지 표시 -->
+<!--                    <div th:if="${articlePage.empty}" class="row">-->
+<!--                        <p> 조건에 맞는 검색어가 없습니다. 검색어를 변경해 보세요.</p>-->
+<!--                    </div>-->
+
+                    <div th:if="${articlePage.empty}" class="row">
+                        <div class="col text-center">
+                            <div class="alert alert-dark" role="alert">
+                                <i class="fas fa-info-circle"></i> 아직 찾으시는 내용이 없네요!
+                                <p>다른 검색어로 시도해보시거나, 아래 버튼을 클릭하여 메인 페이지로 돌아가세요.</p>
+                                <a href="/" class="btn btn-dark btn-sm">메인 페이지로 돌아가기</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </nav>
+            </div>
+        </div>
+
+
+
+        <!-- 검색 양식 -->
+        <div class="row mb-3">
+            <div class="col">
+                <form th:action="@{/articles}" method="get">
+                    <div class="form-row">
+                        <div class="col-4">
+                            <select class="form-control" id="searchType" name="searchType">
+                                <option value="TITLE">제목</option>
+                                <option value="CONTENT">내용</option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <input type="text" class="form-control" id="searchKeyword" name="searchKeyword" placeholder="검색어 입력">
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-primary">검색</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 </footer>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

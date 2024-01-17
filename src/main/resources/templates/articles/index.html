@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -24,8 +25,8 @@
         </tr>
         </thead>
         <tbody>
-        <!-- 컨트롤러에서 가져온 articleList 받아서 하나씩 반복문 돌려줌..-->
-        <tr th:each="article : ${articleList}">
+        <!--  테이블 데이터 반복 -->
+        <tr th:each="article : ${articlePage.content}">
             <td th:text="${article.id}">ID</td>
             <td><a th:href="@{/articles/{id}(id=${article.id})}" th:text="${article.title}">Title</a></td>
             <td th:text="${article.content}">Content</td>
@@ -35,14 +36,22 @@
         </tbody>
     </table>
 
+    <!-- 글쓰기 버튼 -->
 
+    <div class="row">
+        <div class="col text-right">
+            <!-- 글쓰기 버튼 -->
+            <a href="/articles/new" class="btn btn-primary">글쓰기</a>
+        </div>
+    </div>
+
+    <!-- 푸터 삽입 -->
     <div th:replace="layouts/footer :: common-footer"></div>
-</div>x
+</div>
 
-<!-- 푸터 삽입 -->
+
 </body>
 </html>
-
 
 
 

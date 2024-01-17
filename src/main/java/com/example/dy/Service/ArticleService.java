@@ -2,10 +2,13 @@ package com.example.dy.Service;
 
 
 import com.example.dy.Domain.Article;
+import com.example.dy.Domain.constant.SearchType;
 import com.example.dy.Dto.ArticleFormDto;
 import com.example.dy.Repository.ArticleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -25,7 +28,6 @@ public class ArticleService {
         // ** List findAll() 하는 기능은 CrudRepository 에는 없음.
         return articleRepository.findAll(); // 앞쪽에서 List로 받아서 메서드생성
     }
-
 
 
     @Transactional
@@ -129,4 +131,23 @@ public class ArticleService {
         // 결과값 반환
         return articleList;
     }
+
+
+    @Transactional
+    public Page<Article> searchArticles(String searchType, String searchKeyword, Pageable pageable) {
+        if (searchKeyword == null || searchKeyword.isBlank()) {
+            return articleRepository.findAll(pageable);
+        }
+
+        SearchType type = SearchType.valueOf(searchType.toUpperCase());
+        // searchType 변수에 저장된 문자열을 모두 대문자로 변환합니다.
+        // 이는 SearchType 열거형(enum)이 대문자로 정의된 경우에 일치시키기 위한 것입니다.
+
+        return switch (type) {
+            case TITLE -> articleRepository.findByTitleContaining(searchKeyword, pageable);
+            case CONTENT -> articleRepository.findByContentContaining(searchKeyword, pageable);
+        };
+    }
+
+
 }

@@ -6,16 +6,19 @@ import com.example.dy.Dto.CommentDto;
 import com.example.dy.Repository.ArticleRepository;
 import com.example.dy.Service.ArticleService;
 import com.example.dy.Service.CommentService;
-import com.example.dy.Service.PaginationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -31,8 +34,7 @@ public class ArticleController {
     private CommentService commentService;
     @Autowired
     private ArticleService articleService;
-    @Autowired
-    private PaginationService paginationService;
+
 
 
 
@@ -159,19 +161,32 @@ public class ArticleController {
 
     }
 
+
+
     @GetMapping("/articles")
-    public String index(Model model, Pageable pageable){
-        // 1: 모든 Article을 가져온다. 전체목록이라... List로 담아야함.
-        // ** List findAll() 하는 기능은 CrudRepository 에는 없음.
-        List<Article> articleEntityList = articleRepository.findAll();
+    public String index(Model model,
+                        @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+                        @RequestParam(required = false) String searchType,
+                        @RequestParam(required = false) String searchKeyword) {
 
-        // 2: 가져온 모든 Article 묶음을 뷰로 전달!
-        model.addAttribute("articleList",articleEntityList);
+        //        // 1: 모든 Article을 가져온다. 전체목록이라... List로 담아야함.
+        //        // ** List findAll() 하는 기능은 CrudRepository 에는 없음.
+        //        List<Article> articleEntityList = articleRepository.findAll();
+        //
+        //        // 2: 가져온 모든 Article 묶음을 뷰로 전달!
+        //        model.addAttribute("articleList",articleEntityList);
 
+        Page<Article> articlePage = articleService.searchArticles(searchType, searchKeyword, pageable);
 
-        // 3: 뷰 페이지를 설정 !
+        model.addAttribute("articlePage", articlePage);
+        model.addAttribute("searchType", searchType);
+        model.addAttribute("searchKeyword", searchKeyword);
+
         return "articles/index";
     }
+
+
+
 
     //     4. Delete(삭제)
     @GetMapping("/articles/{id}/delete")
