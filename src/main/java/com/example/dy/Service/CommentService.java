@@ -28,71 +28,73 @@ public class CommentService {
 
         //  1.조회 : 댓글 목록 조회
         List<Comment> comments =commentRepository.findByArticleId(articleId); // 게시글 번호에 해당하는 comments 를 찾는다.
+        log.info("댓글 조회 목록 1: {} ",comments);
 
 
-        //  2.변환: comment 엔티티 -> DTO
-        List<CommentDto> dtos = new ArrayList<CommentDto>();                // dtos로 비어있는 dto 리스트를 하나 만들고
-        log.info("테스트2 =>{}",dtos);
+        //  2. entity - > DTO로 변경하여 반환
+        List<CommentDto> dtos = new ArrayList<CommentDto>();      // Comment 에서 -> Dto 변환된 Dto 담는 리스트 생성
+        log.info("댓글 조회 목록 2: {} ",dtos);
+
         for (int i = 0; i < comments.size(); i++) {
-            Comment look = comments.get(i);                          //변환            // entity를
-            CommentDto dto = CommentDto.createCommentDto(look);      //변환            // 여기에 dto로 변환
+            Comment c = comments.get(i);
+            CommentDto dto = CommentDto.createCommentDto(c);      // Comment entity 를 -> dto 로 변환
             dtos.add(dto);
 
-            log.info(String.valueOf(look));
-            log.info(String.valueOf(dto));
+            log.info("댓글 조회 목록 3(Comment) : {} ", c);
+            log.info("댓글 조회 목록 3(DTO) : {} ", dto);
         }
+            log.info("댓글 조회 목록 4(Dtos) : {} ", dtos);
 
         //  3.반환
         return dtos;
 
 
-//        //조회 : 댓글 목록 조회
-//        return commentRepository.findByArticleId(articleId)
-//                .stream()                                           // 하나씩 꺼내온다... 반복문 안써도됨....
-//                .map(comment -> CommentDto.createCommentDto(comment))
-//                                                                    // 1.꺼내진 comment를 -> commentDto에서 함수 createCommentDto 사용 반환
-//                .collect(Collectors.toList());                      // 2.입력으로 들어온 comment 를 다시 CommentDto.createCommentDto(comment) 여기에 넣음
-//                                                                    // 3.List로 묶음
     }
-
-
 
 
     @Transactional
     public CommentDto create(Long articleId, CommentDto dto) {
 
-        log.info("게시글 id 입력값 =>{}",articleId);
-        log.info("댓글 dto 입력값 =>{}",dto);
-        // 게시글 조회 및 예외 발생
+        log.info("1. 게시글 Id : {}", articleId);
+        log.info("2. 댓글 Dto : {}", dto);
+
+        // 1.게시글 조회 및 예외 발생 (예외발생 되면 아래 실행X) -> comment 가 달린 위치 찾기 위해
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new IllegalArgumentException("댓글 생성 실패! 대상 게시글이 없습니다."));
-        // 예외발생되면 아래 실행X
 
-        // 댓글 엔티티 생성
+        // 2.댓글 엔티티 생성
         Comment comment = Comment.createComment(dto, article); //  dto, article 두개다 던져줘서 댓글 엔티티 생성
-        log.info("댓글 엔티티 생성=>{}",comment);
 
-        // 댓글 엔티티를 DB로 저장
+        // 3.댓글 엔티티를 DB로 저장
         Comment created = commentRepository.save(comment);
 
-        // entity - > DTO로 변경하여 반환
+        log.info("3. 댓글 엔티티 생성 : {}",created);
+
+        // 4.entity - > DTO로 변경하여 반환
         return CommentDto.createCommentDto(created);
 
 
     }
-// 위처럼 반복적인 코드를 aop로 가능
+
+
     @Transactional
     public CommentDto update(Long id, CommentDto dto) {
+
+        log.info("1. 댓글 Dto : {}", dto);
+
         // 1.댓글 조회 및 예외 발생
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("댓글 수정 실패! 대상 댓글이 없습니다."));
-        log.info("댓글 엔티티 =>{}",comment);
+
+        log.info("2. 댓글 엔티티 : {}",comment);
 
         // 2.댓글 수정
         comment.patch(dto);
-        log.info("댓글 수정된 엔티티 =>{}",comment);
+        log.info("3. 댓글 수정된 엔티티 : {}",comment);
+
         // 3.DB로 갱신
         Comment updated = commentRepository.save(comment);
+
         // 4.댓글 엔티티를 DTO로 변환 및 반환
         return CommentDto.createCommentDto(updated);
     }

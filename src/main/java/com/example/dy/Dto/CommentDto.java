@@ -4,11 +4,9 @@ import com.example.dy.Domain.Comment;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
-@AllArgsConstructor // 모든 생성자 자동생성
 @ToString
 @NoArgsConstructor // 디폴트 생성자 생성
 @Getter
-
 
 // comment 담을 그릇
 public class CommentDto {
@@ -19,17 +17,25 @@ public class CommentDto {
     private String body;
 
 
+    // 생성자( 이런식으로 생성 해줘도 되고 @AllArgsConstructor 도 가능)
+    public CommentDto(Long id,Long articleId,String nickname,String body) {
+        this.id = id;
+        this.articleId = articleId;
+        this.nickname= nickname;
+        this.body = body;
+    }
 
-
-    // Comment -> CommentDto로 변환하는 메서드
+    // Comment -> CommentDto로 변환
     public static CommentDto createCommentDto(Comment comment) {
         return new CommentDto(
-                comment.getId(),              // 댓글의 id키 번호
-                comment.getArticle().getId(), // 게시글의 id
+                comment.getId(),
+                comment.getArticle().getId(),
                 comment.getNickname(),
                 comment.getBody()
-
         );
     }
+
+
+
 }
 

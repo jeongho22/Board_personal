@@ -1,15 +1,10 @@
 package com.example.dy.Dto;
-
 import com.example.dy.Domain.Article;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import com.example.dy.Domain.Comment;
 import lombok.ToString;
-import org.apache.tomcat.jni.Local;
-
-import java.time.LocalTime;
 
 
-@AllArgsConstructor //    이걸 쓰면 생성자, tostring 이런거 안써도됌...
+
 @ToString
 public class ArticleFormDto {
 
@@ -17,28 +12,27 @@ public class ArticleFormDto {
     private final String title;
     private final String content;
 
+    // 생성자( 이런식으로 생성 해줘도 되고 @AllArgsConstructor 도 가능)
+    public ArticleFormDto(Long id,String title,String content) {
+        this.id = id;
+        this.title = title;
+        this.content= content;
 
-
-//    public ArticleFormDto(String title , String content) {
-//        this.title = title;
-//        this.content = content;
-//
-//    } // @AllArgsConstructor 필드의 생성자 대체 가능
-//
-//    @Override
-//    public String toString() {
-//        return "ArticleFormDto{" +
-//                "title='" + title + '\'' +
-//                ", content='" + content + '\'' +
-//                '}';
-//
-//    }// @ToString 대체 가능
-//
-//
-    public Article toEntity() {                        // ArticleFormDto 객체를 가지고
-
-        return new Article(id, title, content);       // article 엔티티의 생성자들 리턴
     }
+
+
+    // Dto - > Entity 변환
+    public Article toEntity() {
+        return new Article(
+                this.id,
+                this.title,
+                this.content);
+    }
+
+
+
+
+
 }
 
 

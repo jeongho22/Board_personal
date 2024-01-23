@@ -15,10 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -45,28 +42,17 @@ public class ArticleController {
         return "articles/new";
     }
 
+
     @PostMapping("/articles/create") // 글쓰기를 누르면 Submit 여기로가는데 redirect 해줌... 아래에서
-    public String createArticle(ArticleFormDto form) {  // dto 를 form 이라고 명시해주고 dto의 toString 함수를 불러옴.
-        log.info(form.toString());
+    public String createArticle(ArticleFormDto dto) {  // dto 를 form 이라고 명시해주고 dto의 toString 함수를 불러옴.
+        log.info(dto.toString());
 
-        //1. dto를 -> entity 변환
-        //엔티티
-        Article articleEntity = form.toEntity();
-        log.info(articleEntity.toString());
+        Article articleEntity = articleService.create(dto);
 
-
-        //2. 엔티티를 db로 저장한다.
-
-        Article saved = articleRepository.save(articleEntity); // dto에서 entity로 변환한걸 save
-        log.info(saved.toString());
-
+        log.info(String.valueOf(articleEntity));
 
         //3. 페이지로 리다이렉트 한다.
-        return "redirect:/articles/" + saved.getId();
-//        articleEntity.getId()를 사용하는 경우는
-//        엔티티가 데이터베이스에 저장되기 전의 ID 값을 사용하는 것이고,
-//        saved.getId()를 사용하는 경우는
-//        데이터베이스에 저장된 후의 정확한 ID 값을 사용하는 것입니다.
+        return "redirect:/articles/" + articleEntity.getId();
     }
 
     // 2. UPDATE(수정)
@@ -80,7 +66,7 @@ public class ArticleController {
         // 2. 모델 등록
         model.addAttribute("article",articleEntity);
 
-        log.info(articleEntity.toString());
+        log.info(Objects.requireNonNull(articleEntity).toString());
         // article/edit 페이지 에서만 사용 가능
 
         // 3.뷰 페이지 설정
@@ -88,50 +74,28 @@ public class ArticleController {
     }
 
 
+
     @PostMapping("/articles/update")
-    public String update(ArticleFormDto form) {  // dto 를 form 이라고 명시해주고 dto의 toString 함수를 불러옴.
-
-        log.info(form.toString());
-
-        //1. dto를 entity로 변환하는작업을 거쳐야함
+    public String update(Long id, ArticleFormDto form) {
+        Article articleEntity = articleService.update(id, form);
 
 
-        Article articleEntity = form.toEntity();    // dto를 -> entity로 변환
-                                                    // ArticleFormDto에는 view 필드가 없기 때문에, toEntity 메소드를 통해 생성된 Article 객체의 view 필드는 기본값으로 설정됩니다.
-                                                    // 이 경우, Java에서 기본값은 0이 됩니다.
-        log.info(articleEntity.toString());         // 따라서, articleRepository.save(articleEntity)를 호출하면, 데이터베이스에 저장된 기존 게시글의 view가 0으로 덮어씌워집니다.
-
-
-        //2. 엔티티를 db로 저장한다.
-
-        //2-1. DB에서 기존 데이터를 가져온다. 있으면 가져오고, 없으면 null 반환
-        Article target = articleRepository.findById(articleEntity.getId()).orElse(null);
-        //아티클 안에
-        log.info(Objects.requireNonNull(target).toString());
-
-        //2-2. 기존 데이터에 값을 갱신한다.
-        if (target!=null) {               // null 이 아니라면 즉, 기존 데이터가 있다면
-            // target의 title과 content를 업데이트
-            target.setTitle(articleEntity.getTitle());
-            target.setContent(articleEntity.getContent());
-
-//              articleRepository.save(articleEntity); // 문제의 부분 바로 DTO에서 ENTITY로 변환된곳에서 자동으로 기본값 0이 되었기 때문에...
-                                                        //  문제 발생 그래서 전체가 아니라 TITIE과 CONTENT 만 업데이트
-
-            // target을 저장 (이때 view는 기존 값으로 유지됨)
-            articleRepository.save(target);
+        if (articleEntity == null) {
+            // 적절한 에러 처리 (예: 리다이렉트 또는 에러 페이지 표시)
+            return "errorPage";
         }
-        log.info(Objects.requireNonNull(target).toString());
 
-        //3. 수정페이지로 리다이렉트 한다.
+        log.info(String.valueOf(articleEntity.getId()));
+
         return "redirect:/articles/" + articleEntity.getId();
-
-
     }
 
 
 
+
     // 3. READ(읽기)
+
+    // 3-1. 단건 화면 조회
     @GetMapping("/articles/{id}")
     public String show(@PathVariable Long id,
                        Model model){   // id타입을 가져온다 @pathvariable 통해
@@ -139,7 +103,6 @@ public class ArticleController {
 
         //1.id로 데이터를 가져옴 !
         Article articleEntity  = articleService.show(id);
-//        Article articleEntity = articleRepository.findById(id).orElse(null); Service에서 구현
         List<CommentDto> commentsDtos = commentService.comments(id);
 
 
@@ -147,7 +110,6 @@ public class ArticleController {
 
         model.addAttribute("article", articleEntity);
         model.addAttribute("commentDtos", commentsDtos);
-
 
 
         //3. 보여줄 페이지를 설정!
@@ -162,7 +124,7 @@ public class ArticleController {
     }
 
 
-
+    // 3-2. 인덱스 화면 조회
     @GetMapping("/articles")
     public String index(Model model,
                         @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
@@ -176,7 +138,7 @@ public class ArticleController {
         //        // 2: 가져온 모든 Article 묶음을 뷰로 전달!
         //        model.addAttribute("articleList",articleEntityList);
 
-        Page<Article> articlePage = articleService.searchArticles(searchType, searchKeyword, pageable);
+        Page<Article> articlePage = articleService.index(searchType, searchKeyword, pageable);
 
         model.addAttribute("articlePage", articlePage);
         model.addAttribute("searchType", searchType);
@@ -187,24 +149,13 @@ public class ArticleController {
 
 
 
-
     //     4. Delete(삭제)
     @GetMapping("/articles/{id}/delete")
     public String delete(@PathVariable Long id , RedirectAttributes rttr){   // id타입을 가져온다 @pathvariable 통해
 
 
-        //1. 삭제 대상을 가져온다
-
-        Article target = articleRepository.findById(id).orElse(null);
-        log.info("삭제요청이 들어왔습니다: " + target);
-
-
-        //2. 대상을 삭제한다 !
-        if (target!=null) {                                // null 이 아니라면 즉, 비어있지않다면 삭제
-            articleRepository.delete(target);
-            rttr.addFlashAttribute("msg","삭제 완료"); // 한번쓰고 사라지는 플래쉬 휘발성 데이터
-        }
-
+        articleService.delete(id);
+        rttr.addFlashAttribute("msg","삭제 완료"); // 한번쓰고 사라지는 플래쉬 휘발성 데이터
 
         //3. 보여줄 페이지를 설정!
         return "redirect:/articles";

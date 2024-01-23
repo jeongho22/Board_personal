@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+@CrossOrigin(origins = "http://localhost:3000")
 @Slf4j
 @RestController
 public class CommentApiController {
@@ -23,9 +24,11 @@ public class CommentApiController {
     @GetMapping("/api/articles/{articleId}/comments")
     public ResponseEntity<List<CommentDto>> comments(@PathVariable Long articleId){ //ResponseEntity는 HTTP 응답에 대한 전체 메시지를 나타냅니다.
 
-        // 1.서비스에게 위임
-        // 2.코멘트를 바로 반환하기 보다는 dto로 만들어서 반환
+        // 1.서비스 에게 위임
+        // 2.코멘트를 바로 반환 하기 보다는 dto로 만들어서 반환
         List<CommentDto> dtos = commentService.comments(articleId); // 위에 입력값 넣음
+
+        log.info("댓글 조회 목록 5(Dtos) : {} ", dtos);
 
         return ResponseEntity.status(HttpStatus.OK).body(dtos);     // 무조건 옳은 응답으로 일단해줌
     }
@@ -36,7 +39,7 @@ public class CommentApiController {
                                              @RequestBody CommentDto dto) {
         // 서비스에게 위임
         CommentDto createdDto = commentService.create(articleId, dto);
-        log.info("댓글 생성 엔티티 -> dto 변환값 =>{}",createdDto);
+        log.info("4. 댓글 엔티티 -> Dto 변환 : {} ",createdDto);
         // 결과 응답
         return ResponseEntity.status(HttpStatus.OK).body(createdDto);
     }
@@ -47,7 +50,7 @@ public class CommentApiController {
                                              @RequestBody CommentDto dto) { // json 을 받아올때만 dto
         // 서비스에게 위임
         CommentDto updatedDto = commentService.update(id, dto);
-        log.info("댓글 수정 엔티티 -> dto 변환값 =>{}",updatedDto);
+        log.info("4. 댓글 수정 엔티티 -> dto 변환 : {}",updatedDto);
         // 결과 응답
         return ResponseEntity.status(HttpStatus.OK).body(updatedDto);
     }

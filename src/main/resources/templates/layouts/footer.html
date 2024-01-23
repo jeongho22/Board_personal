@@ -26,7 +26,7 @@
                                     <a class="page-link" th:href="@{/articles(page=${articlePage.number - 1}, searchType=${searchType}, searchKeyword=${searchKeyword})}">Previous</a>
                                 </li>
                                 <!-- Page Numbers -->
-                                <li th:each="pageNum : ${#numbers.sequence(0, articlePage.totalPages - 1)}" class="page-item" th:classappend="${pageNum == articlePage.number ? 'active' : ''}">
+                                <li th:each="pageNum : ${#numbers.sequence(0, articlePage.totalPages - 1)}" class="page-item" th:classappend="${pageNum == articlePage.number ? 'disabled' : ''}">
                                     <a class="page-link" th:href="@{/articles(page=${pageNum}, searchType=${searchType}, searchKeyword=${searchKeyword})}" th:text="${pageNum + 1}"></a>
                                     <!--th:each="pageNum : ${#numbers.sequence(0, articlePage.totalPages - 1)}":
                                          0부터 시작하여 총 페이지 수(articlePage.totalPages)까지의 숫자 시퀀스를 생성합니다.
