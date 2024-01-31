@@ -3,7 +3,7 @@ package com.example.dy.Service;
 
 import com.example.dy.Domain.Article;
 import com.example.dy.Domain.constant.SearchType;
-import com.example.dy.Dto.ArticleFormDto;
+import com.example.dy.Dto.ArticleDto;
 import com.example.dy.Repository.ArticleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,104 +44,82 @@ public class ArticleService {
 
     //    1-2. 건별 조회
     @Transactional
-    public Article show(Long id) {
-        Article article = articleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Article not found with id: " + id));
+    public ArticleDto show(Long id) {
 
-        //id를 가진 Article 객체를 데이터베이스에서 찾아서 반환하되, 만약 그런 객체가 없으면 null을 반환
-        if (article != null) {
-            log.info(article.toString());
-            articleRepository.incrementViewCount(id);
-            log.info(article.toString());
-            return articleRepository.save(article);
-        }
-        return null;
+        // 1.ID로 엔티티 조회
+        //   예외가 있으면 다음으로 안넘어감.
+        Article article = articleRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Article not found with id: " + id));
+        // 2. 클릭마다 조회수 증가
+        articleRepository.incrementViewCount(id);
+        log.info("단일 조회 변환 이전(Entity) 1 : {}",article);
+
+        // 3. 엔티티를 DTO로 변환하여 반환
+        return ArticleDto.fromEntity(article);
     }
-
 
     //    2. 생성
 
-    public Article create(ArticleFormDto dto) {
+    public ArticleDto create(ArticleDto dto) {
 
-        log.info("생성 과정1 : {}", dto);
-
-        //1. dto를 -> entity 변환
-        Article article =dto.toEntity();
-        log.info("생성 과정2 : {}", article);
-
-        //2. 기존에 getId() 가 있다면 null 반환
-        if (article.getId()!=null){
-            return null;
-        }
-
-        return articleRepository.save(article);
+        log.info("생성 변환 이전(Dto) 1 : {}",dto);
+        // 1.Dto를 사용하여 엔티티 생성
+        Article article = new Article(null, dto.getTitle(), dto.getContent());
+        log.info("생성 변환 이전(Entity) 2 : {}",article);
+        // 2.엔티티 저장
+        Article createArticle = articleRepository.save(article);
+        // 3.엔티티를 DTO로 변환하여 반환
+        return ArticleDto.fromEntity(createArticle);
     }
-
 
 
 
 
 
     //    3. 수정
-    public Article update(Long id, ArticleFormDto dto) {
+    @Transactional
+    public ArticleDto update(Long id, ArticleDto dto) {
+        // 1.ID로 기존 엔티티 조회
+        //   예외가 있으면 다음으로 안넘어감.
+        Article article = articleRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Article not found with id: " + id));
+        log.info("수정 이전(Entity) 0 : {}",article);
 
-        log.info("업데이트 과정0 : {}", dto);
+        // 2.엔티티 수정
+        Article articleToUpdate = new Article(dto.getId(), dto.getTitle(), dto.getContent());
+        log.info("수정 변환 이전(Entity) 1 : {}",articleToUpdate);
+
+        article.patch(articleToUpdate);
+
+        log.info("수정 변환 이전(Entity) 2 : {}",article);
 
 
-        //1. DTO -> 엔티티 변환하지만, view는 제외하고 변환... 하지만 view역시 entity에 있어서 view 값은 0으로 반환
-        Article article = dto.toEntity();
-        log.info("업데이트 과정1 : {}", article);
+        // 3.엔티티 저장
+        Article updatedArticle = articleRepository.save(article);
 
-        // 2.데이터 베이스 에서 타겟 조회
-        Article target = articleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Article not found with id: " + id));
-        log.info("업데이트 과정2 : {}", target);
-
-        // 3.기존 데이터 베이스 타겟에서  변경된 게시글 업데이트
-        target.patch(article);
-        log.info("업데이트 과정3 : {}", target);
-
-        // 4.저장
-        return articleRepository.save(target);
+        // 4.엔티티를 DTO로 변환하여 반환
+        return ArticleDto.fromEntity(updatedArticle);
     }
+
 
 
 
 
     //    4. 삭제
-    public Article delete(Long id) {
-        // 1.대상 찾기
-        Article target = articleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Article not found with id: " + id));
-        log.info("삭제 대상 : {}", target);
+    public ArticleDto delete(Long id) {
 
-        //2. 대상을 삭제한다 !
-        if (target!=null) {                                // null 이 아니라면 즉, 비어있지않다면 삭제
-            articleRepository.delete(target);
-        }
+        // 1.대상 찾기 없으면 에러발생
+        Article target = articleRepository.findById(id).
+                orElseThrow(() -> new EntityNotFoundException("Article not found with id: " + id));
+        log.info("게시글 삭제 대상(Entity) 1: {}", target);
 
-        //3. 반환
-        return target;
+        // 2. 대상을 삭제한다 !
+        articleRepository.delete(target);
+
+        // 3. 대상 변환 삭제 반환
+        return ArticleDto.fromEntity(target);
     }
 
-
-
-//    @Transactional
-//    public List<Article> createArticles(List<ArticleFormDto> dtos) {
-//        // dto 묶음을 entity 묶음으로 변환
-//        List<Article> articleList = dtos.stream()
-////                .map(dto -> dto.toEntity()) 같은거
-//                .map(ArticleFormDto::toEntity)
-//                .collect(Collectors.toList()); // 리스트로 반환
-//
-//        // entity 묶음을 DB로 저장
-//        articleRepository.saveAll(articleList); // 한줄로 가능 성능이 한번에 저장하기때문에 조금 더 뛰어남... 아래는 계속 반복하면서 호출해야함...
-////        articleList.stream()
-////                .forEach(article -> articleRepository.save(article));
-//        // 강제 예외 발생
-//        articleRepository.findById(-1L).orElseThrow(
-//                () -> new IllegalArgumentException("결제 실패!")
-//        );
-//        // 결과값 반환
-//        return articleList;
-//    }
 
 }
 

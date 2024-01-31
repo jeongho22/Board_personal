@@ -1,7 +1,7 @@
 package com.example.dy.Controller;
 
 import com.example.dy.Domain.Article;
-import com.example.dy.Dto.ArticleFormDto;
+import com.example.dy.Dto.ArticleDto;
 import com.example.dy.Dto.CommentDto;
 import com.example.dy.Repository.ArticleRepository;
 import com.example.dy.Service.ArticleService;
@@ -9,7 +9,6 @@ import com.example.dy.Service.CommentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -43,17 +42,17 @@ public class ArticleController {
     }
 
 
-    @PostMapping("/articles/create") // 글쓰기를 누르면 Submit 여기로가는데 redirect 해줌... 아래에서
-    public String createArticle(ArticleFormDto dto) {  // dto 를 form 이라고 명시해주고 dto의 toString 함수를 불러옴.
-        log.info(dto.toString());
+    @PostMapping("/articles/create")
+    public String createArticle(ArticleDto dto, RedirectAttributes rttr) {
+        ArticleDto createdDto = articleService.create(dto);
 
-        Article articleEntity = articleService.create(dto);
+        log.info("생성 변환 성공(Dto) 3 : {}",createdDto);
 
-        log.info(String.valueOf(articleEntity));
+        rttr.addFlashAttribute("msg", "게시글 생성 완료");
 
-        //3. 페이지로 리다이렉트 한다.
-        return "redirect:/articles/" + articleEntity.getId();
+        return "redirect:/articles/" + createdDto.getId();
     }
+
 
     // 2. UPDATE(수정)
 
@@ -76,20 +75,14 @@ public class ArticleController {
 
 
     @PostMapping("/articles/update")
-    public String update(Long id, ArticleFormDto form) {
-        Article articleEntity = articleService.update(id, form);
+    public String update(Long id, ArticleDto dto, RedirectAttributes rttr) {
+        ArticleDto updatedDto = articleService.update(id, dto);
 
+        log.info("수정 변환 성공(Dto) 3 : {}",updatedDto);
 
-        if (articleEntity == null) {
-            // 적절한 에러 처리 (예: 리다이렉트 또는 에러 페이지 표시)
-            return "errorPage";
-        }
-
-        log.info(String.valueOf(articleEntity.getId()));
-
-        return "redirect:/articles/" + articleEntity.getId();
+        rttr.addFlashAttribute("msg", "게시글 수정 완료");
+        return "redirect:/articles/" + updatedDto.getId();
     }
-
 
 
 
@@ -102,8 +95,10 @@ public class ArticleController {
         log.info("id = " + id);
 
         //1.id로 데이터를 가져옴 !
-        Article articleEntity  = articleService.show(id);
+        ArticleDto articleEntity  = articleService.show(id);
         List<CommentDto> commentsDtos = commentService.comments(id);
+
+        log.info("조회 변환 성공(Dto) 2 : {}",articleEntity);
 
 
         //2. 가져온 데이터를 모델에 등록!
@@ -149,19 +144,14 @@ public class ArticleController {
 
 
 
-    //     4. Delete(삭제)
+
+    // 4. Delete(삭제)
     @GetMapping("/articles/{id}/delete")
-    public String delete(@PathVariable Long id , RedirectAttributes rttr){   // id타입을 가져온다 @pathvariable 통해
-
-
-        articleService.delete(id);
-        rttr.addFlashAttribute("msg","삭제 완료"); // 한번쓰고 사라지는 플래쉬 휘발성 데이터
-
-        //3. 보여줄 페이지를 설정!
+    public String delete(@PathVariable Long id, RedirectAttributes rttr) {
+        ArticleDto deleted = articleService.delete(id);
+        log.info("2 .삭제 변환 성공(Dto) : {}",deleted);
+        rttr.addFlashAttribute("msg", "게시글 삭제 완료: " + deleted.getTitle());
         return "redirect:/articles";
     }
-
-
-
 
 }
