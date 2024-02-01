@@ -5,6 +5,7 @@ import com.example.dy.Domain.Article;
 import com.example.dy.Domain.constant.SearchType;
 import com.example.dy.Dto.ArticleDto;
 import com.example.dy.Repository.ArticleRepository;
+import com.example.dy.Repository.CommentRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,8 +22,14 @@ import javax.transaction.Transactional;
 @Service // 서비스 선언!(서비스 객체를 스프링부트에 생성)
 public class ArticleService {
 
-    @Autowired //DI
-    private ArticleRepository articleRepository;
+//    @Autowired // 필드 주입 방식 DI
+//    private ArticleRepository articleRepository;
+
+
+    private final ArticleRepository articleRepository;
+    public ArticleService(ArticleRepository articleRepository) {
+        this.articleRepository = articleRepository;
+    }
 
 
     //    1.전체 조회

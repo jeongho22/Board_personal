@@ -6,8 +6,10 @@ import com.example.dy.Domain.Comment;
 import com.example.dy.Dto.CommentDto;
 import com.example.dy.Repository.ArticleRepository;
 import com.example.dy.Repository.CommentRepository;
+import com.example.dy.Repository.UserRepository;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,10 +21,23 @@ import java.util.stream.Collectors;
 @Service
 public class CommentService {
 
-    @Autowired
-    private CommentRepository commentRepository;
-    @Autowired
-    private ArticleRepository articleRepository;
+
+//     필드 주입 방식 (비권장)
+//    @Autowired
+//    private CommentRepository commentRepository;
+//    @Autowired
+//    private ArticleRepository articleRepository;
+//
+
+    private final CommentRepository commentRepository;
+    private final ArticleRepository articleRepository;
+
+    // 생성자 주입 방식 (권장)
+    public CommentService(CommentRepository commentRepository, ArticleRepository articleRepository) {
+        this.commentRepository = commentRepository;
+        this.articleRepository = articleRepository;
+    }
+
 
     public List<CommentDto> comments(Long articleId) {
 

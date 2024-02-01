@@ -45,8 +45,6 @@ public class ArticleApiController {
         return ResponseEntity.ok(articleDto);
     }
 
-
-
     //2. 생성 Post
     @PostMapping("/api/articles")
     public ResponseEntity<ArticleDto> create(@RequestBody ArticleDto dto) { // 1. form 에서 데이터를 던질때는 그냥써도 되지만
