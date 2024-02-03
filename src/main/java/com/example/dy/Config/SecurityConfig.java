@@ -6,6 +6,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
 public class SecurityConfig {
@@ -22,8 +23,10 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/login?logout")
+                        .logoutSuccessUrl("/login")
                         .permitAll()
+                        .invalidateHttpSession(true) // 로그아웃 시 세션 종료
+                        .clearAuthentication(true)   // 로그아웃 시 권한 제거
                 )
                 .csrf().disable(); // CSRF 보호 활성화
 
@@ -35,5 +38,24 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    //@Bean
+    //PasswordEncoder 빈을 정의해 두면 애플리케이션의 어느 곳에서든지 주입받아 사용할 수 있습니다.
+    //1.    public *UserService*(PasswordEncoder passwordEncoder, UserRepository userRepository) {
+    //        this.passwordEncoder = passwordEncoder;
+    //        this.userRepository = userRepository;
+    //    }
+    //2.    @Autowired
+    //    public *SecurityConfig*(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
+    //        this.userDetailsService = userDetailsService;
+    //        this.passwordEncoder = passwordEncoder;
+    //    }
+    //3.     @Autowired
+    //    public *AccountService*(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    //        this.userRepository = userRepository;
+    //        this.passwordEncoder = passwordEncoder;
+    //    }
+
 
 }
+
+

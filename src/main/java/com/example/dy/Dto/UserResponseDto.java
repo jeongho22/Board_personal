@@ -33,5 +33,6 @@ public class UserResponseDto {
                 user.getUsername(),
                 user.getEmail(),
                 user.getRole());
+            // 비밀번호 민감정보만 제외
     }
 }

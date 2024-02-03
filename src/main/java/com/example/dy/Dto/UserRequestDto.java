@@ -7,10 +7,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 
-//입력처리
+
+// 회원 가입할때 요청하는 부분.
 public class UserRequestDto {
     private String username;
     private String email;
     private String password;
-    // 생성자, getter, setter는 Lombok이 처리합니다.
 }

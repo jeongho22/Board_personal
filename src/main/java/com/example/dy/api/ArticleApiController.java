@@ -22,9 +22,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController // RESTAPI 용 컨트롤러 JSON(데이터반환)
 public class ArticleApiController {
 
+    // 생성자 주입 (o) 필드 x
+    private final ArticleService articleService;
+    public ArticleApiController(ArticleService articleService) {
+        this.articleService = articleService;
+    }
 
-    @Autowired // DI, 생성 객체를 가져와 연결
-    private ArticleService articleService;
 
     // 1-1.
     // 전체 읽기 Page<Article> 반환

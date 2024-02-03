@@ -24,12 +24,17 @@ import java.util.Objects;
 @Slf4j                                          //  로깅을 위한 어노테이션
 public class ArticleController {
 
-    @Autowired                                  //객체를 안만들어도된다 스프링이 자동으로 만들어줌...
-    private ArticleRepository articleRepository;
-    @Autowired
-    private CommentService commentService;
-    @Autowired
-    private ArticleService articleService;
+    // 생성자 주입 방식
+    private final ArticleRepository articleRepository;
+    private final CommentService commentService;
+    private final ArticleService articleService;
+
+    public ArticleController(ArticleRepository articleRepository, CommentService commentService, ArticleService articleService) {
+        this.articleRepository = articleRepository;
+        this.commentService = commentService;
+        this.articleService = articleService;
+    }
+
 
 
 
