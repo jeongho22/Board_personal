@@ -14,9 +14,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .cors().and() // CORS 활성화
                 .authorizeRequests(authz -> authz
                         .antMatchers("/signup", "/api/signup").permitAll()
                         .anyRequest().authenticated()
+//                        .anyRequest().permitAll()
                 )
                 .formLogin(form -> form
                         .defaultSuccessUrl("/articles", true)
@@ -49,12 +51,6 @@ public class SecurityConfig {
     //        this.userDetailsService = userDetailsService;
     //        this.passwordEncoder = passwordEncoder;
     //    }
-    //3.     @Autowired
-    //    public *AccountService*(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-    //        this.userRepository = userRepository;
-    //        this.passwordEncoder = passwordEncoder;
-    //    }
-
 
 }
 

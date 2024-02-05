@@ -56,7 +56,6 @@ public class ArticleApiController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdDto);
     }
     //3. 수정 Patch
-
     @PatchMapping("/api/articles/{id}")
     public ResponseEntity<ArticleDto> update(@PathVariable Long id, @RequestBody ArticleDto dto) { // 1. 데이터베이스에 무언가 변경될때는 dto 사용해줘야함..
         ArticleDto updatedDto = articleService.update(id, dto);                                    // 2. ResponseEntity 담아서 보내야지만 100,200,300,400 상태코드 보내줄수있음..
@@ -66,7 +65,6 @@ public class ArticleApiController {
 
 
     //4. 삭제 Delete
-
     @DeleteMapping("/api/articles/{id}")
     public ResponseEntity<ArticleDto> delete(@PathVariable Long id){                    //ResponseEntity에 ArticleDto을 담아서 보내준다.
         ArticleDto deleted = articleService.delete(id);

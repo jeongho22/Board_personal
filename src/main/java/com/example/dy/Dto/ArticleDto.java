@@ -14,29 +14,16 @@ public class ArticleDto {
     private Long id;
     private final String title;
     private final String content;
-
-
-
-//    // Getter 메서드 추가
-//    public Long getId() {
-//        return id;
-//    }
-//
-//    public String getTitle() {
-//        return title;
-//    }
-//
-//    public String getContent() {
-//        return content;
-//    }
+    private final Long user;
 
 
 
     // 생성자
-    public ArticleDto(Long id, String title, String content) {
+    public ArticleDto(Long id, String title, String content,Long user) {
         this.id = id;
         this.title = title;
         this.content = content;
+        this.user = user;
     }
 
     // Article 엔티티에서 ArticleDto로 변환
@@ -44,7 +31,8 @@ public class ArticleDto {
         return new ArticleDto(
                 article.getId(),
                 article.getTitle(),
-                article.getContent());
+                article.getContent(),
+                article.getUser().getId());
     }
 
 }

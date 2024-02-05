@@ -15,14 +15,16 @@ public class CommentDto {
     private Long articleId;    // comment 포함된 게시글의 아이디
     private String nickname;
     private String body;
+    private Long user;
 
 
     // 생성자( 이런식으로 생성 해줘도 되고 @AllArgsConstructor 도 가능)
-    public CommentDto(Long id,Long articleId,String nickname,String body) {
+    public CommentDto(Long id,Long articleId,String nickname,String body,Long user) {
         this.id = id;
         this.articleId = articleId;
         this.nickname= nickname;
         this.body = body;
+        this.user = user;
     }
 
     // Comment -> CommentDto로 변환
@@ -31,11 +33,9 @@ public class CommentDto {
                 comment.getId(),
                 comment.getArticle().getId(),
                 comment.getNickname(),
-                comment.getBody()
+                comment.getBody(),
+                comment.getUser().getId()
         );
     }
-
-
-
 }
 

@@ -5,8 +5,12 @@ import com.example.dy.Dto.UserRequestDto;
 import com.example.dy.Dto.UserResponseDto;
 import com.example.dy.Repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import javax.persistence.EntityNotFoundException;
 
 @Slf4j
 @Service
@@ -21,6 +25,7 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    // 회원 가입 메서드
     public UserResponseDto register(UserRequestDto registerRequestDto) {
         if (userRepository.findByEmail(registerRequestDto.getEmail()).isPresent()) {
             throw new IllegalStateException("이미 존재 하는 이메일 입니다");
@@ -43,6 +48,15 @@ public class UserService {
 
         //3. ResponseDto 변환
         return UserResponseDto.fromEntity(saved);
+    }
+
+    // 현재 로그인한 사용자의 User 객체를 반환하는 메서드
+    public User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName(); // 현재 로그인한 사용자의 이메일 또는 유저네임
+
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + email));
     }
 
 

@@ -18,19 +18,24 @@ public class Article extends AuditingFields {
     @GeneratedValue(strategy = GenerationType.IDENTITY)// strategy = GenerationType.IDENTITY 이거까지해주면 DB가 ID(1,2,3...)를 자동 생성한다.
     private Long id;
 
-    @Column private String title;   // setter 쓰면 아래 patch 함수 안써도됌 , 근데 캡슐화 약화되어짐
-    @Column private String content; // setter 쓰면 아래 patch 함수 안써도됌 , 근데 캡슐화 약화되어짐
+    @Setter @Column private String title;   // setter 쓰면 아래 patch 함수 안써도됌 , 근데 캡슐화 약화되어짐
+    @Setter @Column private String content; // setter 쓰면 아래 patch 함수 안써도됌 , 근데 캡슐화 약화되어짐
 
     @Column(columnDefinition = "integer default 0", nullable = false) private long view; // view 값은 엔티티가 아니라 repository에서 갱신
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user; // 댓글을 작성한 사용자
 
 
 
     // 생성자
-    public Article(Long id,String title,String content) {
+    public Article(Long id,String title,String content,User user) {
         this.id = id;
         this.title = title;
         this.content= content;
-    } // 필드의 생성자 하나 만들어주고 ... 이걸 dto에서 변환
+        this.user = user; // 사용자 설정
+    }
 
 
 
@@ -45,9 +50,3 @@ public class Article extends AuditingFields {
 
 }
 
-
-
-
-// 1.
-// @data는 하지만 순환참조나... 각종 로직에 취약함.. getter, setter,  메소드 자동으로 생성
-// id, title, content 필드에 대한 getId(), getTitle(), getContent() 메소드를 생성

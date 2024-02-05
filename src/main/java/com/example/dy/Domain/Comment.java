@@ -24,20 +24,25 @@ public class Comment extends AuditingFields {
     @Column @Setter private String nickname;
     @Column @Setter private String body;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user; // 댓글을 작성한 사용자
+
 
 
     // 생성자( 이런식으로 생성 해줘도 되고 @AllArgsConstructor 도 가능)
-    public Comment(Long id,Article article,String nickname,String body) {
+    public Comment(Long id,Article article,String nickname,String body, User user) {
         this.id = id;
         this.article = article;
         this.nickname= nickname;
         this.body = body;
+        this.user = user;
     }
 
 
 
     // CommentDto -> Comment로 변환
-    public static Comment createComment(CommentDto dto, Article article) {
+    public static Comment createComment(CommentDto dto, Article article,User user) {
 
         if (dto.getId() != null)
             throw new IllegalArgumentException("댓글 생성 실패! 댓글의 id가 없어야 합니다."); // 생성할때 댓글의 아이디가 있어야함...
@@ -49,7 +54,8 @@ public class Comment extends AuditingFields {
                 dto.getId(),
                 article,
                 dto.getNickname(),
-                dto.getBody()
+                dto.getBody(),
+                user
         );
     }
 
@@ -61,9 +67,9 @@ public class Comment extends AuditingFields {
             throw new IllegalArgumentException("댓글 수정 실패! 잘못된 id가 입력되었습니다.");
         // 객체를 갱신
         if (dto.getNickname() != null)
-            this.nickname = dto.getNickname(); // json 닉네임으로 바꿔줌
+            this.nickname = dto.getNickname();
         if (dto.getBody() != null)
-            this.body = dto.getBody();         // json 수정으로 바꿔줌
+            this.body = dto.getBody();
     }
 
 
