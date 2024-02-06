@@ -20,6 +20,13 @@
             </form>
         </div>
 
+        <div>
+            <div>
+                <span>이메일: </span><span th:text="${currentUser != null ? currentUser.email : '로그인하지 않음'}"></span>
+                <span> 권한: </span><span th:text="${currentUser != null ? currentUser.role : '없음'}"></span>
+            </div>
+        </div>
+
     </header>
 
 

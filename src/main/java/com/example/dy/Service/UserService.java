@@ -5,6 +5,7 @@ import com.example.dy.Dto.UserRequestDto;
 import com.example.dy.Dto.UserResponseDto;
 import com.example.dy.Repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,7 +23,7 @@ public class UserService {
     //생성자 생성 (o) 필드 주입 x
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
+        this.passwordEncoder = passwordEncoder; // bean 주입
     }
 
     // 회원 가입 메서드
@@ -50,15 +51,26 @@ public class UserService {
         return UserResponseDto.fromEntity(saved);
     }
 
-    // 현재 로그인한 사용자의 User 객체를 반환하는 메서드
+
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName(); // 현재 로그인한 사용자의 이메일 또는 유저네임
+        if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
+            return null; //1.null 이거거나 2.인증되지 않았거나 3.anonymousUser인 경우 null 반환
+        }
 
-        return userRepository.findByEmail(email)
+        String email = authentication.getName();
+        User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + email));
+
+
+        log.info("접속중 아이디: username={}, email={}, role={}, id={}",
+                currentUser.getUsername(),
+                currentUser.getEmail(),
+                currentUser.getRole(),
+                currentUser.getId());
+
+
+        return currentUser;
     }
-
-
 
 }

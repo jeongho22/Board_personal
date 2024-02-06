@@ -3,11 +3,12 @@ package com.example.dy.Dto;
 import com.example.dy.Domain.Comment;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 @ToString
 @NoArgsConstructor // 디폴트 생성자 생성
 @Getter
-
+@Slf4j
 // comment 담을 그릇
 public class CommentDto {
     private Long id;            //comment 아이디
@@ -25,7 +26,11 @@ public class CommentDto {
         this.nickname= nickname;
         this.body = body;
         this.user = user;
+
+
     }
+
+
 
     // Comment -> CommentDto로 변환
     public static CommentDto createCommentDto(Comment comment) {
@@ -36,6 +41,7 @@ public class CommentDto {
                 comment.getBody(),
                 comment.getUser().getId()
         );
+
     }
 }
 

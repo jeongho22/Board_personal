@@ -1,8 +1,12 @@
 package com.example.dy.api;
 
 
+import com.example.dy.Domain.User;
 import com.example.dy.Dto.CommentDto;
+import com.example.dy.Repository.ArticleRepository;
+import com.example.dy.Service.ArticleService;
 import com.example.dy.Service.CommentService;
+import com.example.dy.Service.UserService;
 import com.example.dy.annotation.RunningTime;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,21 +20,24 @@ import java.util.List;
 @RestController
 public class CommentApiController {
 
-    @Autowired
-    private CommentService commentService;
+
+    private final CommentService commentService;
+
+    public CommentApiController(CommentService commentService) {
+        this.commentService = commentService;
+
+    }
+
 
 
     // 댓글 목록 조회
     @GetMapping("/api/articles/{articleId}/comments")
     public ResponseEntity<List<CommentDto>> comments(@PathVariable Long articleId){ //ResponseEntity는 HTTP 응답에 대한 전체 메시지를 나타냅니다.
-
         // 1.서비스 에게 위임
         // 2.코멘트를 바로 반환 하기 보다는 dto로 만들어서 반환
         List<CommentDto> dtos = commentService.comments(articleId); // 위에 입력값 넣음
-
-        log.info("댓글 조회 목록 5(Dtos) : {} ", dtos);
-
         return ResponseEntity.status(HttpStatus.OK).body(dtos);     // 무조건 옳은 응답으로 일단해줌
+
     }
 
     // 댓글 생성

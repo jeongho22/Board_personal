@@ -73,18 +73,18 @@ public class ArticleService {
     //    2. 생성
     public ArticleDto create(ArticleDto dto) {
         log.info("생성 변환 이전(Dto) 1 : {}",dto);
-        // 현재 로그인한 사용자의 인증 정보 가져오기
+        // 1현재 로그인한 사용자의 인증 정보 가져오기
         User currentUser = userService.getCurrentUser(); // 현재 로그인한 사용자 정보 가져오기
 
-        // 1.Dto를 사용하여 엔티티 생성
+        // 2.Dto를 사용하여 엔티티 생성
         Article article = new Article(null, dto.getTitle(), dto.getContent(), currentUser);
 
         log.info("생성 변환 이전(Entity) 2 : {}",article);
 
-        // 2.엔티티 저장
+        // 3.엔티티 저장
         Article createdArticle = articleRepository.save(article);
 
-        // 3.생성된 Article 객체를 DTO로 변환하여 반환
+        // 4.생성된 Article 객체를 DTO로 변환하여 반환
         return ArticleDto.fromEntity(createdArticle);
     }
 
@@ -97,6 +97,8 @@ public class ArticleService {
 
             // 1.현재 로그인한 사용자의 인증 정보 가져오기
         User currentUser = userService.getCurrentUser();
+
+        log.info("로그3 : {}",currentUser);
             // 2.ID로 기존 엔티티 조회
         Article target = articleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Article not found with id: " + id));
@@ -104,14 +106,14 @@ public class ArticleService {
             // 3.엔티티 수정
         Article articleToUpdate = new Article(dto.getId(), dto.getTitle(), dto.getContent(), null);
 
-        // 게시글 작성자와 현재 로그인한 사용자 비교 하거나 Admin 아이디 인지 확인
+        // 4게시글 작성자와 현재 로그인한 사용자 비교 하거나 Admin 아이디 인지 확인
         if (currentUser.getRole() == Role.ADMIN || target.getUser().equals(currentUser)) {
             target.patch(articleToUpdate);  // user는 변경하지 않음
 
-            // 4.엔티티 저장
+            // 5.엔티티 저장
             Article updatedArticle = articleRepository.save(target);
 
-            // 5.엔티티를 DTO로 변환하여 반환
+            // 6.엔티티를 DTO로 변환하여 반환
             return ArticleDto.fromEntity(updatedArticle);
         } else {
             throw new IllegalStateException("수정 권한이 없습니다.");
@@ -129,7 +131,7 @@ public class ArticleService {
         Article target = articleRepository.findById(id).
                 orElseThrow(() -> new EntityNotFoundException("Article not found with id: " + id));
 
-        // 3.댓글 작성자와 현재 로그인한 사용자 비교
+        // 3.게시글 작성자와 현재 로그인한 사용자 비교
         if (!(currentUser.getRole() == Role.ADMIN) && !target.getUser().equals(currentUser)) {
             throw new IllegalStateException("댓글 수정 실패! 자신이 작성한 댓글만 수정할 수 있습니다.");
         }

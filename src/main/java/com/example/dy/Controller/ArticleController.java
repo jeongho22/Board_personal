@@ -1,11 +1,13 @@
 package com.example.dy.Controller;
 
 import com.example.dy.Domain.Article;
+import com.example.dy.Domain.User;
 import com.example.dy.Dto.ArticleDto;
 import com.example.dy.Dto.CommentDto;
 import com.example.dy.Repository.ArticleRepository;
 import com.example.dy.Service.ArticleService;
 import com.example.dy.Service.CommentService;
+import com.example.dy.Service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,11 +30,16 @@ public class ArticleController {
     private final ArticleRepository articleRepository;
     private final CommentService commentService;
     private final ArticleService articleService;
+    private final UserService userService;
 
-    public ArticleController(ArticleRepository articleRepository, CommentService commentService, ArticleService articleService) {
+    public ArticleController(ArticleRepository articleRepository,
+                             CommentService commentService,
+                             ArticleService articleService,
+                             UserService userService) {
         this.articleRepository = articleRepository;
         this.commentService = commentService;
         this.articleService = articleService;
+        this.userService = userService;
     }
 
 
@@ -105,21 +112,19 @@ public class ArticleController {
 
         log.info("조회 변환 성공(Dto) 2 : {}",articleEntity);
 
+        // 현재 사용자 정보 가져오기
+        User currentUser = userService.getCurrentUser();
+
+        log.info("게시글 작성자: {}",articleEntity.getUser());
 
         //2. 가져온 데이터를 모델에 등록!
-
+        model.addAttribute("currentUser", currentUser);
         model.addAttribute("article", articleEntity);
         model.addAttribute("commentDtos", commentsDtos);
 
 
         //3. 보여줄 페이지를 설정!
         return "articles/show";
-
-        //    조회수를 증가시키는 경우에는 일반적으로 게시글의
-        //    전체 데이터를 업데이트(create,update) 하는 것이 아니라 특정 필드(여기서는 조회수)만을 변경합니다.
-        //    따라서, ArticleFormDto를 사용하지 않고,
-        //    대신 Article 엔티티의 ID만을 사용하여
-        //    조회수를 증가시키는 것이 적절할 수 있습니다.
 
     }
 
@@ -140,6 +145,10 @@ public class ArticleController {
 
         Page<Article> articlePage = articleService.index(searchType, searchKeyword, pageable);
 
+        // 현재 사용자 정보 가져오기
+        User currentUser = userService.getCurrentUser();
+
+        model.addAttribute("currentUser", currentUser);
         model.addAttribute("articlePage", articlePage);
         model.addAttribute("searchType", searchType);
         model.addAttribute("searchKeyword", searchKeyword);

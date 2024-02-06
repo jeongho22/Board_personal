@@ -38,9 +38,13 @@
     <div class="row mt-3">
         <!-- 링크 버튼 섹션 -->
         <div class="col-md-12">
-<!--            <a href="/" class="btn btn-secondary">목록</a>-->
-            <a th:href="@{/articles/{id}/edit(id=${article.id})}" class="btn btn-primary">Edit</a>
-            <a th:href="@{/articles/{id}/delete(id=${article.id})}" class="btn btn-danger">삭제</a>
+            <div th:if="${currentUser != null}">
+                <!-- 관리자이거나 현재 사용자가 게시글의 작성자인 경우 수정 및 삭제 버튼 표시 -->
+                <div th:if="${currentUser.role.name() == 'ADMIN' or currentUser.id == article.user}">
+                    <a th:href="@{/articles/{id}/edit(id=${article.id})}" class="btn btn-primary">Edit</a>
+                    <a th:href="@{/articles/{id}/delete(id=${article.id})}" class="btn btn-danger">삭제</a>
+                </div>
+            </div>
         </div>
     </div>
 </div>
