@@ -9,14 +9,18 @@
             <!-- 댓글 작성 폼-->
             <form>
                 <!-- 닉네임 입력 -->
-                <div class="mb-3">
-                    <label class="form-label">닉네임</label>
-                    <input type="text" class="form-control form-control-sm" id="new-comment-nickname">
+                <div th:if="${currentUser != null}">
+                    <div class="mb-3">
+                        <label class="form-label">닉네임</label>
+                        <input type="text" class="form-control form-control-sm" id="new-comment-nickname">
+                    </div>
                 </div>
                 <!-- 댓글 본문 입력 -->
-                <div class="mb-3">
-                    <label class="form-label">댓글 내용</label>
-                    <textarea type="text" class="form-control form-control-sm" rows="3" id="new-comment-body"></textarea>
+                <div th:if="${currentUser != null}">
+                    <div class="mb-3">
+                        <label class="form-label">댓글 내용</label>
+                        <textarea type="text" class="form-control form-control-sm" rows="3" id="new-comment-body"></textarea>
+                    </div>
                 </div>
                 <!-- 히든 인풋 -->
                 <input type="hidden" id="new-comment-article-id" th:value="${article.id}">

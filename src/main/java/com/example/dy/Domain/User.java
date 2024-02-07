@@ -42,10 +42,5 @@ public class User extends AuditingFields {
     private List<Comment> comments = new ArrayList<>(); // 사용자가 작성한 댓글 목록
 
 
-//    @Column(name = "email_verification_token", unique = true)
-//    private String emailVerificationToken;
-//
-//    @Column(name = "email_verified", nullable = false)
-//    private boolean emailVerified = false;
 
 }
