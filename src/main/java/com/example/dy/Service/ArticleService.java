@@ -2,11 +2,13 @@ package com.example.dy.Service;
 
 
 import com.example.dy.Domain.Article;
+import com.example.dy.Domain.Comment;
 import com.example.dy.Domain.User;
 import com.example.dy.Domain.constant.Role;
 import com.example.dy.Domain.constant.SearchType;
 import com.example.dy.Dto.ArticleDto;
 import com.example.dy.Repository.ArticleRepository;
+import com.example.dy.Repository.CommentRepository;
 import com.example.dy.Repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,7 +21,8 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
-
+import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Slf4j
@@ -28,12 +31,12 @@ public class ArticleService {
 
 
     private final ArticleRepository articleRepository;
-    private final UserRepository userRepository; // UserRepository 주입
+    private final CommentRepository commentRepository;
     private final UserService userService;
-    public ArticleService(ArticleRepository articleRepository,UserRepository userRepository,UserService userService) {
+    public ArticleService(ArticleRepository articleRepository,UserService userService,CommentRepository commentRepository) {
         this.articleRepository = articleRepository;
-        this.userRepository = userRepository;
         this.userService = userService;
+        this.commentRepository = commentRepository;
     }
 
 
@@ -122,27 +125,44 @@ public class ArticleService {
 
 
     //    4. 삭제
+    @Transactional
     public ArticleDto delete(Long id) {
-
         // 1.현재 로그인한 사용자의 인증 정보 가져오기
-        User currentUser = userService.getCurrentUser(); // 현재 로그인한 사용자 정보 가져오기
+        User currentUser = userService.getCurrentUser();
 
-        // 2.대상 찾기 없으면 에러발생
-        Article target = articleRepository.findById(id).
-                orElseThrow(() -> new EntityNotFoundException("Article not found with id: " + id));
+        // 2. 대상 게시글을 찾습니다. 찾을 수 없으면 예외를 발생시킵니다.
+        Article target = articleRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Article not found with id: " + id));
 
         // 3.게시글 작성자와 현재 로그인한 사용자 비교
         if (!(currentUser.getRole() == Role.ADMIN) && !target.getUser().equals(currentUser)) {
-            throw new IllegalStateException("댓글 수정 실패! 자신이 작성한 댓글만 수정할 수 있습니다.");
+            throw new IllegalStateException("You do not have permission to delete this article.");
         }
-        log.info("게시글 삭제 대상(Entity) 1: {}", target);
 
-        // 4. 대상을 삭제한다 !
-        articleRepository.delete(target);
+        //6.Soft Delete 게시글하고 댓글하고 동시에 삭제 될때
 
-        // 5. 대상 변환 삭제 반환
+        // 4. 게시글에 연관된 모든 댓글을 조회합니다.
+        List<Comment> comments = commentRepository.findByArticleId(id);
+
+        // 5. 현재 시간을 가져옵니다.
+        LocalDateTime now = LocalDateTime.now();
+
+        // 6.각 댓글의 deletedAt을 확인하고, 이미 설정된 경우 업데이트하지 않습니다.
+        comments.forEach(comment -> {
+            if (comment.getDeletedAt() == null) { // deletedAt이 null인 경우에만 현재 시간으로 설정
+                comment.setDeletedAt(now);
+                commentRepository.save(comment); // 각 댓글을 업데이트합니다.
+            }
+        });
+
+        // 7.게시글의 deletedAt을 현재 시간으로 설정하고 저장합니다.
+        target.setDeletedAt(now);
+        articleRepository.save(target);
+
+        // 8.삭제된 게시글 정보를 DTO로 변환하여 반환합니다.
         return ArticleDto.fromEntity(target);
     }
+
 
 }
 

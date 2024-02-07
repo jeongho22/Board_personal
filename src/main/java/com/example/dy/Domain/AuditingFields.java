@@ -23,14 +23,16 @@ public abstract class AuditingFields {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @CreatedDate
     @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    private LocalDateTime createdAt;
+    protected LocalDateTime createdAt;
 
     @Setter
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @LastModifiedDate
     @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    LocalDateTime modifiedAt;
+    protected LocalDateTime modifiedAt;
 
-
+    //3.Soft Delete
+    @Setter @Column(name = "deleted_at")
+    protected LocalDateTime deletedAt;
 
 }

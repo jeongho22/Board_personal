@@ -44,8 +44,14 @@ public class CommentService {
     public List<CommentDto> comments(Long articleId) {
 
         //  1.조회 : 댓글 목록 조회
-        List<Comment> comments =commentRepository.findByArticleId(articleId); // 게시글 번호에 해당하는 comments 를 찾는다.
+//        List<Comment> comments =commentRepository.findByArticleId(articleId); // 게시글 번호에 해당하는 comments 를 찾는다.
+//        log.info("댓글 조회 목록 1: {} ",comments);
+
+        //  1.조회 : 댓글 목록 조회
+        //5.Soft Delete
+        List<Comment> comments = commentRepository.findByArticleIdAndDeletedAtIsNull(articleId); // 게시글 번호와 null 에 해당하는 comments 를 찾는다.
         log.info("댓글 조회 목록 1: {} ",comments);
+        // 나머지 로직은 동일하게 유지
 
 
         //  2. entity - > DTO로 변경하여 반환

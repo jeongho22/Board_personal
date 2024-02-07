@@ -19,11 +19,14 @@ public interface CommentRepository extends JpaRepository<Comment,Long> {
                     "WHERE article_id = :articleId",                    // comment의 article_id 컬럼의 값들과 일치하는값만
                     nativeQuery = true)
 
-    List<Comment> findByArticleId(@Param("articleId") Long articleId); // aricleId 를 입력 했을때 Comment의 묶음을 반환 했으면 좋겠다.
-
+    List<Comment> findByArticleId(@Param("articleId") Long articleId); // aricleId 를 입력 했을때 Comment의 묶음을 조회 했으면 좋겠다.
 
     // 특정 닉네임의 모든 댓글 조회
-    List<Comment> findByNickname(String nickname);                        // nickname 을 입력 했을때 Comment의 묶음을 반환 했으면 좋겠다
+    List<Comment> findByNickname(String nickname);                       // nickname 을 입력 했을때 Comment의 묶음을 조회 했으면 좋겠다
+
+    List<Comment> findByArticleIdAndDeletedAtIsNull(@Param("articleId") Long articleId);
+    //4.Soft Delete  = 게시글 ID(articleId)에 해당하며 아직 삭제되지 않은(즉, deletedAt 필드가 null인) 댓글만을 조회
+
 
 
 

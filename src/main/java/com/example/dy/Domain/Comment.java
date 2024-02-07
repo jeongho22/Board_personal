@@ -3,14 +3,18 @@ package com.example.dy.Domain;
 
 import com.example.dy.Dto.CommentDto;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 @Getter
-@ToString
-@NoArgsConstructor              // 디폴트 생성자 하나 무조건 만들어줘야함
+@NoArgsConstructor
+@SQLDelete(sql = "UPDATE comment SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?") //2.Soft Delete
+@Where(clause = "deleted_at IS NULL")
 public class Comment extends AuditingFields {
 
     @Id
@@ -71,7 +75,4 @@ public class Comment extends AuditingFields {
         if (dto.getBody() != null)
             this.body = dto.getBody();
     }
-
-
-
 }

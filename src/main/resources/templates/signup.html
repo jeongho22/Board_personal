@@ -25,11 +25,12 @@
     </div>
 </form>
 
+
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         var form = document.getElementById("signupForm");
         form.onsubmit = function(event) {
-            event.preventDefault(); // Prevent the form from submitting via the browser.
+            event.preventDefault(); // 폼 기본 제출 방지
 
             var formData = {
                 username: form.username.value,
@@ -40,21 +41,28 @@
             fetch('/api/signup', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json', // Indicate that the request body format is JSON
+                    'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(formData) // Convert the form data into JSON
+                body: JSON.stringify(formData) // 폼 데이터를 JSON으로 변환
             })
-                .then(response => response.json()) // Parse the JSON response
-                .then(data => {
-                    console.log(data); // Handle the response data
-                    alert("Signup successful!");
+                .then(response => response.json().then(data => ({ status: response.status, body: data })))
+                .then(result => {
+                    if (result.status === 200) {
+                        console.log(result.body); // 응답 데이터 처리
+                        alert("정상적으로 회원 가입이 되었습니다."); // 성공 메시지 표시
+                        window.location.href = '/'; // 홈페이지로 리다이렉트
+                    } else {
+                        throw new Error(result.body.message); // 서버로부터 받은 에러 메시지
+                    }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert("Signup failed.");
+                    alert(error.message); // 에러 메시지 표시
                 });
         };
     });
 </script>
+
+
 </body>
 </html>

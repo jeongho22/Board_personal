@@ -6,18 +6,30 @@
 <body>
 <header th:fragment="common-header">
 
-    <header class="p-3 bg-dark text-white">
 
+    <header class="p-3 bg-dark text-white">
         <div class="container">
             <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
                 <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
                     <li><a id="home" href="/articles" class="nav-link px-2 text-secondary">Home</a></li>
                 </ul>
-            </div>
 
-            <form action="/logout" method="post">
-                <input type="submit" value="LogOut" class="nav-link px-2 text-secondary" style="background:none;border:none;padding:0;">
-            </form>
+                <!-- 로그인하지 않은 사용자에게만 로그인 버튼 표시 -->
+                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0" th:if="${currentUser == null}">
+                    <li><a id="login" href="/login" class="nav-link px-2 text-secondary">Login</a></li>
+                </ul>
+
+                <!-- 로그인한 사용자에게만 로그아웃 버튼 표시 -->
+                <form th:if="${currentUser != null}" action="/logout" method="post">
+                    <input type="submit" value="LogOut" class="nav-link px-2 text-secondary" style="background:none;border:none;padding:0;">
+                </form>
+
+                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0" th:if="${currentUser == null}">
+                    <li><a id="Sign up" href="/signup" class="nav-link px-2 text-secondary">SignUp</a></li>
+                </ul>
+
+
+            </div>
         </div>
 
         <div>
@@ -26,7 +38,6 @@
                 <span> 권한: </span><span th:text="${currentUser != null ? currentUser.role : '없음'}"></span>
             </div>
         </div>
-
     </header>
 
 

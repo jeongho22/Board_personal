@@ -33,7 +33,7 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/login")
+                        .logoutSuccessUrl("/")
                         .permitAll()
                         .invalidateHttpSession(true) // 로그아웃 시 세션 종료
                         .clearAuthentication(true)   // 로그아웃 시 권한 제거
@@ -48,12 +48,6 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    //@Bean
-    //PasswordEncoder 빈을 정의해 두면 애플리케이션의 어느 곳에서든지 주입받아 사용할 수 있습니다.
-    //1.    public *UserService*(PasswordEncoder passwordEncoder, UserRepository userRepository) {
-    //        this.passwordEncoder = passwordEncoder;
-    //        this.userRepository = userRepository;
-    //    }
 
 
 }
