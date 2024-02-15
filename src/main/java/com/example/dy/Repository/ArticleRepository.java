@@ -27,6 +27,7 @@ public interface ArticleRepository extends JpaRepository<Article,Long> {   // �
 
     // 페이지 형식으로 Article 모든 정보 찾는다.
     Page<Article> findAll(Pageable pageable);
+    Page<Article> findByTitleContainingOrContentContaining(String title, String content, Pageable pageable);
     Page<Article> findByTitleContaining(String title, Pageable pageable);
     Page<Article> findByContentContaining(String content, Pageable pageable);
 

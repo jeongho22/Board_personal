@@ -42,20 +42,27 @@ public class ArticleService {
 
     //    1.전체 조회
     @Transactional
-    public Page<Article> index(String searchType, String searchKeyword, Pageable pageable) {
+    public Page<ArticleDto> index(String searchType, String searchKeyword, Pageable pageable) {
+        Page<Article> articles;
+
         if (searchKeyword == null || searchKeyword.isBlank()) {
-            return articleRepository.findAll(pageable);
+            articles = articleRepository.findAll(pageable);
+        }
+        else {
+            SearchType type = SearchType.valueOf(searchType.toUpperCase());
+
+            articles = switch (type) {
+                case ALL -> articleRepository.findByTitleContainingOrContentContaining(searchKeyword, searchKeyword, pageable);
+                case TITLE -> articleRepository.findByTitleContaining(searchKeyword, pageable);
+                case CONTENT -> articleRepository.findByContentContaining(searchKeyword, pageable);
+                default -> Page.empty(pageable); // 기본값으로 비어있는 페이지를 반환
+            };
         }
 
-        SearchType type = SearchType.valueOf(searchType.toUpperCase());
-        // searchType 변수에 저장된 문자열을 모두 대문자로 변환합니다.
-        // 이는 SearchType 열거형(enum)이 대문자로 정의된 경우에 일치시키기 위한 것입니다.
-
-        return switch (type) {
-            case TITLE -> articleRepository.findByTitleContaining(searchKeyword, pageable);
-            case CONTENT -> articleRepository.findByContentContaining(searchKeyword, pageable);
-        };
+        // Page<Article>을 Page<ArticleDto>로 변환
+        return articles.map(article -> ArticleDto.fromEntity(article));
     }
+
 
     //    1-2. 건별 조회
     @Transactional
@@ -76,18 +83,23 @@ public class ArticleService {
     //    2. 생성
     public ArticleDto create(ArticleDto dto) {
         log.info("생성 변환 이전(Dto) 1 : {}",dto);
-        // 1현재 로그인한 사용자의 인증 정보 가져오기
+        // 1.현재 로그인한 사용자의 인증 정보 가져오기
         User currentUser = userService.getCurrentUser(); // 현재 로그인한 사용자 정보 가져오기
 
-        // 2.Dto를 사용하여 엔티티 생성
+        // 2. 현재 로그인한 사용자가 없다면 예외 발생
+        if (currentUser == null) {
+            throw new IllegalStateException("로그인이 필요한 기능입니다.");
+        }
+
+        // 3.Dto를 사용하여 엔티티 생성
         Article article = new Article(null, dto.getTitle(), dto.getContent(), currentUser);
 
         log.info("생성 변환 이전(Entity) 2 : {}",article);
 
-        // 3.엔티티 저장
+        // 4.엔티티 저장
         Article createdArticle = articleRepository.save(article);
 
-        // 4.생성된 Article 객체를 DTO로 변환하여 반환
+        // 5.생성된 Article 객체를 DTO로 변환하여 반환
         return ArticleDto.fromEntity(createdArticle);
     }
 
