@@ -1,15 +1,10 @@
 package com.example.dy.Dto;
 import com.example.dy.Domain.User;
 import com.example.dy.Domain.constant.Role;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
 @Setter
-@ToString
-@NoArgsConstructor
 // 데이터 반환
 public class UserResponseDto {
     private Long id;
@@ -26,7 +21,7 @@ public class UserResponseDto {
         this.role = role;
     }
 
-    // Article 엔티티에서 ArticleDto로 변환
+    // user 엔티티에서 UserResponseDto로 변환
     public static UserResponseDto fromEntity(User user) {
         return new UserResponseDto(
                 user.getId(),
