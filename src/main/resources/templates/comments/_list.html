@@ -12,8 +12,9 @@
       <div class="card-header">
         <!-- 닉네임 출력 -->
         <span th:text="${comment.nickname}">닉네임</span>
+
         <!-- 관리자 또는 현재 사용자가 댓글 작성자인 경우에만 수정 및 삭제 버튼 표시 -->
-        <div th:if="${currentUser != null and (currentUser.role.name() == 'ADMIN' or currentUser.id == comment.user)}">
+        <span th:if="${currentUser != null and (currentUser.role.name() == 'ADMIN' or currentUser.id == comment.user)}">
           <!-- 댓글 수정 버튼 -->
           <button type="button"
                   class="btn btn-sm btn-outline-primary"
@@ -30,7 +31,7 @@
                   class="btn btn-sm btn-outline-danger comment-delete-btn"
                   th:data-comment-id="${comment.id}">
             삭제</button>
-        </div>
+        </span>
 
 
 
@@ -78,40 +79,12 @@
   </div>
 
 
-
-
-  <!-- 댓글 삭제 -->
-  <script>
-    {
-      // 삭제 버튼 선택
-      const commentDeleteBtns = document.querySelectorAll(".comment-delete-btn"); //querySelectorAll 삭제 버튼 전부다 가져옴.
-      // 삭제 버튼 이벤트를 처리
-      commentDeleteBtns.forEach(btn => { //btn= commentDeleteBtns[i]
-        // 각 버튼의 이벤트 처리를 등록
-        btn.addEventListener("click", (event) => {
-          // 이벤트 발생 요소를 선택
-          const commentDeleteBtn = event.target;
-          // 삭제 댓글 id 가져오기
-          const commentId = commentDeleteBtn.getAttribute("data-comment-id");
-          console.log(`삭제 버튼 클릭: ${commentId}번 댓글`);
-          // 삭제 API 호출 및 처리
-          const url = `/api/comments/${commentId}`;
-          fetch(url, {
-            method: "DELETE"
-          }).then(response => {
-            // 댓글 삭제 실패 처리
-            if (!response.ok) {
-              alert("댓글 삭제 실패..!");
-              return;
-            }
-            // 삭제 성공 시, 댓글을 화면에서 지움!
-            const target = document.querySelector(`#comments-${commentId}`);
-            target.remove(); // window.reload와 target.remove 차이
-          });
-        });
-      });
-    }
+  <!--/*
+  <script th:inline="javascript">
+      var csrfToken = [[${_csrf.token}]];
+      var csrfHeader = [[${_csrf.headerName}]];
   </script>
+  */-->
 
 
 
@@ -122,7 +95,10 @@
           crossorigin="anonymous"></script>
 
 
-  <!-- 모달 이벤트 처리 -->
+
+
+
+  <!-- 댓글 수정 -->
   <script>
     {
       // 모달 요소 선택
@@ -165,7 +141,8 @@
             method: "PATCH",                          // PATCH 요청 대문자로 해야지 오류 안남...
             body: JSON.stringify(comment),            // JSON 으로 넘겨 준다.
             headers: {
-              "Content-Type": "application/json"
+              "Content-Type": "application/json",
+              // [csrfHeader]: csrfToken // CSRF 토큰을 헤더에 추가
             }
           }).then(response => {
             // http 응답 코드에 따른 메시지 출력
@@ -179,6 +156,46 @@
 
     }
   </script>
+
+
+
+  <!-- 댓글 삭제 -->
+  <script>
+    {
+      // 삭제 버튼 선택
+      const commentDeleteBtns = document.querySelectorAll(".comment-delete-btn"); //querySelectorAll 삭제 버튼 전부다 가져옴.
+      // 삭제 버튼 이벤트를 처리
+      commentDeleteBtns.forEach(btn => { //btn= commentDeleteBtns[i]
+        // 각 버튼의 이벤트 처리를 등록
+        btn.addEventListener("click", (event) => {
+          // 이벤트 발생 요소를 선택
+          const commentDeleteBtn = event.target;
+          // 삭제 댓글 id 가져오기
+          const commentId = commentDeleteBtn.getAttribute("data-comment-id");
+          console.log(`삭제 버튼 클릭: ${commentId}번 댓글`);
+          // 삭제 API 호출 및 처리
+          const url = `/api/comments/${commentId}`;
+          fetch(url, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              // [csrfHeader]: csrfToken  // CSRF 토큰을 헤더에 추가
+            }
+          }).then(response => {
+            // 댓글 삭제 실패 처리
+            if (!response.ok) {
+              alert("댓글 삭제 실패..!");
+              return;
+            }
+            // 삭제 성공 시, 댓글을 화면에서 지움!
+            const target = document.querySelector(`#comments-${commentId}`);
+            target.remove();
+          });
+        });
+      });
+    }
+  </script>
+
 
 
 </footer>
