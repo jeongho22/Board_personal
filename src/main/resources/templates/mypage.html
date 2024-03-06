@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>마이 페이지</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .my-page-container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .user-info h2 {
+            color: #333;
+        }
+
+        .user-info p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .delete-btn {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 20px;
+            cursor: pointer;
+            display: inline-block;
+            border-radius: 4px;
+        }
+
+        .delete-btn:hover {
+            background-color: #ff3333;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+
+<div class="my-page-container" th:if="${currentUser != null}">
+    <div class="user-info">
+        <h2>내 정보</h2>
+        <p><strong>ID:</strong> <span th:text="${currentUser.email}"></span></p>
+        <p><strong>Role:</strong> <span th:text="${currentUser.role}"></span></p>
+    </div>
+    <button id="deleteAccountBtn" class="delete-btn">회원 탈퇴</button>
+</div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var userId = [[${currentUser.id}]]; // 현재 로그인한 사용자의 ID를 서버로부터 받아옵니다.
+    /*]]>*/
+
+    $(document).ready(function() {
+        $('#deleteAccountBtn').click(function() {
+            if (confirm('정말로 회원 탈퇴를 하시겠습니까?')) {
+                $.ajax({
+                    url: `/api/users/${userId}`,
+                    type: 'DELETE',
+                    success: function(result) {
+                        alert('계정이 삭제되었습니다.');
+                        window.location.href = '/login';
+                    },
+                    error: function(error) {
+                        alert('회원 탈퇴 중 오류가 발생했습니다.');
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
+
