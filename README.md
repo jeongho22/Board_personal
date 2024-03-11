@@ -13,7 +13,7 @@
 * Server : AWS EC2
 * DB : MySQL, AWS RDS
 * Framework/Flatform :  <img src="https://img.shields.io/badge/springboot-6DB33F.svg?&style=for-the-badge&logo=springboot&logoColor=FFFFFF" /> , SpringSecurity, Thymeleaf , Bootstrap, 
-* Language : <img src="https://img.shields.io/badge/Java-007396?style=flat&logo=Java&logoColor=white" />,   <img src="https://img.shields.io/badge/javascript-F7DF1E.svg?&style=for-the-badge&logo=javascript&logoColor=FFFFFF" /> , <img src="https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=HTML5&logoColor=white" />, <img src="https://img.shields.io/badge/CSS3-1572B6?style=flat&logo=CSS3&logoColor=white" />
+* Language :   <img src="https://img.shields.io/badge/Java-007396.svg?&style=for-the-badge&logo=Java&logoColor=white"/>,   <img src="https://img.shields.io/badge/javascript-F7DF1E.svg?&style=for-the-badge&logo=javascript&logoColor=FFFFFF" /> ,   <img src="https://img.shields.io/badge/html5-E34F26.svg?&style=for-the-badge&logo=html5&logoColor=FFFFFF" />, <img src="https://img.shields.io/badge/css3-1572B6.svg?&style=for-the-badge&logo=css3&logoColor=FFFFFF+" />
 * Tool : Intellj, GitHub, DBeaver
 
 
