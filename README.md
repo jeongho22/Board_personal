@@ -27,14 +27,10 @@
   
 Spring Security dependency 주입
 
-        <!-- spring security -->
-	<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-web -->
 
 	dependencies {
 	
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-
-}
+	implementation 'org.springframework.boot:spring-boot-starter-security'}
 
   
   
