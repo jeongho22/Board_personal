@@ -29,28 +29,14 @@ Spring Security dependency 주입
 
         <!-- spring security -->
 	<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-web -->
-	<dependency>
-		<groupId>org.springframework.security</groupId>
-		<artifactId>spring-security-web</artifactId>
-		<version>5.0.6.RELEASE</version>
-	</dependency>
-	<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-config -->
-	<dependency>
-		<groupId>org.springframework.security</groupId>
-		<artifactId>spring-security-config</artifactId>
-		<version>5.0.6.RELEASE</version>
-	</dependency>
 
-	<dependency>
-		<groupId>org.springframework.security</groupId>
-		<artifactId>spring-security-core</artifactId>
-		<version>5.0.6.RELEASE</version>
-	</dependency>
+	dependencies {
+	
+	implementation 'org.springframework.boot:spring-boot-starter-security'
 
-	<dependency>
-		<groupId>org.springframework.security</groupId>
-		<artifactId>spring-security-taglibs</artifactId>
-		<version>5.0.6.RELEASE</version>
+}
+
+  
   
 - **기능 2:** (기능에 대한 설명)
 - **기능 3:** (기능에 대한 설명)
