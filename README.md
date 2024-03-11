@@ -15,9 +15,13 @@
 * 24.01.01 ~ 24.03.01
 * 참여도 : 100% (개인 프로젝트)
 
+  
+
 ## 2. 사용 기술 및 개발 환경
 
+
 ## Tech Stack
+
 
 
 ### Server
@@ -52,40 +56,33 @@
 
 이 섹션에서는 프로젝트의 주요 기능, 구성 요소, 사용 방법 등을 설명합니다. 
 
-### 설명
-
-- **기능 1:**  로그인
-  
-Spring Security dependency , oauth2-client 주입
 
 
-	dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'}
+- **기능 1:**  회원가입
 
-로그인, 로그아웃 설정
-
-  		// Login 창 커스텀 마이징 
-                .formLogin(form -> form
-                        .loginPage("/login") 
-                        .loginProcessingUrl("/login")  
-                        .failureHandler(customAuthenticationFailureHandler()) 
-                        .defaultSuccessUrl("/articles", true)
-                        .permitAll()
-                )
-
-                .logout(logout -> logout
-                        .logoutSuccessUrl("/login")
-                        .permitAll()
-                        .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID")
-                        .clearAuthentication(true)
-                )
 
   
-  
-- **기능 2:** (기능에 대한 설명)
-- **기능 3:** (기능에 대한 설명)
+- **기능 2:**  로그인
+
+
+
+- **기능 3:** 소셜 로그인 (카카오톡,구글)
+
+
+
+- **기능 4:** 게시글 CRUD
+
+
+
+- **기능 5:** 댓글 CRUD
+
+
+
+- **기능 6:** 유저 조회, 탈퇴 
+
+
+
+- **기능 7:** 유저 북마크(좋아요) 
 
 
 
