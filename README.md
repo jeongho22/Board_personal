@@ -5,6 +5,8 @@
 * SpringFramework를 이용한 게시판 웹 프로젝트
 ![스크린샷_2024-03-08_000722](https://github.com/jeongho22/Board_personal/assets/96859291/44d69743-010f-4b1f-9c92-298bfd31d8d5)
 
+
+
 일정
 * 24.01.01 ~ 24.03.01
 * 참여도 : 100% (개인 프로젝트)
