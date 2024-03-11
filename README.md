@@ -23,9 +23,14 @@
 
 ### 설명
 
-- **기능 1:** 로그인
+- **기능 1:**  로그인
+  
+Spring Security dependency 주입
 
-- 
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+}
+  
 - **기능 2:** (기능에 대한 설명)
 - **기능 3:** (기능에 대한 설명)
 
