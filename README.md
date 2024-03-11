@@ -2,18 +2,24 @@
 
 ## 1. 개요
 
-* SpringFramework를 이용한 학과 문서 관리 웹 프로젝트
+* SpringFramework를 이용한 게시판 웹 프로젝트
+  
+만든 목적
+* 오프라인으로 진행되던 서류작업을 온라인화
+* 서류작업 기능을 동적으로 구현하여 추후에도 관리 가능
+  
+일정
+* 24.01.01 ~ 24.03.01
+* 참여도 : 100% (개인 프로젝트)
 
 ## 2. 사용 기술 및 개발 환경
 
-여기서는 프로젝트에 사용된 주요 기술, 프레임워크, 라이브러리, 개발 환경 설정 등에 대해 설명합니다. 예를 들어, 언어 선택, 주요 라이브러리 및 프레임워크의 버전, 개발 도구 등이 포함될 수 있습니다.
+Server : AWS EC2
+DB : MySQL, AWS RDS
+Framework/Flatform : Spring boot, SpringSecurity, Thymeleaf , Bootstrap, 
+Language : JAVA, Javascript, HTML5, CSS3
+Tool : Intellj, GitHub, DBeaver
 
-### 예시:
-
-- **프로그래밍 언어:** JavaScript, Python
-- **프레임워크:** React for Frontend, Django for Backend
-- **데이터베이스:** PostgreSQL
-- **개발 도구:** Docker, Git, Jenkins
 
 ## 3. 내용
 
