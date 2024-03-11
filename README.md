@@ -12,7 +12,7 @@
 
 * Server : AWS EC2
 * DB : MySQL, AWS RDS
-* Framework/Flatform : #6DB33F, SpringSecurity, Thymeleaf , Bootstrap, 
+* Framework/Flatform : SpringBoot , SpringSecurity, Thymeleaf , Bootstrap, 
 * Language : JAVA, Javascript, HTML5, CSS3
 * Tool : Intellj, GitHub, DBeaver
 
