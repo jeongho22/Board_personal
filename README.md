@@ -25,13 +25,12 @@
 
 - **기능 1:**  로그인
   
-Spring Security dependency 주입
+Spring Security dependency , oauth2-client 주입
 
 
 	dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
- }
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'}
 
 로그인, 로그아웃 설정
 
