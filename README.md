@@ -33,10 +33,11 @@ Spring Security dependency 주입
 
 로그인, 로그아웃 설정
 
+  		// Login 창 커스텀 마이징 
                 .formLogin(form -> form
-                        .loginPage("/login") // 내가 커스텀마이징 한 로그인 페이지
-                        .loginProcessingUrl("/login")  // 로그인 폼 데이터 post 받음. 명시적으로 표시
-                        .failureHandler(customAuthenticationFailureHandler()) // 로그인 실패 커스텀 핸들러 추가
+                        .loginPage("/login") 
+                        .loginProcessingUrl("/login")  
+                        .failureHandler(customAuthenticationFailureHandler()) 
                         .defaultSuccessUrl("/articles", true)
                         .permitAll()
                 )
