@@ -56,7 +56,8 @@
 
 이 섹션에서는 프로젝트의 주요 기능, 구성 요소, 사용 방법 등을 설명합니다. 
 
-![image](https://github.com/jeongho22/Board_personal/assets/96859291/5e5aa1a1-4cdd-4282-a0c4-293e93959930)
+![image](https://github.com/jeongho22/Board_personal/assets/96859291/71e1dff2-3e74-4b4e-95bd-63d96749acf3)
+
 
 
 - **기능 1:**  회원가입
