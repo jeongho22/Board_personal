@@ -62,6 +62,10 @@ API 명세
 https://www.notion.so/dedb4763060946aca67dceaea3740027?v=f42f885a1d854df9ac282f4d382c648e
 
 
+📌 ERD
+
+![스크린샷 2024-03-07 200628](https://github.com/jeongho22/Board_personal/assets/96859291/a2b57104-8676-4e80-aa92-ba824d248c97)
+
 
 - **기능 1:**  회원가입
 
