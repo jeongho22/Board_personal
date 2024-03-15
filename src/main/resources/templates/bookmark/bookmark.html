@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>북마크 목록</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <style>
+        table {
+            width: 100%;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        a {
+            text-decoration: none;
+            color: #007bff; /* Bootstrap primary color */
+            font-weight: bold; /* Make the link text bold */
+        }
+        a:hover {
+            text-decoration: underline; /* Add underline on hover */
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="layouts/header :: common-header"></div>
+
+
+<div class="container mt-4">
+<table id="bookmarkTable" class="table">
+    <thead>
+    <tr>
+        <th>번호</th>
+        <th>제목</th>
+        <th>북마크 저장 시간</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- JavaScript를 통해 여기에 북마크 목록이 동적으로 추가됩니다 -->
+    </tbody>
+</table>
+</div>
+
+
+<!-- 저작권 정보 추가 -->
+<div class="text-center mt-4">
+    <hr> <!-- 구분선 -->
+    <p>&copy; 2024 JeongHo Website Name. All rights reserved.</p>
+</div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        fetch('/api/bookmarks', {
+            method: 'GET',
+        })
+            .then(response => response.json())
+            .then(bookmarks => {
+
+                // 저장 시간 별로 내림차순으로 정렬
+                const sortedBookmarks = bookmarks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+                const bookmarkTableBody = document.querySelector('#bookmarkTable tbody');
+                sortedBookmarks.forEach(bookmark => {
+
+                    // 테이블
+                    const tr = document.createElement('tr');
+
+                    // 1.ID
+                    const tdId = document.createElement('td');
+                    tdId.textContent = bookmark.articleId;
+
+                    tr.appendChild(tdId);
+
+                    // 2.TITLE
+                    const tdTitle = document.createElement('td');
+                    const titleLink = document.createElement('a');
+                    titleLink.href = `/articles/${bookmark.articleId}`;
+                    titleLink.textContent = bookmark.articleTitle;
+                    tdTitle.appendChild(titleLink);
+
+                    tr.appendChild(tdTitle);
+
+                    // 3.CREATE_AT(저장)
+                    const tdCreatedAt = document.createElement('td');
+                    tdCreatedAt.textContent = bookmark.createdAt.replace('T', ' ').substring(0, 19);
+
+                    tr.appendChild(tdCreatedAt);
+
+                    bookmarkTableBody.appendChild(tr);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    });
+</script>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<!-- Popper.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<!-- Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>
