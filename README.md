@@ -3,40 +3,52 @@
 ## 1. 개요
 
 * SpringFramework를 이용한 게시판 웹 프로젝트
-  
+![스크린샷_2024-03-08_000722](https://github.com/jeongho22/Board_personal/assets/96859291/44d69743-010f-4b1f-9c92-298bfd31d8d5)
+
+* 배포 URL : http://jeonghologin2.link/login
+* Test ID : user
+* Test PW : 12345!@#$%
+
+
+
 일정
 * 24.01.01 ~ 24.03.01
 * 참여도 : 100% (개인 프로젝트)
 
+  
+
 ## 2. 사용 기술 및 개발 환경
+
 
 ## Tech Stack
 
 
-### Server
-- ![Amazon EC2](https://img.shields.io/badge/Amazon%20EC2-FF9900?style=for-the-badge&logo=Amazon%20EC2&logoColor=white) - Cloud computing platform.
 
+### Server
+- ![Amazon EC2](https://img.shields.io/badge/Amazon%20EC2-FF9900?style=for-the-badge&logo=Amazon%20EC2&logoColor=white)
+  
 ### Database
-- ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=MySQL&logoColor=white) - Relational database management system.
-- ![AWS RDS](https://img.shields.io/badge/AWS%20RDS-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white) - Managed relational database service.
+- ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=MySQL&logoColor=white) 
+- ![AWS RDS](https://img.shields.io/badge/AWS%20RDS-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white) 
 
 ### Framework/Platform
-- ![Spring Boot](https://img.shields.io/badge/springboot-6DB33F.svg?&style=for-the-badge&logo=springboot&logoColor=FFFFFF) - Framework for building web applications.
-- ![Spring Security](https://img.shields.io/badge/Spring%20Security-6DB33F?style=for-the-badge&logo=Spring%20Security&logoColor=white) - Framework for authentication and access control.
-- ![Thymeleaf](https://img.shields.io/badge/Thymeleaf-005F0F?style=for-the-badge&logo=Thymeleaf&logoColor=white) - Server-side Java template engine.
-- ![Bootstrap](https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white) - Front-end framework.
+- ![Spring Boot](https://img.shields.io/badge/springboot-6DB33F.svg?&style=for-the-badge&logo=springboot&logoColor=FFFFFF) 
+- ![Spring Security](https://img.shields.io/badge/Spring%20Security-6DB33F?style=for-the-badge&logo=Spring%20Security&logoColor=white) 
+- ![Thymeleaf](https://img.shields.io/badge/Thymeleaf-005F0F?style=for-the-badge&logo=Thymeleaf&logoColor=white) 
+- ![Bootstrap](https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white) 
 
 ### Programming Languages
-- ![Java](https://img.shields.io/badge/Java-007396.svg?&style=for-the-badge&logo=Java&logoColor=white) - Main backend development language.
-- ![JavaScript](https://img.shields.io/badge/javascript-F7DF1E.svg?&style=for-the-badge&logo=javascript&logoColor=FFFFFF) - Used for client-side scripting.
-- ![HTML5](https://img.shields.io/badge/html5-E34F26.svg?&style=for-the-badge&logo=html5&logoColor=FFFFFF) - Standard markup language for Web pages.
-- ![CSS3](https://img.shields.io/badge/css3-1572B6.svg?&style=for-the-badge&logo=css3&logoColor=FFFFFF+) - Used for styling web pages.
+- ![Java](https://img.shields.io/badge/Java-007396.svg?&style=for-the-badge&logo=Java&logoColor=white) 
+- ![JavaScript](https://img.shields.io/badge/javascript-F7DF1E.svg?&style=for-the-badge&logo=javascript&logoColor=FFFFFF) 
+- ![HTML5](https://img.shields.io/badge/html5-E34F26.svg?&style=for-the-badge&logo=html5&logoColor=FFFFFF) 
+- ![CSS3](https://img.shields.io/badge/css3-1572B6.svg?&style=for-the-badge&logo=css3&logoColor=FFFFFF+) 
 
 ### Tools
-- ![IntelliJ IDEA](https://img.shields.io/badge/IntelliJ-000000?style=for-the-badge&logo=intellijidea&logoColor=white) - Integrated development environment.
-- ![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white) - Platform for version control and collaboration.
-- ![DBeaver](https://img.shields.io/badge/DBeaver-A1A1A1?style=for-the-badge&logo=DBeaver&logoColor=white) - SQL database tool.
+- ![IntelliJ IDEA](https://img.shields.io/badge/IntelliJ-000000?style=for-the-badge&logo=intellijidea&logoColor=white) 
+- ![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white) 
+- ![DBeaver](https://img.shields.io/badge/DBeaver-A1A1A1?style=for-the-badge&logo=DBeaver&logoColor=white) 
 
+![image](https://github.com/jeongho22/Board_personal/assets/96859291/d11ce0c2-1744-49aa-9065-7c4ad9c0b11b)
 
 
 ## 3. 내용
@@ -45,43 +57,48 @@
 
 이 섹션에서는 프로젝트의 주요 기능, 구성 요소, 사용 방법 등을 설명합니다. 
 
-### 설명
-
-- **기능 1:**  로그인
-  
-Spring Security dependency , oauth2-client 주입
+📃 API 명세
+https://www.notion.so/dedb4763060946aca67dceaea3740027?v=f42f885a1d854df9ac282f4d382c648e
 
 
-	dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'}
+📌 ERD
 
-로그인, 로그아웃 설정
+![스크린샷 2024-03-07 200628](https://github.com/jeongho22/Board_personal/assets/96859291/a2b57104-8676-4e80-aa92-ba824d248c97)
 
-  		// Login 창 커스텀 마이징 
-                .formLogin(form -> form
-                        .loginPage("/login") 
-                        .loginProcessingUrl("/login")  
-                        .failureHandler(customAuthenticationFailureHandler()) 
-                        .defaultSuccessUrl("/articles", true)
-                        .permitAll()
-                )
 
-                .logout(logout -> logout
-                        .logoutSuccessUrl("/login")
-                        .permitAll()
-                        .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID")
-                        .clearAuthentication(true)
-                )
+- **기능 1:**  회원가입
+
 
   
-  
-- **기능 2:** (기능에 대한 설명)
-- **기능 3:** (기능에 대한 설명)
+- **기능 2:**  로그인
 
 
 
+- **기능 3:** 소셜 로그인 (카카오톡,구글)
+
+
+
+- **기능 4:** 게시글 CRUD
+
+
+
+- **기능 5:** 댓글 CRUD
+
+
+
+- **기능 6:** 대댓글(답글) CRUD
+
+
+
+- **기능 7:** 회원 아이디 (CRUD)
+
+
+
+- **기능 8:** 게시글 북마크(CRD)
+
+
+
+- **기능 9:** 게시글 좋아요(CRD)
 
 
 
