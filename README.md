@@ -11,9 +11,17 @@
 
 
 
-일정
+개발기간
 * 24.01.01 ~ 24.03.01
 * 참여도 : 100% (개인 프로젝트)
+
+skills🔨
+Java 17 sdk 자바 17.0.9
+SpringBoot 2.7.0
+gradle
+Thymeleaf
+MySql
+HTML5, CSS3, BootStrap
 
   
 
