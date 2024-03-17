@@ -1,0 +1,83 @@
+
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>인기 게시글</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+
+<body>
+
+<div th:replace="layouts/header :: common-header"></div>
+
+
+<div class="container mt-4">
+<table class="table table-hover">
+    <thead class="table-hover">
+    <tr>
+        <th scope="col">번호</th>
+        <th scope="col">작성자</th>
+        <th scope="col">제목</th>
+        <th scope="col">조회수</th>
+        <th scope="col">작성일</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <!--  테이블 데이터는 JavaScript를 통해 동적으로 생성됩니다 -->
+    </tbody>
+</table>
+
+    <!-- 저작권 정보 추가 -->
+    <div class="text-center mt-4">
+        <hr> <!-- 구분선 -->
+        <p>&copy; 2024 JeongHo Website Name. All rights reserved.</p>
+    </div>
+
+
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        fetch('/api/articles/popular')
+            .then(response => response.json())
+            .then(data => {
+
+                const sortedData = data.sort((a, b) => b.id - a.id);
+                const tbody = document.querySelector('table tbody');
+                sortedData.forEach((article) => {
+                    const row = tbody.insertRow();
+                    const cell1 = row.insertCell(0);
+                    const cell2 = row.insertCell(1);
+                    const cell3 = row.insertCell(2);
+                    const cell4 = row.insertCell(3);
+                    const cell5 = row.insertCell(4);
+
+                    cell1.textContent = article.id; // 번호
+                    cell2.textContent = article.username; // 작성자
+
+                    // 제목에 하이퍼링크 추가
+                    const titleLink = document.createElement('a');
+                    titleLink.href = `/articles/${article.id}`; // 여기서는 Thymeleaf의 `@{}` 문법을 사용할 수 없으므로 경로를 직접 지정해야 합니다.
+                    titleLink.textContent = article.title;
+                    cell3.appendChild(titleLink); // 제목 셀에 링크 추가
+
+                    cell4.textContent = article.view; // 조회수
+                    cell5.textContent = article.createdAt.replace('T', ' ').slice(0, 19);
+                });
+            })
+            .catch(error => console.error('Error fetching popular articles:', error));
+    });
+</script>
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<!-- Popper.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<!-- Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>

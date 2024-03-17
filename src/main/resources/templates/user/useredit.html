@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>회원 정보 수정</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header">
+            회원 정보 수정
+        </div>
+        <input type="hidden" id="userId" th:value="${currentUser.id}" />
+        <input type="hidden" id="loginType" th:value="${currentUser.getLoginType()}"/>
+        <div class="card-body">
+            <form id="updateForm" class="needs-validation" novalidate>
+                <div class="form-group">
+                    <label for="updateUsername">새로운 이름:</label>
+                    <input type="text" class="form-control" id="updateUsername" name="updateUsername" required>
+                    <div class="invalid-feedback">Please enter a new username.</div>
+                </div>
+                <!-- 비밀번호 필드 부분 -->
+                <div class="form-group password-field" style="display: none;"> <!-- Initially hidden -->
+                    <label for="updatePassword">새로운 비밀번호:</label>
+                    <input type="password" class="form-control" id="updatePassword" name="updatePassword">
+                    <div class="invalid-feedback">Please enter a new password.</div>
+                </div>
+                <div class="form-group password-field" style="display: none;"> <!-- Initially hidden -->
+                    <label for="passwordConfirm">비밀번호 확인:</label>
+                    <input type="password" class="form-control" id="passwordConfirm">
+                    <div class="invalid-feedback" id="updatePasswordFeedback"></div>
+                </div>
+
+
+                <button type="submit" class="btn btn-primary">등록</button>
+                <a href="/user/my_page" class="btn btn-secondary">이전</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- 저작권 정보 추가 -->
+<div class="text-center mt-4">
+    <hr> <!-- 구분선 -->
+    <p>&copy; 2024 JeongHo Website Name. All rights reserved.</p>
+</div>
+
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var userId = document.getElementById('userId').value; // 유저 ID 가져오기
+        var loginType = document.getElementById("loginType").value;
+        var updateForm = document.getElementById("updateForm");
+
+        // 로그인 타입에 따라 비밀번호 필드 표시/숨김 처리
+        if (loginType === "NORMAL") {
+            document.querySelectorAll('.password-field').forEach(function(el) {
+                el.style.display = 'block'; // 일반 로그인 사용자는 비밀번호 필드 표시
+            });
+        }
+
+        // 비밀번호 입력 필드와 비밀번호 확인 필드에 대한 이벤트 리스너 설정
+        document.getElementById('updatePassword').addEventListener('input', validatePasswordConditions);
+        document.getElementById('passwordConfirm').addEventListener('input', validatePasswordConditions);
+
+        updateForm.addEventListener("submit", function(event) {
+            event.preventDefault(); // 폼 기본 제출 방지
+
+            var updateData = {}; // 변경 데이터 초기화
+            var hasChanges = false; // 변경사항이 있는지 확인
+
+            // 사용자 이름이 입력되었는지 확인
+            if (updateForm.updateUsername.value) {
+                updateData.username = updateForm.updateUsername.value;
+                hasChanges = true;
+            }
+
+            // NORMAL 로그인 사용자이고 비밀번호가 입력되었는지 확인
+            if (loginType === "NORMAL" && document.getElementById('updatePassword').value) {
+                if (!validatePasswordConditions()) {
+                    alert("회원정보를 확인해 주세요.");
+                    return;
+                }
+                updateData.password = updateForm.updatePassword.value;
+                hasChanges = true;
+            }
+
+            // 1.변경 사항이 없으면 경고 메시지 출력
+            if (!hasChanges) {
+                alert("변경 사항이 없습니다.");
+                return;
+            }
+
+            // 2.변경 사항이 있으면 서버에 업데이트 요청
+            fetch(`/api/users/${userId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updateData)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('회원 정보가 수정되었습니다.');
+                        window.location.href = '/user/my_page'; // 성공 시 '/user/my_page'로 리다이렉트
+                    } else {
+                        throw new Error('Request failed');
+                    }
+                })
+                .catch(error => {
+                    alert('회원 정보 수정 중 오류가 발생했습니다.');
+                    console.error('Error:', error);
+                });
+        });
+    });
+
+
+    // 비밀번호 유효성 및 일치 여부 검사 함수
+    function validatePasswordConditions() {
+        var passwordInput = document.getElementById('updatePassword').value;
+        var passwordConfirmInput = document.getElementById('passwordConfirm').value;
+        var passwordFeedback = document.getElementById('updatePasswordFeedback');
+
+        var hasLetter = /[a-zA-Z]/.test(passwordInput);
+        var hasDigit = /[0-9]/.test(passwordInput);
+        var hasSpecialChar = /[!@#$%^&*()]/.test(passwordInput);
+        var validCriteria = (hasLetter ? 1 : 0) + (hasDigit ? 1 : 0) + (hasSpecialChar ? 1 : 0);
+
+        // 비밀번호 기본 조건 충족 여부 검사
+        if (passwordInput.length < 10 || passwordInput.length > 16 || validCriteria < 2) {
+            passwordFeedback.textContent = "비밀번호는 영문 대소문자/숫자/특수문자 중 2가지 이상 조합, 10~16자로 설정해야 합니다.";
+            passwordFeedback.classList.add("text-danger");
+            passwordConfirm.classList.remove("is-valid");
+            passwordConfirm.classList.add("is-invalid");
+            return false;
+        } else {
+            passwordFeedback.classList.remove("text-danger");
+            passwordConfirm.classList.remove("is-invalid");
+        }
+
+        // 비밀번호 일치 여부 검사
+        if (passwordInput !== passwordConfirmInput) {
+            passwordConfirm.classList.add("is-invalid");
+            passwordFeedback.textContent = "비밀번호가 일치하지 않습니다.";
+            passwordFeedback.classList.add("text-danger");
+            return false;
+        } else if (passwordConfirmInput) {
+            passwordConfirm.classList.remove("is-invalid");
+            passwordConfirm.classList.add("is-valid");
+            passwordFeedback.textContent = "비밀번호가 유효하고 일치합니다.";
+            passwordFeedback.classList.remove("text-danger");
+            passwordFeedback.classList.add("text-success");
+            return true;
+        }
+        return true; // 모든 검사를 통과한 경우
+    }
+
+</script>
+</body>
+</html>
