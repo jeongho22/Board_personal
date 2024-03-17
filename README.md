@@ -3,8 +3,6 @@
 ## 1. 개요
 
 * SpringFramework를 이용한 게시판 웹 프로젝트
-![스크린샷_2024-03-08_000722](https://github.com/jeongho22/Board_personal/assets/96859291/44d69743-010f-4b1f-9c92-298bfd31d8d5)
-
 * 배포 URL : http://jeonghologin2.link/login
 * Test ID : user
 * Test PW : 12345!@#$%
