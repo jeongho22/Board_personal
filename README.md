@@ -58,6 +58,7 @@
 
 📃 API 명세서
 https://www.notion.so/dedb4763060946aca67dceaea3740027?v=f42f885a1d854df9ac282f4d382c648e
+![스크린샷 2024-03-17 160921](https://github.com/jeongho22/Board_personal/assets/96859291/7c064735-e630-46c6-b4d2-ae3fa1b78c6c)
 
 
 📌 ERD
