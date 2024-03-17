@@ -1,4 +1,4 @@
-# 프로젝트 제목
+# SpringFramework 게시판 웹 프로젝트
 
 ## 1. 개요
 
@@ -64,7 +64,7 @@ https://www.notion.so/dedb4763060946aca67dceaea3740027?v=f42f885a1d854df9ac282f4
 ![스크린샷 2024-03-16 015451](https://github.com/jeongho22/Board_personal/assets/96859291/5593c76a-b7cc-41f0-a2a3-035dbd1945ca)
 
 
-# Users
+* Users
 사용자(User) 엔티티는 시스템의 사용자 정보를 보여준다 . 사용자 이름, 비밀번호, 이메일, 역할, 로그인 유형 등의 정보를 포함합니다. 이메일은 고유해야 하며([unique]), 사용자는 여러 게시글, 댓글, 북마크, 좋아요를 가질 수 있습니다.
 
 * Articles
