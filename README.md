@@ -172,8 +172,8 @@ https://www.notion.so/dedb4763060946aca67dceaea3740027?v=f42f885a1d854df9ac282f4
 	runtimeOnly 'mysql:mysql-connector-java'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-}
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'}
+
 
 2. 프로젝트 실행:
 
