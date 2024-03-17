@@ -49,6 +49,18 @@
 ![image](https://github.com/jeongho22/Board_personal/assets/96859291/d11ce0c2-1744-49aa-9065-7c4ad9c0b11b)
 
 
+
+**⚙️ 개발 환경**
+
+- `Java 17`
+- `JDK 1.8.0`
+- **IDE** : IntellJ Ultimate 2023.3
+- **Framework** : Springboot(2.x)
+- **Database** : MySQL , AWS RDS
+- **ORM** : JPA
+
+
+
 ### 의존성 추가 
 
     dependencies {
