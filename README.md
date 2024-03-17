@@ -1,6 +1,6 @@
 # SpringFramework 게시판 웹 프로젝트
 
-## 1. 개요
+# 1. 개요
 
 * SpringFramework를 이용한 게시판 웹 프로젝트
 * 배포 URL : http://jeonghologin2.link/login
@@ -15,7 +15,7 @@
 
   
 
-## 2. 사용 기술 및 개발 환경
+# 2. 사용 기술 및 개발 환경
 
 
 ## Tech Stack
@@ -49,7 +49,7 @@
 ![image](https://github.com/jeongho22/Board_personal/assets/96859291/d11ce0c2-1744-49aa-9065-7c4ad9c0b11b)
 
 
-## 3. API 명세서 ERD
+# 3. API 명세서 ERD
 
 
 📃 API 명세서 : https://www.notion.so/dedb4763060946aca67dceaea3740027?v=f42f885a1d854df9ac282f4d382c648e
@@ -84,7 +84,7 @@
 
 
 
-## 4. 내용
+# 4. 내용
 
 게시판을 구성 하는 기초적인 요소를 통해 나만의 게시판을 구성 해보았습니다. 이 섹션에서는 프로젝트의 주요 기능, 구성 요소, 사용 방법 등을 설명합니다. 
 
