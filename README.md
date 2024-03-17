@@ -54,8 +54,8 @@
 
 - `Java 17`
 - **IDE** : IntellJ Ultimate 2023.3
+- **Framework** : Springboot(2.7 version)
 - **ORM** : JPA
-
 
 
 ### 의존성 추가 
