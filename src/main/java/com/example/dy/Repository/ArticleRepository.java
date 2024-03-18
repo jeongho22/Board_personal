@@ -1,6 +1,7 @@
 package com.example.dy.Repository;
 
 import com.example.dy.Domain.Article;
+import com.example.dy.Domain.Comment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,10 +10,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.List;
 
-@RepositoryRestResource
+@Repository
 public interface ArticleRepository extends JpaRepository<Article,Long> {   // 관리대상 Aricle 저장, 대표값 저장 Long
 
     @Modifying // 변경쿼리에 사용
@@ -25,11 +28,53 @@ public interface ArticleRepository extends JpaRepository<Article,Long> {   // �
     // 단순히 조회수가 증가하는 경우에 modifiedAt 필드가 업데이트되는 것을 원치 않을 때 유용합니다.
 
 
-    // 페이지 형식으로 Article 모든 정보 찾는다.
+    // 1. 게시물 페이지 조회
     Page<Article> findAll(Pageable pageable);
+
+    // 2. 전체 조회
     Page<Article> findByTitleContainingOrContentContaining(String title, String content, Pageable pageable);
+
+    // 3. 제목 조회
     Page<Article> findByTitleContaining(String title, Pageable pageable);
+
+    // 4. 내용 조회
     Page<Article> findByContentContaining(String content, Pageable pageable);
+
+    // 5. 게시물을 작성한 유저 조회
+    List<Article> findByUserId(@Param("UserId") Long UserId);
+
+
+    // 6.인기 게시물 조회
+
+    @Query("SELECT a FROM Article a WHERE a.id IN " +
+            "(SELECT b.article.id FROM LikeBoard b GROUP BY b.article.id HAVING COUNT(b) >= :likeCount) " +
+            "AND a.view >= :viewCount " +
+            "AND (LOWER(a.title) LIKE LOWER(CONCAT('%', :searchKeyword, '%')) OR LOWER(a.content) LIKE LOWER(CONCAT('%', :searchKeyword, '%')))")
+    Page<Article> findPopularArticlesWithSearch(
+            @Param("likeCount") Long likeCount,
+            @Param("viewCount") Long viewCount,
+            @Param("searchKeyword") String searchKeyword,
+            Pageable pageable);
+
+    @Query("SELECT a FROM Article a WHERE a.id IN " +
+            "(SELECT b.article.id FROM LikeBoard b GROUP BY b.article.id HAVING COUNT(b) >= :likeCount) " +
+            "AND a.view >= :viewCount " +
+            "AND LOWER(a.title) LIKE LOWER(:searchKeyword)")
+    Page<Article> findPopularArticlesWithTitleSearch(
+            @Param("likeCount") Long likeCount,
+            @Param("viewCount") Long viewCount,
+            @Param("searchKeyword") String searchKeyword,
+            Pageable pageable);
+
+    @Query("SELECT a FROM Article a WHERE a.id IN " +
+            "(SELECT b.article.id FROM LikeBoard b GROUP BY b.article.id HAVING COUNT(b) >= :likeCount) " +
+            "AND a.view >= :viewCount " +
+            "AND LOWER(a.content) LIKE LOWER(:searchKeyword)")
+    Page<Article> findPopularArticlesWithContentSearch(
+            @Param("likeCount") Long likeCount,
+            @Param("viewCount") Long viewCount,
+            @Param("searchKeyword") String searchKeyword,
+            Pageable pageable);
 
 
 }

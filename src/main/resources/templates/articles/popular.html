@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -8,68 +9,180 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 
-
 <body>
 
 <div th:replace="layouts/header :: common-header"></div>
 
 
 <div class="container mt-4">
-<table class="table table-hover">
-    <thead class="table-hover">
-    <tr>
-        <th scope="col">번호</th>
-        <th scope="col">작성자</th>
-        <th scope="col">제목</th>
-        <th scope="col">조회수</th>
-        <th scope="col">작성일</th>
-    </tr>
-    </thead>
 
-    <tbody>
-    <!--  테이블 데이터는 JavaScript를 통해 동적으로 생성됩니다 -->
-    </tbody>
-</table>
+    <!-- 게시물 테이블 -->
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th scope="col">번호</th>
+            <th scope="col">작성자</th>
+            <th scope="col">제목</th>
+            <th scope="col">조회수</th>
+            <th scope="col">작성일</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- 여기에 데이터가 동적으로 삽입됩니다 -->
+        </tbody>
+    </table>
 
-    <!-- 저작권 정보 추가 -->
+
+    <div>
+
+
+        <!-- 페이징 네비게이션 -->
+        <nav aria-label="Page navigation" class="pagination justify-content-center mb-4"> <!-- 여기에 mb-4를 추가하여 아래쪽 마진 생성 -->
+            <ul class="pagination justify-content-center">
+                <li class="page-item"><a class="page-link" href="#" id="prevPage">Previous</a></li>
+                <!-- 페이지 번호는 동적으로 생성됩니다 -->
+                <li class="page-item"><a class="page-link" href="#" id="nextPage">Next</a></li>
+            </ul>
+        </nav>
+
+        <!-- 검색 폼 -->
+        <form id="searchForm" class="mt-4"> <!-- 여기에 mt-4를 추가하여 위쪽 마진 생성 -->
+            <div class="row mb-3">
+                <div class="col">
+                    <div class="form-row">
+                        <div class="col-4">
+                            <select class="form-control mb-2" id="searchType">
+                                <option value="ALL">전체</option>
+                                <option value="TITLE">제목</option>
+                                <option value="CONTENT">내용</option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <input type="text" class="form-control mb-2" id="searchKeyword" placeholder="검색어 입력">
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-primary mb-2">검색</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+
+
+        <!-- 저작권 정보 추가 -->
     <div class="text-center mt-4">
         <hr> <!-- 구분선 -->
         <p>&copy; 2024 JeongHo Website Name. All rights reserved.</p>
     </div>
 
+</div>
 
 </div>
 
+
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        fetch('/api/articles/popular')
-            .then(response => response.json())
-            .then(data => {
+        const searchForm = document.getElementById('searchForm');
+        let currentPage = 0; // 현재 페이지 번호, 0부터 시작
 
-                const sortedData = data.sort((a, b) => b.id - a.id);
-                const tbody = document.querySelector('table tbody');
-                sortedData.forEach((article) => {
-                    const row = tbody.insertRow();
-                    const cell1 = row.insertCell(0);
-                    const cell2 = row.insertCell(1);
-                    const cell3 = row.insertCell(2);
-                    const cell4 = row.insertCell(3);
-                    const cell5 = row.insertCell(4);
+        function fetchArticles(page, searchType, searchKeyword) {
+            const params = new URLSearchParams({
+                page: page,
+                searchType: searchType,
+                searchKeyword: searchKeyword
+            }).toString();
+            fetch(`/api/articles/popular?${params}`)
+                .then(response => response.json())
+                .then(data => {
+                    updateArticlesTable(data.content);
+                    updatePagination(data.totalPages, page); // 총 페이지 수와 현재 페이지를 바탕으로 페이징 업데이트
+                })
+                .catch(error => console.error('Error fetching popular articles:', error));
+        }
 
-                    cell1.textContent = article.id; // 번호
-                    cell2.textContent = article.username; // 작성자
+        function updateArticlesTable(articles) {
+            const tbody = document.querySelector('table tbody');
+            tbody.innerHTML = ''; // 기존 테이블 내용을 비웁니다.
 
-                    // 제목에 하이퍼링크 추가
-                    const titleLink = document.createElement('a');
-                    titleLink.href = `/articles/${article.id}`; // 여기서는 Thymeleaf의 `@{}` 문법을 사용할 수 없으므로 경로를 직접 지정해야 합니다.
-                    titleLink.textContent = article.title;
-                    cell3.appendChild(titleLink); // 제목 셀에 링크 추가
+            articles.forEach(article => {
+                const row = tbody.insertRow();
+                const cell1 = row.insertCell(0);
+                const cell2 = row.insertCell(1);
+                const cell3 = row.insertCell(2);
+                const cell4 = row.insertCell(3);
+                const cell5 = row.insertCell(4);
 
-                    cell4.textContent = article.view; // 조회수
-                    cell5.textContent = article.createdAt.replace('T', ' ').slice(0, 19);
-                });
-            })
-            .catch(error => console.error('Error fetching popular articles:', error));
+                cell1.textContent = article.id; // 번호
+                cell2.textContent = article.username; // 작성자 이름 또는 닉네임
+                // 제목에 하이퍼링크 추가
+                const titleLink = document.createElement('a');
+                titleLink.href = `/articles/${article.id}`; // 실제 경로 지정
+                titleLink.textContent = article.title;
+                cell3.appendChild(titleLink); // 제목 셀에 링크 추가
+                cell4.textContent = article.view; // 조회수
+
+                // 날짜 포맷 변경
+                const createdAt = new Date(article.createdAt);
+                const createdAtFormatted = `${createdAt.getFullYear()}-${(createdAt.getMonth() + 1).toString().padStart(2, '0')}-${createdAt.getDate().toString().padStart(2, '0')}-${createdAt.getHours().toString().padStart(2, '0')}:${createdAt.getMinutes().toString().padStart(2, '0')}:${createdAt.getSeconds().toString().padStart(2, '0')}`;
+                cell5.textContent = createdAtFormatted; // 수정된 작성일
+
+            });
+        }
+
+
+
+        function updatePagination(totalPages, currentPage) {
+            const pagination = document.querySelector('.pagination');
+            pagination.innerHTML = ''; // 기존 페이징 내용을 비웁니다.
+
+            const groupSize = 5; // 페이징 그룹 크기
+            let currentGroup = Math.floor(currentPage / groupSize);
+
+            // '이전' 페이지 버튼의 활성화/비활성화
+            let prevDisabled = currentGroup === 0;
+            addPaginationItem(!prevDisabled, (currentGroup - 1) * groupSize, 'Previous', false);
+
+            // 페이지 번호 버튼들
+            let startPage = currentGroup * groupSize;
+            let endPage = Math.min(startPage + groupSize, totalPages);
+            for (let i = startPage; i < endPage; i++) {
+                addPaginationItem(true, i, i + 1, currentPage === i);
+            }
+
+            // '다음' 페이지 버튼의 활성화/비활성화
+            let nextDisabled = endPage >= totalPages;
+            addPaginationItem(!nextDisabled, endPage, 'Next', false);
+
+            function addPaginationItem(isActive, pageIndex, text, isCurrent) {
+                const li = document.createElement('li');
+                li.className = `page-item ${!isActive ? 'disabled' : ''} ${isCurrent ? 'disabled' : ''}`;
+                const a = document.createElement('a');
+                a.className = 'page-link';
+                a.href = '#';
+                a.textContent = text;
+
+                if (isActive && !isCurrent) {
+                    a.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        fetchArticles(pageIndex, document.getElementById('searchType').value, document.getElementById('searchKeyword').value);
+                    });
+                }
+                li.appendChild(a);
+                pagination.appendChild(li);
+            }
+        }
+
+
+        searchForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const searchType = document.getElementById('searchType').value;
+            const searchKeyword = document.getElementById('searchKeyword').value;
+            fetchArticles(0, searchType, searchKeyword); // 검색 시 항상 첫 페이지부터
+        });
+
+        // 페이지 로드 시 기본 게시물 로딩
+        fetchArticles(currentPage, 'ALL', '');
     });
 </script>
 
@@ -79,5 +192,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 <!-- Bootstrap JS -->
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 
 </body>

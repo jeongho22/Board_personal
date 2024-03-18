@@ -1,16 +1,11 @@
 package com.example.dy.Domain;
-
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
-
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
-
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -32,7 +27,9 @@ public abstract class AuditingFields {
     protected LocalDateTime modifiedAt;
 
     //3.Soft Delete
-    @Setter @Column(name = "deleted_at")
+    @Setter
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @Column(name = "deleted_at")
     protected LocalDateTime deletedAt;
 
 }

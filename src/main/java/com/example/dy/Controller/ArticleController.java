@@ -14,11 +14,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Objects;
 
@@ -31,6 +35,7 @@ public class ArticleController {
     private final CommentService commentService;
     private final ArticleService articleService;
     private final UserService userService;
+
 
     public ArticleController(ArticleRepository articleRepository,
                              CommentService commentService,
@@ -55,11 +60,9 @@ public class ArticleController {
 
 
     @PostMapping("/articles/create")
-    public String createArticle(ArticleDto dto, RedirectAttributes rttr) {
+    public String create(ArticleDto dto, RedirectAttributes rttr) {
         ArticleDto createdDto = articleService.create(dto);
-
         log.info("생성 변환 성공(Dto) 3 : {}",createdDto);
-
         rttr.addFlashAttribute("msg", "게시글 생성 완료");
 
         return "redirect:/articles/" + createdDto.getId();
@@ -77,7 +80,7 @@ public class ArticleController {
         // 2. 모델 등록
         model.addAttribute("article",articleEntity);
 
-        log.info(Objects.requireNonNull(articleEntity).toString());
+        log.info("수정 entity 아이디 : {}",articleEntity);
         // article/edit 페이지 에서만 사용 가능
 
         // 3.뷰 페이지 설정
@@ -99,7 +102,6 @@ public class ArticleController {
 
 
     // 3. READ(읽기)
-
     // 3-1. 단건 화면 조회
     @GetMapping("/articles/{id}")
     public String show(@PathVariable Long id,
@@ -107,19 +109,19 @@ public class ArticleController {
         log.info("id = " + id);
 
         //1.id로 데이터를 가져옴 !
-        ArticleDto articleEntity  = articleService.show(id);
+        ArticleDto articleDto  = articleService.show(id);
         List<CommentDto> commentsDtos = commentService.comments(id);
 
-        log.info("조회 변환 성공(Dto) 2 : {}",articleEntity);
+        log.info("조회 변환 성공(Dto) 2 : {}",articleDto);
 
         // 현재 사용자 정보 가져오기
         User currentUser = userService.getCurrentUser();
 
-        log.info("게시글 작성자: {}",articleEntity.getUser());
+        log.info("게시글 작성자: {}",articleDto.getUser());
 
         //2. 가져온 데이터를 모델에 등록!
         model.addAttribute("currentUser", currentUser);
-        model.addAttribute("article", articleEntity);
+        model.addAttribute("article", articleDto);
         model.addAttribute("commentDtos", commentsDtos);
 
 
@@ -132,19 +134,12 @@ public class ArticleController {
     // 3-2. 인덱스 화면 조회
     @GetMapping("/articles")
     public String index(Model model,
-                        @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+                        @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
                         @RequestParam(required = false) String searchType,
                         @RequestParam(required = false) String searchKeyword) {
 
-        //        // 1: 모든 Article을 가져온다. 전체목록이라... List로 담아야함.
-        //        // ** List findAll() 하는 기능은 CrudRepository 에는 없음.
-        //        List<Article> articleEntityList = articleRepository.findAll();
-        //
-        //        // 2: 가져온 모든 Article 묶음을 뷰로 전달!
-        //        model.addAttribute("articleList",articleEntityList);
 
-        Page<Article> articlePage = articleService.index(searchType, searchKeyword, pageable);
-
+        Page<ArticleDto> articlePage = articleService.index(searchType, searchKeyword, pageable);
         // 현재 사용자 정보 가져오기
         User currentUser = userService.getCurrentUser();
 
@@ -152,6 +147,7 @@ public class ArticleController {
         model.addAttribute("articlePage", articlePage);
         model.addAttribute("searchType", searchType);
         model.addAttribute("searchKeyword", searchKeyword);
+
 
         return "articles/index";
     }
@@ -165,6 +161,9 @@ public class ArticleController {
         ArticleDto deleted = articleService.delete(id);
         log.info("2 .삭제 변환 성공(Dto) : {}",deleted);
         rttr.addFlashAttribute("msg", "게시글 삭제 완료: " + deleted.getTitle());
+
+
+
         return "redirect:/articles";
     }
 
