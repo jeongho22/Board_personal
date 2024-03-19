@@ -1,0 +1,60 @@
+/* 기본 스타일 */
+.header {
+    padding: 20px;
+    background: #333;
+    color: #fff;
+    text-align: center;
+}
+
+.nav-link {
+    display: inline-block;
+    margin: 0 10px;
+    color: #fff;
+    text-decoration: none;
+}
+
+/* 화면 너비가 768px 이하일 때 적용될 스타일 */
+@media (max-width: 768px) {
+    .header {
+        padding: 10px;
+        text-align: center;
+    }
+
+    .nav-link {
+        display: block;
+        margin: 5px 0;
+    }
+
+    .container {
+        width: 100%;
+        padding: 0 10px;
+    }
+
+    .d-flex {
+        display: block;
+        text-align: center;
+    }
+}
+
+/* 화면 너비가 480px 이하일 때 적용될 스타일 */
+@media (max-width: 480px) {
+    .nav {
+        display: block;
+        text-align: center;
+    }
+}
+
+
+@media (max-width: 768px) {
+    .header, .footer {
+        padding: 10px;
+    }
+
+    .nav-item, .nav-link {
+        font-size: 14px;
+    }
+
+    .table {
+        font-size: 12px;
+    }
+}

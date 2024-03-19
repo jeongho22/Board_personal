@@ -6,14 +6,17 @@ import com.example.dy.Dto.LikeBoardDto;
 import com.example.dy.Repository.ArticleRepository;
 import com.example.dy.Repository.LikeBoardRepository;
 import com.example.dy.Repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 
+@Slf4j
 @Service
 public class LikeBoardService {
     private final LikeBoardRepository likeBoardRepository;
@@ -30,10 +33,22 @@ public class LikeBoardService {
     }
 
     //1. 특정 게시글에 좋아요를 누른 사용자 조회
+//    public List<LikeBoardDto> findLikesByArticleId(Long articleId) {
+//        return likeBoardRepository.findByArticleId(articleId).stream()
+//                .map(LikeBoardDto::likeBoardDto) // LikeBoard 인스턴스를 LikeBoardDto로 변환
+//                .collect(Collectors.toList());
+//    }
+
     public List<LikeBoardDto> findLikesByArticleId(Long articleId) {
-        return likeBoardRepository.findByArticleId(articleId).stream()
-                .map(LikeBoardDto::likeBoardDto) // LikeBoard 인스턴스를 LikeBoardDto로 변환
-                .collect(Collectors.toList());
+
+        List<LikeBoard> likes = likeBoardRepository.findByArticleId(articleId);
+        List<LikeBoardDto> likeBoardDtos = new ArrayList<>();
+
+        for (LikeBoard like : likes) {
+            LikeBoardDto dto = LikeBoardDto.likeBoardDto(like);
+            likeBoardDtos.add(dto);
+        }
+        return likeBoardDtos;
     }
 
 
@@ -52,12 +67,25 @@ public class LikeBoardService {
 
     // 4.사용자가 누른 좋아요 목록 조회 기능
     @Transactional(readOnly = true)
-    public List<LikeBoardDto> findLikesByUserId(Long userId) {
-        // 소프트 삭제되지 않은 게시물의 좋아요 조회
-        return likeBoardRepository.findActiveLikeByUserId(userId).stream()
-                .map(LikeBoardDto::likeBoardDto)
-                .collect(Collectors.toList());
+//    public List<LikeBoardDto> findLikesByUserId(Long userId) {
+//        // 소프트 삭제되지 않은 게시물의 좋아요 조회
+//        return likeBoardRepository.findActiveLikeByUserId(userId).stream()
+//                .map(LikeBoardDto::likeBoardDto)
+//                .collect(Collectors.toList());
+//    }
+    public List<LikeBoardDto> findLikesByUserId(Long userId){
+
+        List<LikeBoard> likes= likeBoardRepository.findActiveLikeByUserId(userId);
+        List<LikeBoardDto> likeBoardDtos =new ArrayList<>();
+
+        for (LikeBoard like : likes){
+            LikeBoardDto dto = LikeBoardDto.likeBoardDto(like);
+            likeBoardDtos.add(dto);
+        }
+
+        return likeBoardDtos;
     }
+
 
 
     // 5.좋아요 생성,삭제 (토글)
