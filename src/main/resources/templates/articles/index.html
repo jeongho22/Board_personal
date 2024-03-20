@@ -1,6 +1,4 @@
 
-
-
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -12,54 +10,109 @@
 
 <div th:replace="layouts/header :: common-header"></div>
 
+
+
+
+
+
 <!-- 메인 콘텐츠 -->
 <div class="container mt-4">
+
+
+
     <table class="table table-hover">
-        <thead class="thead-dark">
+        <thead class="table-hover">
         <tr>
-            <th scope="col">ID</th>
-            <th scope="col">Title</th>
-            <th scope="col">Content</th>
+            <th scope="col">번호</th>
+            <th scope="col">작성자</th>
+            <th scope="col">제목</th>
             <th scope="col">조회수</th>
-            <th scope="col">작성시간</th>
+            <th scope="col">작성일</th>
         </tr>
         </thead>
+
+
         <tbody>
         <!--  테이블 데이터 반복 -->
         <tr th:each="article : ${articlePage.content}">
-            <td th:text="${article.id}">ID</td>
-            <td><a th:href="@{/articles/{id}(id=${article.id})}" th:text="${article.title}">Title</a></td>
-            <td th:text="${article.content}">Content</td>
+            <td th:text="${article.id}">번호</td>
+            <td th:text="${article.authorNickname}">작성자</td>
+            <td>
+                <a th:href="@{/articles/{id}(id=${article.id})}" th:text="${article.title}">제목</a>
+                <span class="comment-count" th:data-article-id="${article.id}"></span>
+            </td>
             <td th:text="${article.view}">조회수</td>
-            <td th:text="${article.createdAt}">작성시간</td>
+            <td class="created_at" th:text="${article.createdAt}">작성일</td>
         </tr>
         </tbody>
     </table>
 
-    <!-- 글쓰기 버튼 -->
+
 
     <div class="row">
+        <!-- 인기 게시글 버튼 (왼쪽 정렬) -->
+        <div class="col text-left">
+            <div th:if="${currentUser != null}">
+            <a href="/articles/popular" class="btn btn-primary">인기글</a>
+            </div>
+        </div>
+
+        <!-- 글쓰기 버튼 (오른쪽 정렬) -->
         <div class="col text-right">
-            <!-- 글쓰기 버튼 -->
             <div th:if="${currentUser != null}">
                 <a href="/articles/new" class="btn btn-primary">글쓰기</a>
             </div>
         </div>
     </div>
 
+
+
     <!-- 푸터 삽입 -->
     <div th:replace="layouts/footer :: common-footer"></div>
 </div>
 
 
+<script>
+    var elements = document.querySelectorAll('.created_at'); // 모든 'created_at' 클래스를 가진 요소 선택
+    elements.forEach(function(element) {
+        var originalDateString = element.textContent; // 각 요소의 텍스트 가져오기
+        element.textContent = originalDateString.replace('T', '-'); // 'T'를 공백으로 교체
+    });
+</script>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var commentCountElements = document.querySelectorAll('.comment-count');
+
+        commentCountElements.forEach(function(element) {
+            var articleId = element.getAttribute('data-article-id');
+            var articleLink = `/articles/${articleId}`; // 게시글 상세 페이지로의 링크
+
+            fetch('/api/articles/count/' + articleId)
+                .then(response => response.json())
+                .then(data => {
+                    // 'data'가 댓글 수를 나타냄. 댓글 수에 따라 다른 표시를 함.
+                    if(data > 0) {
+                        // 댓글이 있는 경우, 댓글 수와 함께 링크를 표시
+                        element.innerHTML = `<a href="${articleLink}" class="comment-link">[${data}]</a>`;
+                    }
+                })
+                .catch(error => console.error('Error fetching comment count:', error));
+        });
+    });
+</script>
+
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<!-- Popper.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<!-- Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 </body>
+
+
+
 </html>
-
-
-
-<!--@{/articles/{id}}: 이 부분은 URL의 템플릿을 정의합니다. 여기서 {id}는 URL 경로의 일부로 사용될 변수를 나타냅니다.
- 예를 들어, 만약 id 값이 123이라면, 이 템플릿은 /articles/123으로 해석됩니다.-->
-
-<!--(id=${article.id}): 이 부분은 실제 id 변수에 들어갈 값을 정의합니다.
-${article.id}는 현재 Thymeleaf 컨텍스트에서 article 객체의 id 속성 값을 의미합니다.
-이 표현식은 {id} 템플릿 변수를 실제 article 객체의 id 값으로 대체합니다.-->
