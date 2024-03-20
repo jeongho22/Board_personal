@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>로그인 페이지</title>
-    <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -98,18 +97,21 @@
     <form id="loginForm" th:action="@{/login}" method="post"> <!--post 방식으로 login 을 보내면-->
         <h2>로그인</h2>
         <div>
-            <label for="username">이메일:</label>
+            <label for="username">아이디:</label>
             <input type="text" id="username" name="username" required>
         </div>
         <div>
             <label for="password">비밀번호:</label>
-            <input type="password" id="password" name="password" required>
+            <input type="password" id="password" name="password" required autocomplete="current-password">
         </div>
         <div>
             <button type="submit">로그인</button>
         </div>
     </form>
 
+    <div th:if="${loginError}">
+        <p class="error" style="color: red;">아이디 또는 비밀번호가 올바르지 않습니다. 다시 확인해주세요.</p>
+    </div>
 
 
     <!-- 카카오톡 간편 로그인 버튼 -->
@@ -131,38 +133,40 @@
             구글 계정으로 로그인
         </a>
     </div>
+
 </div>
 
 
-<script>
 
-    document.getElementById('loginForm').addEventListener('submit', function(event) {
-        event.preventDefault();
 
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
+<!--<script>-->
 
-        fetch('/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password })
-        })
-            .then(response => {
-                if (response.ok) {
-                    // 로그인 성공, 서버가 HttpOnly 쿠키에 JWT를 설정
-                    console.log('로그인 성공');
-                    window.location.href = '/'; // 로그인 성공 후 리다이렉트할 페이지
+<!--    document.getElementById('loginForm').addEventListener('submit', function(event) {-->
+<!--        event.preventDefault();-->
 
-                } else {
-                    alert('로그인 실패');
-                }
-            })
-            .catch(error => {
-                console.error('Error during login:', error);
-            });
-    });
-</script>
+<!--        const username = document.getElementById('username').value;-->
+<!--        const password = document.getElementById('password').value;-->
 
+<!--        fetch('/login', {-->
+<!--            method: 'POST',-->
+<!--            headers: { 'Content-Type': 'application/json' },-->
+<!--            body: JSON.stringify({ username, password })-->
+<!--        })-->
+<!--            .then(response => {-->
+<!--                if (response.ok) {-->
+<!--                    // 로그인 성공, 서버가 HttpOnly 쿠키에 JWT를 설정-->
+<!--                    console.log('로그인 성공');-->
+<!--                    window.location.href = '/articles'; // 로그인 성공 후 리다이렉트할 페이지-->
+
+<!--                } else {-->
+<!--                    alert('로그인 실패');-->
+<!--                }-->
+<!--            })-->
+<!--            .catch(error => {-->
+<!--                console.error('Error during login:', error);-->
+<!--            });-->
+<!--    });-->
+<!--</script>-->
 
 </body>
 </html>
