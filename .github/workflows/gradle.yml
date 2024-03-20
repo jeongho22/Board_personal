@@ -21,6 +21,8 @@ jobs:
         distribution: 'temurin'
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v3.1.0
+    - name: Set execute permission for gradlew
+      run: chmod +x ./gradlew
     - name: Build with Gradle Wrapper
       run: ./gradlew build
       
@@ -41,9 +43,9 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
-        file: ./build/libs/Dockerfile
+        file: ./build/libs/Dockerfile  # 이 경로는 실제 Dockerfile의 위치에 맞게 조정해야 합니다.
         push: true
-        tags: kimjeongho/jjapp:1.0
+        tags: kimjeongho/jjapp:1.0  # 'kimjeongho'와 'jjapp:1.0'를 실제 Docker Hub 사용자 이름과 이미지 태그로 변경해야 합니다.
 
   dependency-submission:
     runs-on: ubuntu-latest
