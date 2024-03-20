@@ -1,0 +1,242 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <!-- Bootstrap CSS 추가 -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <h2 class="mb-3">Sign Up</h2>
+            <form id="signupForm" class="needs-validation" novalidate>
+                <div class="form-group">
+                    <label for="username">이름:</label>
+                    <input type="text" class="form-control" id="username" name="username" required>
+                    <div class="invalid-feedback">이름을 입력 해주세요.</div>
+                </div>
+                <div class="form-group">
+                    <label for="email">아이디:</label>
+                    <div class="d-flex align-items-center">
+                        <input type="email" class="form-control mr-2" id="email" name="email" required>
+                        <button type="button" id="checkEmailButton" class="btn btn-primary" style="min-width: 100px;">중복 확인</button>
+                    </div>
+                    <div class="invalid-feedback">Please enter a valid email address.</div>
+                    <div id="emailFeedback" class="feedback"></div>
+                </div>
+                <div class="form-group">
+                    <label for="password">비밀번호:</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                    <div class="invalid-feedback">Please enter your password.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="passwordConfirm">비밀번호 확인:</label>
+                    <input type="password" class="form-control" id="passwordConfirm" required>
+                    <div class="invalid-feedback" id="passwordFeedback"></div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">등록</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- 저작권 정보 추가 -->
+<div class="text-center mt-4">
+    <hr> <!-- 구분선 -->
+    <p>&copy; 2024 JeongHo Website Name. All rights reserved.</p>
+</div>
+
+
+<!--/*
+<script th:inline="javascript">
+    var csrfToken = [[${_csrf.token}]];
+    var csrfHeader = [[${_csrf.headerName}]];
+</script>
+*/-->
+
+
+
+<script>
+
+    //1.비밀번호 체크 메서드
+
+    document.getElementById('password').addEventListener('input', validatePasswordConditions);
+
+    // 비밀번호 조건 및 일치 여부 검사 함수
+    function validatePasswordConditions() {
+        var passwordInput = password.value;
+        var passwordConfirmInput = passwordConfirm.value;
+        var passwordFeedback = document.getElementById('passwordFeedback');
+
+        var hasLetter = /[a-zA-Z]/.test(passwordInput);
+        var hasDigit = /[0-9]/.test(passwordInput);
+        var hasSpecialChar = /[!@#$%^&*()]/.test(passwordInput);
+        var validCriteria = (hasLetter ? 1 : 0) + (hasDigit ? 1 : 0) + (hasSpecialChar ? 1 : 0);
+
+        // 비밀번호 기본 조건 충족 여부 검사
+        if (passwordInput.length < 10 || passwordInput.length > 16 || validCriteria < 2) {
+            passwordFeedback.textContent = "비밀번호는 영문 대소문자/숫자/특수문자 중 2가지 이상 조합, 10~16자로 설정해야 합니다.";
+            passwordFeedback.classList.add("text-danger");
+            passwordFeedback.classList.remove("text-success");
+            passwordConfirm.classList.remove("is-valid");
+            passwordConfirm.classList.add("is-invalid");
+            return false;
+        } else {
+            passwordFeedback.classList.remove("text-danger");
+            passwordConfirm.classList.remove("is-invalid");
+        }
+
+        // 비밀번호 일치 여부 검사
+        if (passwordInput !== passwordConfirmInput) {
+            passwordConfirm.classList.add("is-invalid");
+            passwordFeedback.textContent = "비밀번호가 일치하지 않습니다.";
+            passwordFeedback.classList.add("text-danger");
+            return false;
+        } else if (passwordConfirmInput) {
+            passwordConfirm.classList.remove("is-invalid");
+            passwordConfirm.classList.add("is-valid");
+            passwordFeedback.textContent = "비밀번호가 유효하고 일치합니다.";
+            passwordFeedback.classList.remove("text-danger");
+            passwordFeedback.classList.add("text-success");
+            return true;
+        }
+        return true; // 모든 검사를 통과한 경우
+    }
+
+    document.getElementById('passwordConfirm').addEventListener('input', validatePasswordConditions);
+
+
+
+
+    // 2. 회원 가입 버튼
+    document.addEventListener("DOMContentLoaded", function() {
+        var form = document.getElementById("signupForm");
+        form.onsubmit = function(event) {
+            event.preventDefault(); // 폼 기본 제출 방지
+
+            // 비밀번호 유효성 및 일치 여부 검사
+            if (!validatePasswordConditions()) {
+                alert("회원정보를 확인해 주세요."); // 사용자 친화적 에러 메시지로 대체
+                return; // 비밀번호 검사를 통과하지 못하면 폼 제출 중단
+            }
+
+            var formData = {
+                username: form.username.value,
+                email: form.email.value,
+                password: form.password.value
+            };
+
+            fetch('/api/users/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // [csrfHeader]: csrfToken
+                },
+                body: JSON.stringify(formData)              //데이터를 JSON으로 변환 -> 컨트롤러 @RequestBody를통해 -> 자바객체로 변환
+            })
+                .then(response => response.json().then(data => ({ status: response.status, body: data })))
+                .then(result => {
+                    if (result.status === 200) {
+                        alert("정상적으로 회원 가입이 되었습니다."); // 성공 메시지 표시
+                        window.location.href = '/login.html'; // 홈페이지로 리다이렉트
+                    } else {
+                        throw new Error(result.body.message); // 서버로부터 받은 에러 메시지
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("회원정보를 확인해 주세요."); // 사용자 친화적 에러 메시지로 대체
+                });
+        };
+    });
+
+
+    // 3. 중복확인 검증
+    document.getElementById("checkEmailButton").addEventListener("click", function() {
+        var email = document.getElementById("email").value;
+        var emailFeedback = document.getElementById("emailFeedback");
+
+        // 이메일 형식 및 조건 검증
+        var emailPattern = /^[a-z0-9]{4,16}$/; // 영문 소문자/숫자, 4~16자로만 구성
+        if (!email) {
+            emailFeedback.textContent = "아이디를 입력해주세요.";
+            emailFeedback.classList.add("is-invalid", "text-danger");
+            emailFeedback.classList.remove("text-success");
+            return;
+        } else if (!emailPattern.test(email)) {
+            emailFeedback.textContent = "아이디는 영문 소문자/숫자, 4~16자로만 구성 되어야 합니다.";
+            emailFeedback.classList.add("is-invalid", "text-danger");
+            emailFeedback.classList.remove("text-success");
+            return;
+        }
+
+        // 이메일 중복 검증
+        fetch(`/api/users/check-email?email=${email}`)
+            .then(response => response.json())
+            .then(data => {
+                if(data) {
+                    emailFeedback.textContent = "이미 사용 중인 아이디 입니다.";
+                    emailFeedback.classList.add("is-invalid", "text-danger");
+                    emailFeedback.classList.remove("text-success");
+                } else {
+                    emailFeedback.textContent = "사용 가능한 아이디 입니다.";
+                    emailFeedback.classList.remove("is-invalid", "text-danger");
+                    emailFeedback.classList.add("is-valid", "text-success");
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("오류가 발생했습니다. 다시 시도해주세요.");
+            });
+    });
+
+
+</script>
+
+
+<script>
+    // 이름 입력 필드 유효성 검사 함수
+    function validateName() {
+        var nameInput = document.getElementById('username').value;
+        var nameFeedback = document.getElementById('nameFeedback');
+
+        if (!nameInput) { // 이름이 입력되지 않은 경우
+            nameFeedback.classList.add("text-danger");
+            nameFeedback.classList.remove("text-success");
+            document.getElementById('username').classList.add("is-invalid");
+            return false;
+        } else { // 이름이 입력된 경우
+            nameFeedback.classList.remove("text-danger");
+            document.getElementById('username').classList.remove("is-invalid");
+            document.getElementById('username').classList.add("is-valid");
+            return true;
+        }
+    }
+
+    // 이름 입력 필드에 'input' 이벤트 리스너 추가
+    document.getElementById('username').addEventListener('input', validateName);
+
+    // 폼 제출 전 이름 입력 검증 추가
+    document.getElementById("signupForm").addEventListener("submit", function(event) {
+        if (!validateName()) {
+            event.preventDefault(); // 유효하지 않은 이름 입력 시 폼 제출 방지
+        }
+    });
+
+    // 이름 입력 필드에 대한 피드백 요소 추가
+    document.querySelector('.form-group').insertAdjacentHTML('afterend', '<div id="nameFeedback" class="feedback"></div>');
+</script>
+
+
+</body>
+</html>

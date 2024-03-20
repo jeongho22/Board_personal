@@ -1,0 +1,80 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>마이 페이지</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div th:replace="layouts/header :: common-header"></div>
+
+
+<div class="container mt-5">
+    <div class="card" th:if="${currentUser != null}">
+        <div class="card-header">
+            회원 정보
+        </div>
+
+        <input type="hidden" id="userId" th:value="${currentUser.id}" />
+        <div class="card-body">
+            <p class="card-title"><strong>이름:</strong> <span th:text="${currentUser.getUsername}"></span></p>
+            <p class="card-text"><strong>아이디:</strong> <span th:text="${currentUser.email}"></span></p>
+            <p class="card-text"><strong>권한:</strong> <span th:text="${currentUser.role}"></span></p>
+            <p class="card-text"><strong>가입일:</strong> <span class="created_at" th:text="${currentUser.createdAt}"></span></p>
+            <p class="card-text"><strong>로그인 유형:</strong> <span th:text="${currentUser.getLoginType()}"></span></p>
+            <a href="/articles" class="btn btn-secondary">이전</a>
+            <a href="/user/my_page/edit" class="btn btn-primary">수정</a>
+            <button id="deleteAccountBtn" class="btn btn-danger">탈퇴</button>
+        </div>
+    </div>
+</div>
+
+
+<!-- 저작권 정보 추가 -->
+<div class="text-center mt-4">
+    <hr> <!-- 구분선 -->
+    <p>&copy; 2024 JeongHo Website Name. All rights reserved.</p>
+</div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+        var userId = document.getElementById('userId').value; // th:value 가져 오기
+
+        document.getElementById('deleteAccountBtn').addEventListener('click', function() {
+            if (confirm('정말로 회원 탈퇴를 하시겠습니까?')) {
+                fetch(`/api/users/${userId}`, {
+                    method: 'DELETE'
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            alert('계정이 삭제되었습니다.');
+                            window.location.href = '/login';
+                        } else {
+                            throw new Error('Request failed');
+                        }
+                    })
+                    .catch(error => {
+                        alert('회원 탈퇴 중 오류가 발생했습니다.');
+                        console.error('Error:', error);
+                    });
+            }
+        });
+
+        var originalDateString = document.querySelector('.created_at').textContent;               // 'created_at' 클래스를 가진 요소에서 텍스트 가져오기
+        document.querySelector('.created_at').textContent = originalDateString.replace('T', '-'); // 수정된 문자열로 텍스트 설정
+    });
+</script>
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<!-- Popper.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<!-- Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

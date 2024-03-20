@@ -1,0 +1,274 @@
+
+
+<!--<!DOCTYPE html>-->
+<!--<html lang="ko">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>유저 테이블</title>-->
+<!--    &lt;!&ndash; 부트스트랩 CSS 추가 &ndash;&gt;-->
+<!--    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">-->
+<!--</head>-->
+<!--<body>-->
+
+<!--<div th:replace="layouts/header :: common-header"></div>-->
+
+
+<!--<div class="container mt-4">-->
+<!--    <table class="table table-hover">-->
+<!--        <thead class="table-hover">-->
+<!--        <tr>-->
+<!--            <th>번호</th>-->
+<!--            <th>이름</th>-->
+<!--            <th>아이디</th>-->
+<!--            <th>가입일</th>-->
+<!--            <th>회원탈퇴</th>-->
+
+<!--        </tr>-->
+<!--        </thead>-->
+<!--        <tbody id="userTableBody">-->
+<!--        &lt;!&ndash; 자바스크립트를 통해 여기에 사용자 데이터와 삭제 버튼이 동적으로 삽입됩니다. &ndash;&gt;-->
+<!--        </tbody>-->
+<!--    </table>-->
+<!--</div>-->
+
+
+
+<!--&lt;!&ndash; 저작권 정보 추가 &ndash;&gt;-->
+<!--<div class="text-center mt-4">-->
+<!--    <hr> &lt;!&ndash; 구분선 &ndash;&gt;-->
+<!--    <p>&copy; 2024 JeongHo Website Name. All rights reserved.</p>-->
+<!--</div>-->
+
+
+<!--<script>-->
+<!--    document.addEventListener('DOMContentLoaded', function() {-->
+<!--        fetch('/api/users')-->
+<!--            .then(response => response.json())-->
+<!--            .then(users => {-->
+<!--                const sortedUsers = users.sort((a, b) => b.id - a.id);-->
+
+<!--                const tbody = document.getElementById('userTableBody');-->
+<!--                sortedUsers.forEach(user => {-->
+
+<!--                    // 날짜 형식을 'YYYY-MM-DD-HH:MM:SS' 형식으로 변환하는 부분-->
+<!--                    const createdAtFormatted = user.created_at.replace('T', '-').substring(0, 19);-->
+
+
+<!--                    const tr = document.createElement('tr');-->
+<!--                    const tdNo = document.createElement('td');-->
+<!--                    const tdUsername = document.createElement('td');-->
+<!--                    const tdEmail = document.createElement('td');-->
+<!--                    const tdCreated = document.createElement('td')-->
+<!--                    const tdActions = document.createElement('td');-->
+<!--                    const deleteButton = document.createElement('button');-->
+
+
+<!--                    tdNo.textContent = user.id;-->
+<!--                    tdUsername.textContent = user.username;-->
+<!--                    tdEmail.textContent = user.email;-->
+<!--                    tdCreated.textContent = createdAtFormatted; // 변경된 날짜 형식 사용-->
+
+
+
+<!--                    deleteButton.textContent = '강퇴';-->
+<!--                    deleteButton.className = 'btn btn-danger';-->
+<!--                    deleteButton.setAttribute('data-id', user.id); // 사용자 ID를 버튼에 설정-->
+
+
+<!--                    deleteButton.onclick = function() {-->
+<!--                        const userId = this.getAttribute('data-id');-->
+<!--                        const confirmDelete = confirm('정말로 강퇴하시겠습니까?');-->
+<!--                        if (confirmDelete) {-->
+<!--                            deleteUser(userId);-->
+<!--                        }-->
+<!--                    };-->
+
+
+<!--                    tdActions.appendChild(deleteButton);-->
+<!--                    tr.appendChild(tdNo);-->
+<!--                    tr.appendChild(tdUsername);-->
+<!--                    tr.appendChild(tdEmail);-->
+<!--                    tr.appendChild(tdCreated);-->
+<!--                    tr.appendChild(tdActions);-->
+<!--                    tbody.appendChild(tr);-->
+
+
+<!--                });-->
+<!--            })-->
+<!--            .catch(error => console.error('Error:', error));-->
+
+<!--        function deleteUser(userId) {-->
+<!--            fetch(`/api/users/${userId}`, {-->
+<!--                method: 'DELETE',-->
+<!--            })-->
+<!--                .then(response => {-->
+<!--                    if (response.ok) {-->
+<!--                        location.reload(); // 페이지 새로고침하여 변경사항 반영-->
+<!--                    } else {-->
+
+<!--                    }-->
+<!--                })-->
+<!--                .catch(error => console.error('Error deleting user', error));-->
+<!--        }-->
+<!--    });-->
+
+<!--</script>-->
+
+<!--<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>-->
+<!--&lt;!&ndash; Popper.js &ndash;&gt;-->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>-->
+<!--&lt;!&ndash; Bootstrap JS &ndash;&gt;-->
+<!--<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>-->
+
+<!--</body>-->
+<!--</html>-->
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>유저 테이블</title>
+    <!-- 부트스트랩 CSS 추가 -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+<div th:replace="layouts/header :: common-header"></div>
+
+<div class="container mt-4">
+    <!-- 검색 기능 추가 -->
+    <div class="row mb-3">
+        <div class="col-4">
+            <select id="searchType" class="form-control">
+                <option value="ALL">전체</option>
+                <option value="TITLE">이름</option>
+                <option value="CONTENT">아이디</option>
+            </select>
+        </div>
+        <div class="col">
+            <input type="text" id="searchKeyword" class="form-control" placeholder="검색어 입력">
+        </div>
+        <div class="col-auto">
+            <button onclick="searchUsers()" class="btn btn-primary">검색</button>
+        </div>
+    </div>
+
+
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>번호</th>
+            <th>이름</th>
+            <th>아이디</th>
+            <th>가입일</th>
+            <th>회원탈퇴</th>
+        </tr>
+        </thead>
+        <tbody id="userTableBody">
+        <!-- 자바스크립트를 통해 여기에 사용자 데이터와 삭제 버튼이 동적으로 삽입됩니다. -->
+        </tbody>
+    </table>
+    <nav>
+        <ul class="pagination">
+            <!-- 페이지네이션 버튼이 동적으로 삽입됩니다 -->
+        </ul>
+    </nav>
+</div>
+
+<!-- 저작권 정보 추가 -->
+<div class="text-center mt-4">
+    <hr>
+    <p>&copy; 2024 JeongHo Website Name. All rights reserved.</p>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        fetchUsers();
+    });
+
+    function fetchUsers(page = 0, searchKeyword = '', searchType = 'ALL') {
+        let url = `/api/users?page=${page}&searchType=${searchType}`;
+        if (searchKeyword) {
+            url += `&searchKeyword=${encodeURIComponent(searchKeyword)}`;
+        }
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                const users = data.content;
+                const totalPages = data.totalPages;
+                const currentPage = data.number;
+                updateTable(users);
+                updatePagination(totalPages, currentPage, searchKeyword);
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+
+    function searchUsers() {
+        const searchType = document.getElementById('searchType').value;
+        const searchKeyword = document.getElementById('searchKeyword').value;
+        fetchUsers(0, searchKeyword, searchType);
+    }
+
+    function updateTable(users) {
+        const tbody = document.getElementById('userTableBody');
+        tbody.innerHTML = '';
+        users.forEach(user => {
+            const createdAtFormatted = user.created_at.replace('T', '-').substring(0, 19);
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${user.id}</td>
+                <td>${user.username}</td>
+                <td>${user.email}</td>
+                <td>${createdAtFormatted}</td>
+                <td>
+                    <button class="btn btn-danger" onclick="deleteUser(${user.id})">강퇴</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function updatePagination(totalPages, currentPage, searchKeyword) {
+        const pagination = document.querySelector('.pagination');
+        pagination.innerHTML = '';
+        for (let i = 0; i < totalPages; i++) {
+            const li = document.createElement('li');
+            li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+            li.innerHTML = `<a class="page-link" href="#" onclick="fetchUsers(${i}, '${searchKeyword}')">${i + 1}</a>`;
+            pagination.appendChild(li);
+        }
+    }
+
+    function deleteUser(userId) {
+        const confirmDelete = confirm('정말로 강퇴하시겠습니까?');
+        if (confirmDelete) {
+            fetch(`/api/users/${userId}`, { method: 'DELETE' })
+                .then(response => {
+                    if (response.ok) {
+                        const searchKeyword = document.getElementById('searchKeyword').value;
+                        fetchUsers(0, searchKeyword); // 페이지 새로고침 없이 사용자 목록을 갱신합니다.
+                    } else {
+                        alert('사용자 삭제에 실패했습니다.');
+                    }
+                })
+                .catch(error => console.error('Error deleting user', error));
+        }
+    }
+</script>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<!-- Popper.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<!-- Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>
