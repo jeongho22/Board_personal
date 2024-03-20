@@ -1,43 +1,120 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <body>
-
-
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 <footer th:fragment="common-footer1">
+
 
   <div id="comments-list" th:each="comment : ${commentDtos}">
     <div class="card m-2" th:id="'comments-' + ${comment.id}">
 
-      <div class="card-header">
-        <!-- 닉네임 출력 -->
-        <span th:text="${comment.nickname}">닉네임</span>
 
-        <!-- 관리자 또는 현재 사용자가 댓글 작성자인 경우에만 수정 및 삭제 버튼 표시 -->
-        <span th:if="${currentUser != null and (currentUser.role.name() == 'ADMIN' or currentUser.id == comment.user)}">
-          <!-- 댓글 수정 버튼 -->
-          <button type="button"
-                  class="btn btn-sm btn-outline-primary"
-                  data-bs-toggle="modal"
-                  data-bs-target="#comment-edit-modal"
-                  th:data-bs-id="${comment.id}"
-                  th:data-bs-nickname="${comment.nickname}"
-                  th:data-bs-body="${comment.body}"
-                  th:data-bs-article-id="${comment.articleId}">
-            수정</button>
-
-          <!-- 댓글 삭제 버튼 -->
-          <button type="button"
-                  class="btn btn-sm btn-outline-danger comment-delete-btn"
-                  th:data-comment-id="${comment.id}">
-            삭제</button>
-        </span>
-
-
-
+      <!-- 1-1.삭제된 원댓글 경우 '삭제된 댓글입니다.'만 표시하고, '답글 달기' 버튼은 유지 -->
+      <div th:if="${comment.deleted}">
+        <div class="card-body text-muted">삭제된 댓글입니다.</div>
+        <!-- '답글 달기' 버튼을 삭제된 원댓글에도 표시 -->
+        <div class="card-footer">
+          <button class="reply-btn btn btn-sm btn-outline-primary"
+                  th:attr="data-parent-id=${comment.id},
+                        data-article-id=${comment.articleId},
+                        data-nickname-id=${currentUser.getUsername()}">
+            답글 달기
+          </button>
+        </div>
       </div>
-      <!-- 본문 내용 출력 -->
-      <div class="card-body" th:text="${comment.body}"></div>
+
+      <!--1-2. 삭제되지 않은 원댓글의 출력 목록 -->
+      <div th:if="!${comment.deleted}">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <div>
+            <i class="far fa-comment"></i>
+            <strong th:text="${comment.nickname}">닉네임</strong>
+            <small class="created_at" th:text="${comment.createdAt}">작성시간</small>
+          </div>
+
+          <div class="action-buttons-container">
+          <span class="reply-btn-container" th:if="${comment.parentId == null}">
+            <button class="reply-btn btn btn-sm btn-outline-primary"
+                    th:attr="data-parent-id=${comment.id},
+                            data-article-id=${comment.articleId},
+                            data-nickname-id=${currentUser.getUsername()}">
+              답글 달기
+            </button>
+          </span>
+
+            <span th:if="${currentUser != null and (currentUser.role.name() == 'ADMIN' or currentUser.id == comment.user)}" class="dropdown">
+            <button class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                    type="button"
+                    id="dropdownMenuButton-Main"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false">
+              ...
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton-Main">
+              <button class="dropdown-item"
+                      type="button"
+                      data-bs-toggle="modal"
+                      data-bs-target="#comment-edit-modal"
+                      th:data-bs-id="${comment.id}"
+                      th:data-bs-nickname="${comment.nickname}"
+                      th:data-bs-body="${comment.body}"
+                      th:data-bs-article-id="${comment.articleId}">
+                수정
+              </button>
+              <button class="dropdown-item comment-delete-btn"
+                      type="button"
+                      th:data-comment-id="${comment.id}">
+                삭제
+              </button>
+            </div>
+          </span>
+          </div>
+        </div>
+        <div class="card-body" th:text="${comment.body}"></div>
+      </div>
+
+
+
+      <!-- 2.대댓글 목록 출력 -->
+      <div class="ml-4" th:each="reply : ${comment.replies}">
+        <div class="card m-2" th:id="'comments-' + ${reply.id}">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+              <i class="far fa-comments"></i>
+              <strong th:text="${reply.nickname}">닉네임</strong>
+              <small class="created_at" th:text="${reply.createdAt}">작성시간</small>
+            </div>
+            <!-- 관리자 또는 현재 사용자가 대댓글 작성자인 경우에만 드롭다운 버튼 표시 -->
+            <div th:if="${currentUser != null and (currentUser.role.name() == 'ADMIN' or currentUser.id == reply.user)}" class="dropdown">
+              <button class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                      type="button"
+                      id="dropdownMenuButton-Sub"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false">
+                ...
+              </button>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton-Sub">
+                <button class="dropdown-item"
+                        type="button"
+                        data-bs-toggle="modal"
+                        data-bs-target="#comment-edit-modal"
+                        th:data-bs-id="${reply.id}"
+                        th:data-bs-nickname="${reply.nickname}"
+                        th:data-bs-body="${reply.body}"
+                        th:data-bs-article-id="${reply.articleId}">
+                  수정
+                </button>
+                <button class="dropdown-item comment-delete-btn"
+                        type="button"
+                        th:data-comment-id="${reply.id}">
+                  삭제
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="card-body" th:text="${reply.body}"></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -45,33 +122,36 @@
 
 
 
-  <!-- Modal -->
-  <div class="modal fade" id="comment-edit-modal" tabindex="-1">
+
+
+  <!-- 3.댓글 수정 모달창 -->
+  <div class="modal fade" id="comment-edit-modal" tabindex="-1" aria-labelledby="likeUserModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">댓글 수정</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
         <div class="modal-body">
           <!-- 댓글 수정 폼-->
           <form>
             <!-- 닉네임 입력 -->
-            <div class="mb-3">
-              <label class="form-label">닉네임</label>
-              <input type="text" class="form-control form-control-sm" id="edit-comment-nickname">
+            <div class="mb-1">
+              <input type="hidden" class="form-control form-control-sm" id="edit-comment-nickname" th:value="${currentUser.getUsername()}">
             </div>
 
             <!-- 댓글 본문 입력 -->
             <div class="mb-3">
               <label class="form-label">댓글 내용</label>
-              <textarea type="text" class="form-control form-control-sm" rows="3" id="edit-comment-body"></textarea>
+              <label for="edit-comment-body"></label><textarea type="text" class="form-control form-control-sm" rows="3" id="edit-comment-body"></textarea>
             </div>
             <!-- 히든 인풋 -->
             <input type="hidden" id="edit-comment-id">
             <input type="hidden" id="edit-comment-article-id">
             <!-- 전송 버튼 -->
-            <button type="button" class="btn btn-outline-primary btn-sm" id="comment-update-btn">수정 완료</button>
+            <button type="button" class="btn btn-primary btn" id="comment-update-btn">등록</button>
           </form>
         </div>
       </div>
@@ -86,17 +166,10 @@
   </script>
   */-->
 
-
-
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"
           integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8"
           crossorigin="anonymous"></script>
-
-
-
-
 
   <!-- 댓글 수정 -->
   <script>
@@ -112,7 +185,6 @@
         const nickname = triggerBtn.getAttribute("data-bs-nickname");
         const body = triggerBtn.getAttribute("data-bs-body");
         const articleId = triggerBtn.getAttribute("data-bs-article-id");
-        //console.log(`${id}, ${nickname}, ${body}, ${articleId}`);
         // 데이터를 반영
         document.querySelector("#edit-comment-id").value = id;
         document.querySelector("#edit-comment-nickname").value = nickname;
@@ -134,7 +206,6 @@
             article_id: document.querySelector("#edit-comment-article-id").value    // 이미 있는 해당 값을 가져옴
           };
 
-
           // 수정 REST API 호출 - fetch()
           const url = "/api/comments/" + comment.id; // 위에 수정 댓글 객체의 comment 아이디값을 가져온거임.
           fetch(url, {
@@ -146,7 +217,7 @@
             }
           }).then(response => {
             // http 응답 코드에 따른 메시지 출력
-            const msg = (response.ok) ? "댓글이 수정이 성공 하였습니다." : "댓글 수정이 실패 하였습니다."; // 삼항 연산자 True 수정완료 / False 실패
+            const msg = (response.ok) ? "댓글이 수정이 성공 하였습니다." : "내용을 입력 해주세요"; // 삼항 연산자 True 수정완료 / False 실패
             alert(msg);
             // 현재 페이지를 새로고침
             window.location.reload();
@@ -158,49 +229,121 @@
   </script>
 
 
-
   <!-- 댓글 삭제 -->
   <script>
-    {
-      // 삭제 버튼 선택
-      const commentDeleteBtns = document.querySelectorAll(".comment-delete-btn"); //querySelectorAll 삭제 버튼 전부다 가져옴.
-      // 삭제 버튼 이벤트를 처리
-      commentDeleteBtns.forEach(btn => { //btn= commentDeleteBtns[i]
-        // 각 버튼의 이벤트 처리를 등록
-        btn.addEventListener("click", (event) => {
-          // 이벤트 발생 요소를 선택
-          const commentDeleteBtn = event.target;
-          // 삭제 댓글 id 가져오기
-          const commentId = commentDeleteBtn.getAttribute("data-comment-id");
-          console.log(`삭제 버튼 클릭: ${commentId}번 댓글`);
-          // 삭제 API 호출 및 처리
-          const url = `/api/comments/${commentId}`;
-          fetch(url, {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-              // [csrfHeader]: csrfToken  // CSRF 토큰을 헤더에 추가
+
+    document.querySelectorAll('.comment-delete-btn').forEach(button => {
+      button.addEventListener('click', function() {
+        const commentId = this.getAttribute('data-comment-id'); // 대댓글의 ID
+        console.log(`삭제 시도: ${commentId}번 대댓글`);
+
+        // 삭제 API 호출
+        fetch(`/api/comments/${commentId}`, {
+          method: 'DELETE',
+          headers: {'Content-Type': 'application/json'}
+        }).then(response => {
+          console.log(`삭제 응답 상태: ${response.status}`); // 응답 상태 로깅
+          if (response.ok) {
+            alert('삭제 되었습니다.');
+            window.location.reload();
+            // 해당 대댓글의 DOM 요소 찾기 시도
+            const elementToRemove = document.querySelector(`#comments-${commentId}`);
+            console.log('삭제 대상 요소:', elementToRemove);
+
+            if (elementToRemove) {
+              // 성공적으로 삭제된 경우, 해당 대댓글의 DOM 요소를 제거
+              elementToRemove.remove();
+              console.log(`${commentId}번 댓글 삭제 완료`);
+            } else {
+              console.error('삭제 대상 요소를 찾을 수 없음');
             }
-          }).then(response => {
-            // 댓글 삭제 실패 처리
-            if (!response.ok) {
-              alert("댓글 삭제 실패..!");
-              return;
-            }
-            // 삭제 성공 시, 댓글을 화면에서 지움!
-            const target = document.querySelector(`#comments-${commentId}`);
-            target.remove();
-          });
+          } else {
+            alert('댓글 삭제에 실패했습니다.');
+          }
+        }).catch(error => {
+          console.error('삭제 중 오류 발생:', error);
         });
       });
-    }
+    });
   </script>
 
 
+<!--대댓글 작성-->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.reply-btn').forEach(function(button) {
+        button.addEventListener('click', function() {
+          const currentNickname = this.getAttribute('data-nickname-id');
+          const parentId = this.getAttribute('data-parent-id');
+          const articleId = this.getAttribute('data-article-id');
 
+          // 기존 대댓글 입력 폼 제거
+          const existingForm = document.querySelector('.reply-form');
+
+          // 이미 열려있는 입력 폼이 있으면 제거하고 함수 종료
+          if (existingForm) {
+            existingForm.remove();
+            return; // 함수 종료
+          }
+
+          // 대댓글 입력 폼 생성
+          const form = document.createElement('form');
+          form.className = 'reply-form card m-2';
+          form.innerHTML = `
+          <div class="card-body">
+            <div class="mb-1">
+              <p class="form-control-plaintext">${currentNickname}</p>
+              <input type="hidden" value="${currentNickname}">
+            </div>
+            <div class="mb-1">
+              <textarea class="form-control form-control-sm reply-content" rows="3" placeholder="답글 남겨 보세요"></textarea>
+            </div>
+            <button type="button" class="btn btn-primary submit-reply">답글 등록</button>
+          </div>
+      `;
+
+          // 댓글 컨테이너 선택 (댓글 달기 버튼을 포함하는 가장 가까운 .card.m-2 컨테이너)
+          const commentContainer = this.closest('.card.m-2');
+          // 답글 입력 폼을 댓글 컨테이너 바로 다음에 삽입
+          commentContainer.parentNode.insertBefore(form, commentContainer.nextSibling);
+
+            form.querySelector('.submit-reply').addEventListener('click', function() {
+              const replyContent = form.querySelector('.reply-content').value.trim();
+
+              // 내용이 비어있는지 검사
+              if (!replyContent) {
+                alert('내용을 입력 해주세요');
+                return; // 함수 종료
+              }
+
+            // 대댓글 등록 로직
+            fetch(`/api/articles/${articleId}/comments`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                body: replyContent,
+                parentId: parentId,
+                article_id: articleId,
+                nickname: currentNickname
+              })
+            })
+                    .then(response => {
+                      console.log("Response Status: ", response.status); // 응답 상태 로깅
+                      window.location.reload();
+                      return response.json(); // JSON으로 변환
+                    })
+                    .then(data => {
+                      console.log("Response Data: ", data); // 응답 데이터 로깅
+                    })
+                    .catch(error => console.error('Error:', error));
+          });
+        });
+      });
+    });
+  </script>
 </footer>
-
-
 
 </body>
 </html>

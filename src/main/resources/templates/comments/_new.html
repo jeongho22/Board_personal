@@ -1,40 +1,51 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<body>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
+<style>
+    .form-control-plaintext,
+    .form-control-sm {
+        margin-bottom: 0; /* 마진 제거 */
+        padding-bottom: 0; /* 패딩 제거 */
+    }
+
+</style>
+
+
+<body>
 <footer th:fragment="common-footer2">
+
     <!--댓글 작성-->
     <div class="card m-2" id="comments-new">
         <div class="card-body">
             <!-- 댓글 작성 폼-->
             <form>
                 <!-- 닉네임 입력 -->
-                <div th:if="${currentUser != null}">
-                    <div class="mb-3">
-                        <label class="form-label">닉네임</label>
-                        <input type="text" class="form-control form-control-sm" id="new-comment-nickname">
-                    </div>
+                <div th:if="${currentUser != null}" class="mb-1">
+                    <p class="form-control-plaintext" th:text="${currentUser.getUsername()}"></p>
+                    <input type="hidden" id="new-comment-nickname" th:value="${currentUser.getUsername()}">
                 </div>
+
                 <!-- 댓글 본문 입력 -->
-                <div th:if="${currentUser != null}">
-                    <div class="mb-3">
-                        <label class="form-label">댓글 내용</label>
-                        <textarea type="text" class="form-control form-control-sm" rows="3" id="new-comment-body"></textarea>
-                    </div>
+                <div th:if="${currentUser != null}" class="mb-1">
+                    <textarea class="form-control form-control-sm" rows="3" id="new-comment-body"  placeholder="댓글을 남겨 보세요"></textarea>
                 </div>
                 <!-- 히든 인풋 -->
                 <input type="hidden" id="new-comment-article-id" th:value="${article.id}">
                 <!-- 전송 버튼 -->
                 <div th:if="${currentUser != null}">
-                    <button type="button" class="btn btn-outline-primary btn-sm" id="comment-create-btn">댓글 작성</button>
+                    <button type="button" class="btn btn-primary btn" id="comment-create-btn">등록</button>
                 </div>
-
             </form>
         </div>
     </div>
 
+    <!-- 저작권 정보 추가 -->
+    <div class="text-center mt-4">
+        <hr> <!-- 구분선 -->
+        <p>&copy; 2024 JeongHo Website Name. All rights reserved.</p>
+    </div>
 
-    <!--// footer0->footer1->footer2 두번 이상 호출할때는 replace 부분 호출해서 스크립트 불가능 -->
+
 
     <script>
         { // 댓글 생성 버튼 변수화
@@ -42,15 +53,13 @@
             // 댓글 클릭 이벤트 감지!
             commentCreateBtn.addEventListener("click", function () {
 
-                console.log("버튼이 클릭")
                 // 새 댓글 객체 생성
                 const comment = {
                     nickname: document.querySelector("#new-comment-nickname").value,
                     body: document.querySelector("#new-comment-body").value,
                     article_id: document.querySelector("#new-comment-article-id").value
                 };
-                // 댓글 객체 출력
-                console.log(comment);
+       
                 // fetch() - 비동기 통신을 위한 API
                 const url = "/api/articles/" + comment.article_id + "/comments"; // comment.article_id 여기서
                 fetch(url, {
@@ -62,7 +71,7 @@
                     }
                 }).then(response => {
                     // http 응답 코드에 따른 메시지 출력
-                    const msg = (response.ok) ? "댓글이 등록되었습니다." : "댓글 등록 실패..!";
+                    const msg = (response.ok) ? "댓글이 등록 되었습니다" : "내용을 입력 해주세요";
                     alert(msg);
                     // 현재 페이지 새로고침
                     window.location.reload();
@@ -71,7 +80,5 @@
         }
     </script>
 </footer>
-
-
 </body>
 </html>
