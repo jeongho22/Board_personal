@@ -275,12 +275,6 @@ public class UserService {
             User currentUserOAuth2 = userRepository.findByEmail(email)
                     .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + email));
 
-            log.info("접속중 아이디(OAuth2): username={}, email={}, role={}, id={}",
-                    currentUserOAuth2.getUsername(),
-                    currentUserOAuth2.getEmail(),
-                    currentUserOAuth2.getRole(),
-                    currentUserOAuth2.getId());
-
             return currentUserOAuth2;
 
 
@@ -291,16 +285,6 @@ public class UserService {
             User currentUser = userRepository.findByEmail(email)
                     .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + email));
 
-            log.info("세션값 : {}", authentication);
-
-            log.info("일반 이메일 : {} ",email);
-
-
-            log.info("접속중 아이디(일반): username={}, email={}, role={}, id={}",
-                    currentUser.getUsername(),
-                    currentUser.getEmail(),
-                    currentUser.getRole(),
-                    currentUser.getId());
 
             return currentUser;
         }
