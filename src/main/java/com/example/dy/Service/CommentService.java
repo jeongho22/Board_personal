@@ -70,9 +70,6 @@ public class CommentService {
         List<CommentDto> commentDtos = new ArrayList<>();
         Map<Long, CommentDto> commentDtoMap = new HashMap<>();
 
-        log.info("1.commentDtoMap : {}",commentDtoMap);
-        log.info("1.commentDtos : {}",commentDtos);
-
         // 원댓글 처리
         for (Comment comment : comments) {
             if (comment.getParentComment() == null) {
@@ -82,26 +79,17 @@ public class CommentService {
             }
         }
 
-        log.info("2.commentDtoMap : {}",commentDtoMap);
-        log.info("2.commentDtos : {}",commentDtos);
-
-
         // 대댓글 처리
         for (Comment comment : comments) {
             if (comment.getParentComment() != null) {
 
                 CommentDto parentDto = commentDtoMap.get(comment.getParentComment().getId());
-                log.info("parentDto : {} ",parentDto);
 
                 CommentDto replyDto = CommentDto.createCommentDto(comment); // 대댓글 DTO 변환
-                log.info("replyDto : {} ",replyDto);
 
                 parentDto.addReply(replyDto); // 원댓글의 DTO에 대댓글 추가
             }
         }
-
-        log.info("3.commentDtoMap : {}",commentDtoMap); // key, value
-        log.info("3.commentDtos : {}",commentDtos); // 리스트
 
         return commentDtos;
     }
