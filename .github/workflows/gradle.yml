@@ -1,0 +1,61 @@
+name: Java CI with Gradle and Docker CD
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v3.1.0
+    - name: Build with Gradle Wrapper
+      run: ./gradlew build
+      
+  # 추가된 도커 빌드 및 푸시 작업
+  docker:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+    - name: Login to DockerHub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: ./build/libs/Dockerfile
+        push: true
+        tags: kimjeongho/jjapp:1.0
+
+  dependency-submission:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+    - name: Generate and submit dependency graph
+      uses: gradle/actions/dependency-submission@v3.1.0
