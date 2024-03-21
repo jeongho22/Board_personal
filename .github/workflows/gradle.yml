@@ -1,10 +1,12 @@
 name: Spring Boot & Gradle CI/CD
 
+
 on:
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+
 
 # 위 이벤트 발생 시 실행될 작업들
 jobs:
@@ -45,12 +47,12 @@ jobs:
     # Docker 이미지 빌드
 
     - name: Docker Image Build
-      run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }} -f build/libs/Dockerfile .
-
+      run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }} .
 
     # DockerHub Push
     - name: DockerHub Push
       run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
+
 
     # EC2 인스턴스 접속 및 애플리케이션 실행
     - name: Application Run
