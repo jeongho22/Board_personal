@@ -121,16 +121,16 @@
         if (deleteBtn) {
             deleteBtn.addEventListener('click', function () { // 이벤트 리스너를 추가합니다.
                 const articleId = this.getAttribute('data-article-id'); // 버튼의 data-article-id 속성에서 글 ID를 추출합니다.
-                if (confirm('게시글을 삭제하시겠습니까?')) { // 사용자에게 삭제를 확인합니다.
+                if (confirm('게시글을 삭제 하시겠습니까?')) { // 사용자에게 삭제를 확인합니다.
                     fetch(`/api/articles/${articleId}`, {
                         method: 'DELETE', // HTTP 메소드를 DELETE로 설정합니다.
                     })
                         .then(response => {
                             if (response.ok) { // 응답이 성공적인 경우
-                                alert('게시글이 삭제되었습니다.');
+                                alert('게시글이 삭제 되었습니다.');
                                 window.location.href = '/articles'; // 게시글 목록 페이지로 리다이렉션합니다.
                             } else {
-                                throw new Error('게시글 삭제에 실패했습니다.'); // 오류 메시지를 생성합니다.
+                                throw new Error('게시글 삭제에 실패 했습니다.'); // 오류 메시지를 생성합니다.
                             }
                         })
                         .catch(error => console.error('Error:', error)); // 오류를 콘솔에 기록합니다.
@@ -178,11 +178,11 @@
                     if (response.status === 201) {
                         bookmarkIcon.classList.remove('far', 'fa-bookmark');
                         bookmarkIcon.classList.add('fas', 'fa-bookmark');
-                        alert('북마크가 추가 완료.');
+                        alert('북마크 추가');
                     } else if (response.status === 204) {
                         bookmarkIcon.classList.remove('fas', 'fa-bookmark');
                         bookmarkIcon.classList.add('far', 'fa-bookmark');
-                        alert('북마크가 삭제 완료.');
+                        alert('북마크 삭제');
                     } else {
                         throw new Error('북마크 처리에 실패');
                     }
