@@ -112,12 +112,8 @@ public class ArticleController {
         ArticleDto articleDto  = articleService.show(id);
         List<CommentDto> commentsDtos = commentService.comments(id);
 
-        log.info("조회 변환 성공(Dto) 2 : {}",articleDto);
-
         // 현재 사용자 정보 가져오기
         User currentUser = userService.getCurrentUser();
-
-        log.info("게시글 작성자: {}",articleDto.getUser());
 
         //2. 가져온 데이터를 모델에 등록!
         model.addAttribute("currentUser", currentUser);
