@@ -1,6 +1,6 @@
 
 package com.example.dy.Config;
-import com.example.dy.JWT.JWTUtil;
+//import com.example.dy.JWT.JWTUtil;
 import com.example.dy.Service.Login.CustomAuthenticationFailureHandler;
 import com.example.dy.Service.Login.CustomUserDetailsService;
 import com.example.dy.Service.OAuth2.CustomOAuth2UserService;
@@ -25,17 +25,17 @@ public class SecurityConfig {
 
     private final CustomOAuth2UserService customOAuth2UserService;
     private final AuthenticationConfiguration authenticationConfiguration;
-    private final JWTUtil jwtUtil;
+//    private final JWTUtil jwtUtil;
     private final CustomUserDetailsService customUserDetailsService;
 
 
     public SecurityConfig(@Lazy CustomOAuth2UserService customOAuth2UserService,
                           AuthenticationConfiguration authenticationConfiguration,
-                          JWTUtil jwtUtil,
+//                          JWTUtil jwtUtil,
                           CustomUserDetailsService customUserDetailsService) {
         this.customOAuth2UserService = customOAuth2UserService;
         this.authenticationConfiguration = authenticationConfiguration;
-        this.jwtUtil = jwtUtil;
+//        this.jwtUtil = jwtUtil;
         this.customUserDetailsService = customUserDetailsService;
 
     }

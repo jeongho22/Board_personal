@@ -6,39 +6,61 @@ import com.example.dy.Domain.User;
 import com.example.dy.Dto.BookmarkDto;
 import com.example.dy.Repository.ArticleRepository;
 import com.example.dy.Repository.BookmarkRepository;
+import com.example.dy.Repository.LikeBoardRepository;
 import com.example.dy.Repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+
+@Slf4j
 @Service
 public class BookmarkService {
 
     private final BookmarkRepository bookmarkRepository;
     private final ArticleRepository articleRepository;
     private final UserRepository userRepository;
+    private final LikeBoardRepository likeBoardRepository;
 
     public BookmarkService(BookmarkRepository bookmarkRepository,
                            ArticleRepository articleRepository,
-                           UserRepository userRepository) {
+                           UserRepository userRepository,
+                           LikeBoardRepository likeBoardRepository) {
 
         this.articleRepository = articleRepository;
         this.bookmarkRepository = bookmarkRepository;
         this.userRepository = userRepository;
+        this.likeBoardRepository = likeBoardRepository;
     }
 
 
     // 1.사용자 별 북마크 목록 조회 기능
     @Transactional(readOnly = true)
+//    public List<BookmarkDto> findBookmarksByUserId(Long userId) {
+//        // 소프트 삭제되지 않은 게시물의 북마크만 조회
+//        return bookmarkRepository.findActiveBookmarksByUserId(userId).
+//                stream()
+//                .map(BookmarkDto::bookmarkDto)
+//                .collect(Collectors.toList());
+//    }
     public List<BookmarkDto> findBookmarksByUserId(Long userId) {
-        // 소프트 삭제되지 않은 게시물의 북마크만 조회
-        return bookmarkRepository.findActiveBookmarksByUserId(userId).stream()
-                .map(BookmarkDto::bookmarkDto)
-                .collect(Collectors.toList());
+
+        List<Bookmark> bookmarks = bookmarkRepository.findActiveBookmarksByUserId(userId);
+        List<BookmarkDto> bookmarkDtos = new ArrayList<>();
+
+        for (Bookmark bookmark : bookmarks){
+            BookmarkDto dto = BookmarkDto.bookmarkDto(bookmark);
+            bookmarkDtos.add(dto);
+        }
+
+        return bookmarkDtos;
     }
+
 
 
     // 2.북마크 생성,삭제 (토글)
