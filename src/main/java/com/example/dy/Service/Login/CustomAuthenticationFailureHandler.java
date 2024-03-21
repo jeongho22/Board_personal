@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
-
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         setDefaultFailureUrl("/login?error=true"); // 실패 URL 설정
@@ -19,3 +18,5 @@ public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationF
         // 예를 들어, 로그 기록, 실패 카운터 증가 등
     }
 }
+
+

@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
@@ -44,12 +45,15 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         log.info("3.userRequest.getClientRegistration().getRegistrationId : {}",registrationId);
 
         OAuth2ResponseDto oAuth2Responsedto = null; // 카카오, 구글 , 네이버 들어올때마다 초기화 시켜주기위해 null 값으로 지정
+        String loginType = null;
 
         if (registrationId.equals("kakao")) {
             oAuth2Responsedto = new KaKaoResponseDto(oAuth2User.getAttributes()); // 카카오 ,구글, 네이버 다들 바구니가 다름
+            loginType = "KAKAO SOCIAL";
         }
         else if (registrationId.equals("google")){
             oAuth2Responsedto = new GoogleResponseDto(oAuth2User.getAttributes());
+            loginType = "GOOGLE SOCIAL";
         }
         else{
             return null;
@@ -60,9 +64,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         String email = oAuth2Responsedto.getEmail();
         log.info("6.OAuth2User attributes email: {}", email);
-
         Optional<User> existData = userRepository.findByEmail(email);
 
+        if (existData.isPresent() && "NORMAL".equals(existData.get().getLoginType())) {
+            // 동일한 이메일 주소를 가진 'NORMAL' 로그인 타입의 사용자가 이미 존재하는 경우
+            throw new IllegalArgumentException("이미 동일한 이메일 주소로 가입된 '일반' 계정이 있습니다.");
+        }
 
 
         User user = null;
@@ -73,6 +80,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             user.setEmail(oAuth2Responsedto.getEmail());
             user.setPassword(passwordEncoder.encode(UUID.randomUUID().toString()));
             user.setRole(Role.USER);
+            user.setLoginType(loginType); // 로그인 타입을 구체적으로 설정
 
             userRepository.save(user); // 새 사용자 저장
         } else {
