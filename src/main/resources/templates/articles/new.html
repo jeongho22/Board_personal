@@ -3,22 +3,64 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
 
-<form class="container mt-5" action="/articles/create" method="post" th:action="@{/articles/create}">
-<!--                                                                        컨트롤러로 포스트-->
+<form id="createArticleForm" class="container mt-5">
     <div class="row">
         <div class="col-md-8 mx-auto">
             <div class="mb-3">
                 <label for="title" class="form-label">제목</label>
-                <input type="text" id="title" class="form-control" name="title">
-                                                                    <!--디티오랑 똑같은 네임을 넣어줘야함-->
+                <input type="text" id="title" class="form-control" name="title"  placeholder="제목을 입력해 주세요.">
             </div>
             <div class="mb-3">
                 <label for="content" class="form-label">내용</label>
-                <textarea id="content" class="form-control" rows="3" name="content"></textarea>
-                                                                    <!--디티오랑 똑같은 네임을 넣어줘야함-->
+                <textarea id="content" class="form-control" rows="3" name="content" placeholder="내용을 입력 하세요."></textarea>
             </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
-            <a href="/" class="btn btn-secondary">뒤로가기</a>
+            <button type="submit" class="btn btn-primary">등록</button>
+            <a href="/" class="btn btn-secondary">이전</a>
         </div>
     </div>
 </form>
+
+
+
+<!-- 저작권 정보 추가 -->
+<div class="text-center mt-4">
+    <hr> <!-- 구분선 -->
+    <p>&copy; 2024 JeongHo Website Name. All rights reserved.</p>
+</div>
+
+
+
+<script>
+    document.getElementById('createArticleForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // 폼의 기본 제출 동작을 방지
+
+        const title = document.getElementById('title').value;
+        const content = document.getElementById('content').value;
+
+        // 제목 필드가 비어있는지 확인
+        if (!title.trim()) {
+            alert('제목을 입력해 주세요.'); // 제목 필드가 비어있으면 경고 메시지 표시
+            return; // 함수 실행을 여기서 중단
+        }
+
+        // 내용 필드가 비어있는지 확인
+        if (!content.trim()) {
+            alert('내용을 입력해 주세요.'); // 내용 필드가 비어있으면 경고 메시지 표시
+            return; // 함수 실행을 여기서 중단
+        }
+
+
+        fetch('/api/articles', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ title, content }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                window.location.href = `/articles/${data.id}`; // 성공시 글 상세 페이지로 리다이렉트
+            })
+            .catch(error => console.error('Error:', error));
+    });
+</script>

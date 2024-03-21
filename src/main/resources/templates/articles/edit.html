@@ -1,25 +1,98 @@
 <!-- Bootstrap CSS -->
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
-<form class="container" action="/articles/update" method="post">
-
-    <input type="hidden" name="id" th:value="${article.id}">
-                                        <!--    수정할때는 id 값까지 같이 던져줘야함... 물론 hidden 처리해주는게좋음-->
-
-    <div class="mb-3">
-        <label class="form-label">제목</label>
-        <label>
-            <input type="text" class="form-control" name="title" th:value="${article.title}">
-                                                                    <!--            value 기존에 값 불러옴-->
-        </label>
+<form id="editArticleForm" class="container mt-5">
+    <input type="hidden" id="articleId"> <!-- 글 ID를 저장할 hidden 필드 -->
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="mb-3">
+                <label for="title" class="form-label" >제목</label>
+                <input type="text" id="title" class="form-control" placeholder="제목을 입력해 주세요.">
+            </div>
+            <div class="mb-3">
+                <label for="content" class="form-label">내용</label>
+                <textarea id="content" class="form-control" rows="3" placeholder="내용을 입력해 주세요."></textarea>
+            </div>
+            <button type="button" id="saveBtn" class="btn btn-primary">등록</button>
+            <a href="#" id="cancelBtn" class="btn btn-secondary">취소</a>
+        </div>
     </div>
-    <div class="mb-3">
-        <label class="form-label">내용</label>
-        <label>
-            <textarea class="form-control" rows="3" name="content" th:text="${article.content}"></textarea>
-                                                                     <!--            value 기존에 값 불러옴-->
-        </label>
-    </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
-    <a th:href="@{/articles/{id}/(id=${article.id})}">Cancel</a>
 </form>
+
+
+<!-- 저작권 정보 추가 -->
+<div class="text-center mt-4">
+    <hr> <!-- 구분선 -->
+    <p>&copy; 2024 JeongHo Website Name. All rights reserved.</p>
+</div>
+
+
+<script>
+
+
+    let articleId; // 전역 스코프에서 articleId 변수 선언
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const pathSegments = window.location.pathname.split('/');
+        const articleIdIndex = pathSegments.length - 2;
+        articleId = pathSegments[articleIdIndex]; // articleId 변수에 값을 할당
+        console.log("값 : ", articleId);
+
+        fetch(`/api/articles/${articleId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch article details');
+                }
+                return response.json();
+            })
+            .then(article => {
+                document.getElementById('articleId').value = article.id;
+                document.getElementById('title').value = article.title;
+                document.getElementById('content').value = article.content;
+            })
+            .catch(error => console.error('Error:', error));
+    });
+
+    // 저장 버튼 클릭 이벤트 리스너
+    document.getElementById('saveBtn').addEventListener('click', function() {
+        const id = document.getElementById('articleId').value;
+        const title = document.getElementById('title').value;
+        const content = document.getElementById('content').value;
+
+        // 제목 필드가 비어있는지 확인
+        if (!title.trim()) {
+            alert('제목을 입력해 주세요.'); // 제목 필드가 비어있으면 경고 메시지 표시
+            return; // 함수 실행을 여기서 중단
+        }
+
+        // 내용 필드가 비어있는지 확인
+        if (!content.trim()) {
+            alert('내용을 입력해 주세요.'); // 내용 필드가 비어있으면 경고 메시지 표시
+            return; // 함수 실행을 여기서 중단
+        }
+
+        fetch(`/api/articles/${id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title, content }),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to update article');
+                }
+                return response.json();
+            })
+            .then(updatedArticle => {
+                alert('게시글이 수정되었습니다.');
+                window.location.href = `/articles/${updatedArticle.id}`;
+            })
+            .catch(error => console.error('Error:', error));
+    });
+
+    // 취소 버튼 클릭 이벤트 리스너
+    document.getElementById('cancelBtn').addEventListener('click', function(event) {
+        event.preventDefault();
+        window.location.href = `/articles/${articleId}`; // 수정된 articleId 변수 사용
+    });
+
+
+</script>
