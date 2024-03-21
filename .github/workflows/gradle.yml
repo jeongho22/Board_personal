@@ -1,15 +1,14 @@
 # Workflow 이름
 name: Spring Boot & Gradle CI/CD
 
-
 # 어떤 이벤트가 발생하면 workflow 실행할 지 명시
 on:
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-    
-
+	
+	
 # 위 이벤트 발생 시 실행될 작업들
 jobs:
   build:
@@ -73,13 +72,3 @@ jobs:
           -e SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USERNAME }} \
           -e SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }} \
           -d ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
-
-
-
-
-
-
-
-
-
-
