@@ -32,7 +32,7 @@ jobs:
     # Gradle Build (test 제외)
 
     - name: Build with Gradle
-      run: ./gradlew clean build --exclude-task test --info
+      run: ./gradlew clean build --exclude-task test
 
 
 
