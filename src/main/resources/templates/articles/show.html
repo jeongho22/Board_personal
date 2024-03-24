@@ -178,11 +178,11 @@
                     if (response.status === 201) {
                         bookmarkIcon.classList.remove('far', 'fa-bookmark');
                         bookmarkIcon.classList.add('fas', 'fa-bookmark');
-                        alert('북마크 추가 되었습니다 !');
+                        alert('북마크 추가 되었습니다..');
                     } else if (response.status === 204) {
                         bookmarkIcon.classList.remove('fas', 'fa-bookmark');
                         bookmarkIcon.classList.add('far', 'fa-bookmark');
-                        alert('북마크 삭제 되었습니다 !');
+                        alert('북마크 삭제 되었습니다..');
                     } else {
                         throw new Error('북마크 처리 실패 !!');
                     }
