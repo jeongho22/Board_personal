@@ -51,7 +51,8 @@
 - ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=GitHub-Actions&logoColor=white)
 
 
-![image](https://github.com/jeongho22/Board_personal/assets/96859291/d11ce0c2-1744-49aa-9065-7c4ad9c0b11b)
+![image (1)](https://github.com/jeongho22/Board_personal/assets/96859291/8bdd3a9c-c9ca-4912-894f-5bebaae8c376)
+
 
 
 
