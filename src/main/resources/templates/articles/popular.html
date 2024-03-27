@@ -39,9 +39,9 @@
         <!-- 페이징 네비게이션 -->
         <nav aria-label="Page navigation" class="pagination justify-content-center mb-4"> <!-- 여기에 mb-4를 추가하여 아래쪽 마진 생성 -->
             <ul class="pagination justify-content-center">
-                <li class="page-item"><a class="page-link" href="#" id="prevPage">이전</a></li>
+                <li class="page-item"><a class="page-link" href="#" id="prevPage"></a></li>
                 <!-- 페이지 번호는 동적으로 생성됩니다 -->
-                <li class="page-item"><a class="page-link" href="#" id="nextPage">다음</a></li>
+                <li class="page-item"><a class="page-link" href="#" id="nextPage"></a></li>
             </ul>
         </nav>
 
@@ -141,7 +141,7 @@
 
             // '이전' 페이지 버튼의 활성화/비활성화
             let prevDisabled = currentGroup === 0;
-            addPaginationItem(!prevDisabled, (currentGroup - 1) * groupSize, 'Previous', false);
+            addPaginationItem(!prevDisabled, (currentGroup - 1) * groupSize, '이전', false);
 
             // 페이지 번호 버튼들
             let startPage = currentGroup * groupSize;
@@ -152,7 +152,7 @@
 
             // '다음' 페이지 버튼의 활성화/비활성화
             let nextDisabled = endPage >= totalPages;
-            addPaginationItem(!nextDisabled, endPage, 'Next', false);
+            addPaginationItem(!nextDisabled, endPage, '다음', false);
 
             function addPaginationItem(isActive, pageIndex, text, isCurrent) {
                 const li = document.createElement('li');
